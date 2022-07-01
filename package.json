@@ -1,7 +1,7 @@
 {
   "name": "auto-translate-json-library",
-  "version": "1.0.3",
-  "description": "",
+  "version": "1.0.4",
+  "description": "Automatically translates JSON language files to other languages using Google Translate,AWS,Azure or DeepL",
   "main": "./index.js",
   "types": "./index.d.ts",
   "scripts": {
@@ -10,7 +10,10 @@
     "start": "ts-node src/index.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "codegrue",
+  "contributors": [
+    "topce"
+  ],
   "license": "MIT",
   "husky": {
     "hooks": {
@@ -19,6 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^14.18.21",
+    "@types/yargs": "^17.0.10",
     "husky": "^8.0.1",
     "prettier": "^2.7.1",
     "pretty-quick": "^3.1.3",
@@ -26,12 +30,12 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@aws-sdk/client-translate": "^3.118.0",
+    "@aws-sdk/client-translate": "^3.121.0",
     "@google-cloud/translate": "^6.3.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
     "form-data": "^4.0.0",
     "uuid": "^8.3.2",
-    "yazl": "^2.5.1"
+    "yargs": "^17.5.1"
   }
 }
