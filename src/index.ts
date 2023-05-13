@@ -104,6 +104,14 @@ function setConfigurationFromEnvironment() {
     };
   }
 
+  if (process.env.ATJ_OPEN_AI_SECRET_KEY) {
+    config.translationKeyInfo = {
+      kind: 'openai',
+      apiKey: process.env.ATJ_OPEN_AI_SECRET_KEY,
+    };
+  }
+  
+
   if (process.env.ATJ_START_DELIMITER) {
     config.startDelimiter = process.env.ATJ_START_DELIMITER;
   }

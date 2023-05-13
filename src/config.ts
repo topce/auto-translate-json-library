@@ -1,10 +1,11 @@
 export type Configuration = {
   translationKeyInfo:
-    | GoogleTranslationKey
-    | AwsTranslationKey
-    | AzureTranslationKey
-    | DeepLProTranslationKey
-    | DeepLFreeTranslationKey;
+  | GoogleTranslationKey
+  | AwsTranslationKey
+  | AzureTranslationKey
+  | DeepLProTranslationKey
+  | DeepLFreeTranslationKey
+  | OpenAITranslationKey;
   startDelimiter: string;
   endDelimiter: string;
   mode: 'file' | 'folder';
@@ -35,3 +36,4 @@ type DeepLFreeTranslationKey = {
   secretKey: string;
 };
 
+type OpenAITranslationKey = { kind: 'openai'; apiKey: string };

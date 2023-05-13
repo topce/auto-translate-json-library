@@ -10,6 +10,7 @@ import { ITranslate } from './translate.interface';
 import { Util } from './util';
 import { DeepLTranslate } from './deepl';
 import { Configuration } from './config';
+import { OpenAITranslate } from './openai';
 
 const NAME = 'AutoTranslateJSON';
 
@@ -43,9 +44,12 @@ export async function translate(sourceFile: string ,config: Configuration  ): Pr
         translateEngine = new DeepLTranslate(config.translationKeyInfo.secretKey, 'free');
       } else if (config.translationKeyInfo.kind==='deepLPro') {
         translateEngine = new DeepLTranslate(config.translationKeyInfo.secretKey, 'pro');
-      } else {
+      }else if (config.translationKeyInfo.kind==='openai') {
+        translateEngine = new OpenAITranslate(config.translationKeyInfo.apiKey);
+      } 
+      else {
         console.warn(
-          'You must provide a Google, AWS or Azure parameters first in the extension settings.'
+          'You must provide a Google, AWS, Azure, deepL, openai parameters first in the extension settings.'
         );
         return;
       }

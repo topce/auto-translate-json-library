@@ -93,6 +93,9 @@ ATJ_DEEPL_PRO_SECRET_KEY=
 deepl free parameters
 ATJ_DEEPL_FREE_SECRET_KEY=
 
+OpenAI parameters 
+ATJ_OPEN_AI_SECRET_KEY=
+
 start delimiter
 ATJ_START_DELIMITER={{
 end delimiter
