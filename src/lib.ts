@@ -14,195 +14,203 @@ import { OpenAITranslate } from './openai';
 
 const NAME = 'AutoTranslateJSON';
 
-export async function translate(sourceFile: string ,config: Configuration  ): Promise<void> {
-      
+export async function translate(sourceFile: string, config: Configuration): Promise<void> {
 
-      // set the delimiters for named arguments
-      const startDelimiter = config.startDelimiter || '{';
-      if (startDelimiter) {
-        Util.startDelimiter = startDelimiter;
-      }
 
-      const endDelimiter = config.endDelimiter || '}';
-      if (endDelimiter) {
-        Util.endDelimiter = endDelimiter;
-      }
+  // set the delimiters for named arguments
+  const startDelimiter = config.startDelimiter || '{';
+  if (startDelimiter) {
+    Util.startDelimiter = startDelimiter;
+  }
 
-      let translateEngine: ITranslate;
+  const endDelimiter = config.endDelimiter || '}';
+  if (endDelimiter) {
+    Util.endDelimiter = endDelimiter;
+  }
 
-      if (config.translationKeyInfo.kind === 'google') {
-        translateEngine = new GoogleTranslate(config.translationKeyInfo.apiKey);
-      } else if (config.translationKeyInfo.kind === 'aws') {
-        translateEngine = new AWSTranslate(
-          config.translationKeyInfo.accessKeyId,
-          config.translationKeyInfo.secretAccessKey,
-          config.translationKeyInfo.region
-        );
-      } else if (config.translationKeyInfo.kind==='azure') {
-        translateEngine = new AzureTranslate(config.translationKeyInfo.secretKey, config.translationKeyInfo.region);
-      } else if (config.translationKeyInfo.kind==='deepLFree') {
-        translateEngine = new DeepLTranslate(config.translationKeyInfo.secretKey, 'free');
-      } else if (config.translationKeyInfo.kind==='deepLPro') {
-        translateEngine = new DeepLTranslate(config.translationKeyInfo.secretKey, 'pro');
-      }else if (config.translationKeyInfo.kind==='openai') {
-        translateEngine = new OpenAITranslate(config.translationKeyInfo.apiKey);
-      } 
-      else {
-        console.warn(
-          'You must provide a Google, AWS, Azure, deepL, openai parameters first in the extension settings.'
-        );
-        return;
-      }
+  let translateEngine: ITranslate;
 
-  
-      const fileMode =config.mode;
-      const files = readFiles(sourceFile, fileMode);
-      if (files === null) {
-        return;
-      }
+  if (config.translationKeyInfo.kind === 'google') {
+    translateEngine = new GoogleTranslate(config.translationKeyInfo.apiKey);
+  } else if (config.translationKeyInfo.kind === 'aws') {
+    translateEngine = new AWSTranslate(
+      config.translationKeyInfo.accessKeyId,
+      config.translationKeyInfo.secretAccessKey,
+      config.translationKeyInfo.region
+    );
+  } else if (config.translationKeyInfo.kind === 'azure') {
+    translateEngine = new AzureTranslate(config.translationKeyInfo.secretKey, config.translationKeyInfo.region);
+  } else if (config.translationKeyInfo.kind === 'deepLFree') {
+    translateEngine = new DeepLTranslate(config.translationKeyInfo.secretKey, 'free');
+  } else if (config.translationKeyInfo.kind === 'deepLPro') {
+    translateEngine = new DeepLTranslate(config.translationKeyInfo.secretKey, 'pro');
+  } else if (config.translationKeyInfo.kind === 'openai') {
+    translateEngine = new OpenAITranslate(config.translationKeyInfo.apiKey);
+  }
+  else {
+    console.warn(
+      'You must provide a Google, AWS, Azure, deepL, openai parameters first in the extension settings.'
+    );
+    return;
+  }
 
-      // enforce source locale if provided in settings
-      if (config.sourceLocale !== files.sourceLocale) {
-        console.log(
-          'You must use the ' +
-          config.sourceLocale +
-            '.json file due to your Source Locale setting.'
-        );
-        return;
-      }
 
-      const keepTranslations = config.keepTranslations === 'keep';
-      const keepExtras = config.keepExtraTranslations === 'keep';
+  const fileMode = config.mode;
+  const files = readFiles(sourceFile, fileMode);
+  if (files === null) {
+    return;
+  }
 
-      // load source JSON
-      let source: any;
-      try {
-        source = await files.loadJsonFromLocale(files.sourceLocale);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log(error, 'Source file malformed');
-        }
-        return;
-      }
+  // enforce source locale if provided in settings
+  if (config.sourceLocale !== files.sourceLocale) {
+    console.log(
+      'You must use the ' +
+      config.sourceLocale +
+      '.json file due to your Source Locale setting.'
+    );
+    return;
+  }
 
-      // Iterate target Locales
-      files.targetLocales.forEach(async (targetLocale) => {
-        try {
-          const isValid = await translateEngine.isValidLocale(targetLocale);
-          if (!isValid) {
-            throw Error(targetLocale + ' is not supported. Skipping.');
-          }
+  const keepTranslations = config.keepTranslations === 'keep';
+  const keepExtras = config.keepExtraTranslations === 'keep';
 
-          const targetOriginal = await files.loadJsonFromLocale(targetLocale);
-
-          // Iterate source terms
-          const targetNew = await recurseNode(
-            source,
-            targetOriginal,
-            keepTranslations,
-            keepExtras,
-            files.sourceLocale,
-            targetLocale,
-            translateEngine
-          );
-
-          // save target
-          files.saveJsonToLocale(targetLocale, targetNew);
-
-          const feedback = "Translated locale '" + targetLocale + "'";
-          console.log(feedback);
-          
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(error);
-          }
-          return;
-        }
-      });
+  // load source JSON
+  let source: any;
+  try {
+    source = await files.loadJsonFromLocale(files.sourceLocale);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error, 'Source file malformed');
     }
+    return;
+  }
 
-
-  const readFiles: (
-    filePath: string,
-    mode: 'file' | 'folder'
-  ) => IFiles | null = (filePath: string, mode: string) => {
+  // Iterate target Locales
+  files.targetLocales.forEach(async (targetLocale) => {
     try {
-      const files: IFiles =
-        mode === 'file' ? new Files(filePath) : new FolderFiles(filePath);
+      const isValid = await translateEngine.isValidLocale(targetLocale);
+      if (!isValid) {
+        throw Error(targetLocale + ' is not supported. Skipping.');
+      }
 
-      // log locale info
-      console.log('Source locale = ' + files.sourceLocale);
-      console.log('Target locales = ' + files.targetLocales);
+      const targetOriginal = await files.loadJsonFromLocale(targetLocale);
 
-      return files;
+      // Iterate source terms
+      const targetNew = await recurseNode(
+        source,
+        targetOriginal,
+        keepTranslations,
+        keepExtras,
+        files.sourceLocale,
+        targetLocale,
+        translateEngine,
+        config.ignorePrefix
+      );
+
+      // save target
+      files.saveJsonToLocale(targetLocale, targetNew);
+
+      const feedback = "Translated locale '" + targetLocale + "'";
+      console.log(feedback);
+
     } catch (error) {
       if (error instanceof Error) {
         console.error(error);
       }
-      return null;
+      return;
     }
-  };
+  });
+}
 
-  async function recurseNode(
-    source: any,
-    original: any,
-    keepTranslations: boolean | null,
-    keepExtras: boolean | null,
-    sourceLocale: string,
-    locale: string,
-    translateEngine: ITranslate,
-    isArray: boolean = false
-  ): Promise<any> {
-    const destination: any = isArray ? [] : {};
 
-    // defaults
-    if (keepTranslations === null) {
-      keepTranslations = true;
+const readFiles: (
+  filePath: string,
+  mode: 'file' | 'folder'
+) => IFiles | null = (filePath: string, mode: string) => {
+  try {
+    const files: IFiles =
+      mode === 'file' ? new Files(filePath) : new FolderFiles(filePath);
+
+    // log locale info
+    console.log('Source locale = ' + files.sourceLocale);
+    console.log('Target locales = ' + files.targetLocales);
+
+    return files;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
     }
-    if (keepExtras === null) {
-      keepExtras = true;
-    }
+    return null;
+  }
+};
 
-    for (const term in source) {
-      const node = source[term];
+async function recurseNode(
+  source: any,
+  original: any,
+  keepTranslations: boolean | null,
+  keepExtras: boolean | null,
+  sourceLocale: string,
+  locale: string,
+  translateEngine: ITranslate,
+  ignorePrefix: string = '',
+  isArray: boolean = false
+): Promise<any> {
+  const destination: any = isArray ? [] : {};
 
-      if (node instanceof Object && node !== null) {
-        destination[term] = await recurseNode(
-          node,
-          original[term] ?? {},
-          keepTranslations,
-          keepExtras,
-          sourceLocale,
-          locale,
-          translateEngine,
-          node instanceof Array
-        );
+  // defaults
+  if (keepTranslations === null) {
+    keepTranslations = true;
+  }
+  if (keepExtras === null) {
+    keepExtras = true;
+  }
+
+  for (const term in source) {
+    const node = source[term];
+
+    if (node instanceof Object && node !== null) {
+      destination[term] = await recurseNode(
+        node,
+        original[term] ?? {},
+        keepTranslations,
+        keepExtras,
+        sourceLocale,
+        locale,
+        translateEngine,
+        ignorePrefix,
+        node instanceof Array
+      );
+    } else {
+      // if we already have a translation, keep it
+      if (keepTranslations && original[term]) {
+        destination[term] = original[term];
+      } else if (typeof node === 'number' || typeof node === 'boolean') {
+        // numbers and booleans do not need translations
+        destination[term] = node;
       } else {
-        // if we already have a translation, keep it
-        if (keepTranslations && original[term]) {
-          destination[term] = original[term];
-        } else if (typeof node === 'number' || typeof node === 'boolean') {
-          // numbers and booleans do not need translations
-          destination[term] = node;
-        } else {
+        if (ignorePrefix === '' || (ignorePrefix !=='' && !term.startsWith(ignorePrefix))) {
           const translation = await translateEngine
             .translateText(node, sourceLocale, locale)
-            .catch((err) =>console.error(err));
+            .catch((err) => console.error(err));
           destination[term] = translation;
+        }else {
+          delete destination[term];
         }
+
       }
     }
-
-    if (keepExtras) {
-      // add back in any terms that were not in source
-      for (const term in original) {
-        if (!destination[term]) {
-          destination[term] = original[term];
-        }
-      }
-    }
-
-    return destination;
   }
+
+  if (keepExtras) {
+    // add back in any terms that were not in source
+    for (const term in original) {
+      if (!destination[term]) {
+        destination[term] = original[term];
+      }
+    }
+  }
+
+  return destination;
+}
 
 

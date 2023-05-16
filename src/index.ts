@@ -45,9 +45,14 @@ function setConfigurationFromCLI() {
     config.sourceLocale = argv.sourceLocale;
   }
 
+  if (argv.ignorePrefix !== undefined) {
+    config.ignorePrefix = argv.ignorePrefix;
+  }
+
   if (argv.pivotTranslation !== undefined) {
     translate(argv.pivotTranslation, config);
   } else {
+    console.log(argv);
     console.log('Please provide a pivot translation');
     exit(1);
   }
@@ -60,6 +65,7 @@ function setDefaultConfiguration() {
   config.keepExtraTranslations = 'keep';
   config.keepTranslations = 'keep';
   config.sourceLocale = 'en';
+  config.ignorePrefix = '';
 }
 
 function setConfigurationFromEnvironment() {
@@ -110,7 +116,7 @@ function setConfigurationFromEnvironment() {
       apiKey: process.env.ATJ_OPEN_AI_SECRET_KEY,
     };
   }
-  
+
 
   if (process.env.ATJ_START_DELIMITER) {
     config.startDelimiter = process.env.ATJ_START_DELIMITER;
@@ -149,5 +155,12 @@ function setConfigurationFromEnvironment() {
       process.env.ATJ_KEEP_EXTRA_TRANSLATIONS === 'remove')
   ) {
     config.keepExtraTranslations = process.env.ATJ_KEEP_EXTRA_TRANSLATIONS;
+  }
+
+  if (
+    process.env.ATJ_IGNORE_PREFIX &&
+    (process.env.ATJ_IGNORE_PREFIX !== '')
+  ) {
+    config.ignorePrefix = process.env.ATJ_IGNORE_PREFIX;
   }
 }

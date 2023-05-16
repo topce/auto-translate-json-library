@@ -35,10 +35,12 @@ do not forget to set translation engine parameters in environment variables or .
 node node_modules\auto-translate-json-library\index.js --pivotTranslation=./translations/en.json
 ```
 
-if you clone repo  you can use the following command
+if you clone repo  you can use the following commands
 
 ```shell
-npm start --pivotTranslation=./test/en.json
+npm run i
+npm run build
+node .\build\src\index.js --pivotTranslation=./tests/translations/en.json  
 ```
 
 ```	
@@ -73,6 +75,9 @@ if specified it must match with pivot translation
 
 pivotTranslation
 pivot translation file that will be used as source for translations
+
+ignorePrefix 
+ignore translation that key starts with ignore prefix
 
 # ENVIRONMENT VARIABLES
 
@@ -112,5 +117,8 @@ ATJ_KEEP_TRANSLATIONS=keep
 
 keep or remove extra translations
 ATJ_KEEP_EXTRA_TRANSLATIONS=keep
+
+ignore prefix translation keys to ignore
+ATJ_IGNORE_PREFIX=
 
 You can also use .env file to store environment variables
