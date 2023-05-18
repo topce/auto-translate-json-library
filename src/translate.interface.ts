@@ -3,6 +3,11 @@ export interface ITranslate {
   translateText(
     text: string,
     sourceLocale: string,
-    targetLocale: string
+    targetLocale: string,
   ): Promise<string>;
+}
+
+export interface TranslationFile {
+  // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+  [key: string]: any;
 }

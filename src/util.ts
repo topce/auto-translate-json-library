@@ -1,17 +1,17 @@
 export class Util {
-  private static _startDelimiter = '{';
-  private static _endDelimiter = '}';
+  private static _startDelimiter = "{";
+  private static _endDelimiter = "}";
   private static pattern = new RegExp(
-    Util._startDelimiter + '(.*?)' + Util._endDelimiter,
-    'g'
+    `${Util._startDelimiter}(.*?)${Util._endDelimiter}`,
+    "g",
   );
 
   public static set startDelimiter(value: string) {
     Util._startDelimiter = value;
     // update regex
     Util.pattern = new RegExp(
-      Util._startDelimiter + '(.*?)' + Util._endDelimiter,
-      'g'
+      `${Util._startDelimiter}(.*?)${Util._endDelimiter}`,
+      "g",
     );
   }
 
@@ -19,20 +19,20 @@ export class Util {
     Util._endDelimiter = value;
     // update regex
     Util.pattern = new RegExp(
-      Util._startDelimiter + '(.*?)' + Util._endDelimiter,
-      'g'
+      `${Util._startDelimiter}(.*?)${Util._endDelimiter}`,
+      "g",
     );
   }
   public static replaceArgumentsWithNumbers(
     args: RegExpMatchArray | null,
-    result: string
+    result: string,
   ) {
     if (args) {
       let i = 0;
-      for (let arg of args) {
+      for (const arg of args) {
         result = result.replace(
           Util._startDelimiter + i + Util._endDelimiter,
-          arg
+          arg,
         );
         i++;
       }
@@ -41,13 +41,12 @@ export class Util {
   }
 
   public static replaceContextVariables(text: string) {
-    
     const args = text.match(Util.pattern);
 
     // replace arguments with numbers
     if (args) {
       let i = 0;
-      for (let arg of args) {
+      for (const arg of args) {
         text = text.replace(arg, Util._startDelimiter + i + Util._endDelimiter);
         i++;
       }

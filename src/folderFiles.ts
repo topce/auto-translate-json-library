@@ -1,6 +1,7 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { IFiles, loadJsonFromLocale, saveJsonToLocale } from './files';
+import * as path from "path";
+import * as fs from "fs";
+import { IFiles, loadJsonFromLocale, saveJsonToLocale } from "./files";
+import { TranslationFile } from "./translate.interface";
 
 export class FolderFiles implements IFiles {
   folderPath: string;
@@ -19,15 +20,15 @@ export class FolderFiles implements IFiles {
       this.folderPath,
       this.fileName,
       this.sourceLocale,
-      this.targetLocales
+      this.targetLocales,
     );
   }
 
   private getTargetLocales(): string[] {
-    let files = fs
+    const files = fs
       .readdirSync(this.folderPath)
       .map((folder) => path.basename(folder))
-      .map((locale) => (locale !== this.sourceLocale ? locale : ''))
+      .map((locale) => (locale !== this.sourceLocale ? locale : ""))
       .filter((x) => x); // do not want empty strings
 
     return files;
@@ -41,7 +42,7 @@ export class FolderFiles implements IFiles {
     return loadJsonFromLocale(this.createFileName(locale));
   }
 
-  saveJsonToLocale(locale: string, file: any) {
+  saveJsonToLocale(locale: string, file: TranslationFile) {
     saveJsonToLocale(this.createFileName(locale), file);
   }
 }

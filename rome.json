@@ -1,0 +1,19 @@
+{
+  "formatter": {
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "error"
+      },
+      "style": {
+        "useConst": "error",
+        "noParameterAssign": "off",
+        "useTemplate":"error"
+      }
+    }
+  }
+}

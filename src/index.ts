@@ -1,24 +1,23 @@
-import { exit } from 'process';
-import { Configuration } from './config';
-import { translate } from './lib';
+import { exit } from "process";
+import { Configuration } from "./config";
+import { translate } from "./lib";
 
 export { Configuration, translate };
 
-let config: Configuration = {} as Configuration;
+const config: Configuration = {} as Configuration;
 
 setDefaultConfiguration();
 setConfigurationFromEnvironment();
 setConfigurationFromCLI();
 // console.log(config);
 
-
 function setConfigurationFromCLI() {
-  const argv = require('yargs').argv;
+  const argv = require("yargs").argv;
 
-  if (argv.mode === 'file') {
-    config.mode = 'file';
-  } else if (argv.mode === 'folder') {
-    config.mode = 'folder';
+  if (argv.mode === "file") {
+    config.mode = "file";
+  } else if (argv.mode === "folder") {
+    config.mode = "folder";
   }
 
   if (argv.startDelimiter !== undefined) {
@@ -29,16 +28,16 @@ function setConfigurationFromCLI() {
     config.endDelimiter = argv.endDelimiter;
   }
 
-  if (argv.keepExtraTranslations === 'keep') {
-    config.keepExtraTranslations = 'keep';
-  } else if (argv.keepExtraTranslations === 'remove') {
-    config.keepExtraTranslations = 'remove';
+  if (argv.keepExtraTranslations === "keep") {
+    config.keepExtraTranslations = "keep";
+  } else if (argv.keepExtraTranslations === "remove") {
+    config.keepExtraTranslations = "remove";
   }
 
-  if (argv.keepTranslations === 'keep') {
-    config.keepTranslations = 'keep';
-  } else if (argv.keepTranslations === 'retranslate') {
-    config.keepTranslations = 'retranslate';
+  if (argv.keepTranslations === "keep") {
+    config.keepTranslations = "keep";
+  } else if (argv.keepTranslations === "retranslate") {
+    config.keepTranslations = "retranslate";
   }
 
   if (argv.sourceLocale !== undefined) {
@@ -53,26 +52,26 @@ function setConfigurationFromCLI() {
     translate(argv.pivotTranslation, config);
   } else {
     console.log(argv);
-    console.log('Please provide a pivot translation');
+    console.log("Please provide a pivot translation");
     exit(1);
   }
 }
 
 function setDefaultConfiguration() {
-  config.mode = 'file';
-  config.startDelimiter = '{';
-  config.endDelimiter = '}';
-  config.keepExtraTranslations = 'keep';
-  config.keepTranslations = 'keep';
-  config.sourceLocale = 'en';
-  config.ignorePrefix = '';
+  config.mode = "file";
+  config.startDelimiter = "{";
+  config.endDelimiter = "}";
+  config.keepExtraTranslations = "keep";
+  config.keepTranslations = "keep";
+  config.sourceLocale = "en";
+  config.ignorePrefix = "";
 }
 
 function setConfigurationFromEnvironment() {
-  require('dotenv').config();
+  require("dotenv").config();
   if (process.env.ATJ_GOOGLE_API_KEY) {
     config.translationKeyInfo = {
-      kind: 'google',
+      kind: "google",
       apiKey: process.env.ATJ_GOOGLE_API_KEY,
     };
   }
@@ -82,7 +81,7 @@ function setConfigurationFromEnvironment() {
     process.env.ATJ_AWS_REGION
   ) {
     config.translationKeyInfo = {
-      kind: 'aws',
+      kind: "aws",
       accessKeyId: process.env.ATJ_AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.ATJ_AWS_SECRET_ACCESS_KEY,
       region: process.env.ATJ_AWS_REGION,
@@ -90,7 +89,7 @@ function setConfigurationFromEnvironment() {
   }
   if (process.env.ATJ_AZURE_SECRET_KEY && process.env.ATJ_AZURE_REGION) {
     config.translationKeyInfo = {
-      kind: 'azure',
+      kind: "azure",
       secretKey: process.env.ATJ_AZURE_SECRET_KEY,
       region: process.env.ATJ_AZURE_REGION,
     };
@@ -98,25 +97,24 @@ function setConfigurationFromEnvironment() {
 
   if (process.env.ATJ_DEEPL_PRO_SECRET_KEY) {
     config.translationKeyInfo = {
-      kind: 'deepLPro',
+      kind: "deepLPro",
       secretKey: process.env.ATJ_DEEPL_PRO_SECRET_KEY,
     };
   }
 
   if (process.env.ATJ_DEEPL_FREE_SECRET_KEY) {
     config.translationKeyInfo = {
-      kind: 'deepLFree',
+      kind: "deepLFree",
       secretKey: process.env.ATJ_DEEPL_FREE_SECRET_KEY,
     };
   }
 
   if (process.env.ATJ_OPEN_AI_SECRET_KEY) {
     config.translationKeyInfo = {
-      kind: 'openai',
+      kind: "openai",
       apiKey: process.env.ATJ_OPEN_AI_SECRET_KEY,
     };
   }
-
 
   if (process.env.ATJ_START_DELIMITER) {
     config.startDelimiter = process.env.ATJ_START_DELIMITER;
@@ -132,7 +130,7 @@ function setConfigurationFromEnvironment() {
 
   if (
     process.env.ATJ_MODE &&
-    (process.env.ATJ_MODE === 'file' || process.env.ATJ_MODE === 'folder')
+    (process.env.ATJ_MODE === "file" || process.env.ATJ_MODE === "folder")
   ) {
     config.mode = process.env.ATJ_MODE;
   }
@@ -143,24 +141,21 @@ function setConfigurationFromEnvironment() {
 
   if (
     process.env.ATJ_KEEP_TRANSLATIONS &&
-    (process.env.ATJ_KEEP_TRANSLATIONS === 'keep' ||
-      process.env.ATJ_KEEP_TRANSLATIONS === 'retranslate')
+    (process.env.ATJ_KEEP_TRANSLATIONS === "keep" ||
+      process.env.ATJ_KEEP_TRANSLATIONS === "retranslate")
   ) {
     config.keepTranslations = process.env.ATJ_KEEP_TRANSLATIONS;
   }
 
   if (
     process.env.ATJ_KEEP_EXTRA_TRANSLATIONS &&
-    (process.env.ATJ_KEEP_EXTRA_TRANSLATIONS === 'keep' ||
-      process.env.ATJ_KEEP_EXTRA_TRANSLATIONS === 'remove')
+    (process.env.ATJ_KEEP_EXTRA_TRANSLATIONS === "keep" ||
+      process.env.ATJ_KEEP_EXTRA_TRANSLATIONS === "remove")
   ) {
     config.keepExtraTranslations = process.env.ATJ_KEEP_EXTRA_TRANSLATIONS;
   }
 
-  if (
-    process.env.ATJ_IGNORE_PREFIX &&
-    (process.env.ATJ_IGNORE_PREFIX !== '')
-  ) {
+  if (process.env.ATJ_IGNORE_PREFIX && process.env.ATJ_IGNORE_PREFIX !== "") {
     config.ignorePrefix = process.env.ATJ_IGNORE_PREFIX;
   }
 }
