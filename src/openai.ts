@@ -114,7 +114,6 @@ const supportedLanguages: { [key: string]: string } = {
 };
 
 export class OpenAITranslate implements ITranslate {
-  private endpoint = "https://api.cognitive.microsofttranslator.com";
   private openai;
   constructor(private apiKey: string) {
     const configuration = new Configuration({
