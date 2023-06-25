@@ -122,7 +122,7 @@ export class AWSTranslate implements ITranslate {
       const translation = await this.client.translateText(params);
       result = translation.TranslatedText as string;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return "";
     }
 

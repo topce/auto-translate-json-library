@@ -148,7 +148,7 @@ export class GoogleTranslate implements ITranslate {
         if (error.message === "Invalid Value") {
           message = `Invalid Locale ${targetLocale}`;
         }
-        console.log(message);
+        console.error(message);
         return message;
       }
       return "error";
