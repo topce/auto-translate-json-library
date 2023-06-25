@@ -1,4 +1,3 @@
-import { exit } from "process";
 import { Configuration } from "./config";
 import { translate } from "./lib";
 
@@ -53,7 +52,6 @@ function setConfigurationFromCLI() {
   } else {
     console.log(argv);
     console.log("Please provide a pivot translation");
-    exit(1);
   }
 }
 
