@@ -38,7 +38,7 @@ node node_modules\auto-translate-json-library\index.js --pivotTranslation=./tran
 if you clone repo  you can use the following commands
 
 ```shell
-npm run i
+npm i
 npm run build
 node .\build\src\index.js --pivotTranslation=./tests/translations/en.json  
 ```
