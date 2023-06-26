@@ -3,13 +3,13 @@ import { Util } from "../src/util";
 
 describe('Util', () => {
   describe('replaceArgumentsWithNumbers', () => {
-    it('should replace placeholders with arguments', () => {
+    it('should replace placeholders with arguments', (cb_) => {
       const args: RegExpMatchArray = ['John', 'Doe'];
       const result = Util.replaceArgumentsWithNumbers(args, 'Hello {0}, my name is {1}.');
       expect(result).toBe('Hello John, my name is Doe.');
     });
 
-    it('should return the same result if no arguments provided', () => {
+    it('should return the same result if no arguments provided', (cb_) => {
       const args: RegExpMatchArray | null = null;
       const result = Util.replaceArgumentsWithNumbers(args, 'Hello {0}, my name is {1}.');
       expect(result).toBe('Hello {0}, my name is {1}.');
@@ -17,7 +17,7 @@ describe('Util', () => {
   });
 
   describe('replaceContextVariables', () => {
-    it('should replace placeholders with numerical indices', () => {
+    it('should replace placeholders with numerical indices', (cb_) => {
       Util.startDelimiter = '{{';
       Util.endDelimiter = '}}';
 
@@ -27,7 +27,7 @@ describe('Util', () => {
       expect(replacedText).toBe('Hello {{0}}, my age is {{1}}.');
     });
 
-    it('should return the same text if no placeholders found', () => {
+    it('should return the same text if no placeholders found', (cb_) => {
       Util.startDelimiter = '{{';
       Util.endDelimiter = '}}';
 

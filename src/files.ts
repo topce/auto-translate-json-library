@@ -57,7 +57,7 @@ export class Files implements IFiles {
 
     const files = fs.readdirSync(this.folderPath);
 
-    files.forEach((file) => {
+    files.forEach((file, _index, _array) => {
       const locale = this.getLocaleFromFilename(file);
       if (locale !== this.sourceLocale) {
         locales.push(locale);

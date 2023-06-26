@@ -90,7 +90,7 @@ export async function translate(
   }
 
   // Iterate target Locales
-  files.targetLocales.forEach(async (targetLocale) => {
+  files.targetLocales.forEach(async (targetLocale, _index, _array) => {
     try {
       const isValid = await translateEngine.isValidLocale(targetLocale);
       if (!isValid) {

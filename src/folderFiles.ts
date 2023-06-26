@@ -27,9 +27,11 @@ export class FolderFiles implements IFiles {
   private getTargetLocales(): string[] {
     const files = fs
       .readdirSync(this.folderPath)
-      .map((folder) => path.basename(folder))
-      .map((locale) => (locale !== this.sourceLocale ? locale : ""))
-      .filter((x) => x); // do not want empty strings
+      .map((folder, _index, _array) => path.basename(folder))
+      .map((locale, _index, _array) =>
+        locale !== this.sourceLocale ? locale : "",
+      )
+      .filter((x, _index, _array) => x); // do not want empty strings
 
     return files;
   }
