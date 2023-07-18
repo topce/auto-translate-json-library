@@ -39,7 +39,7 @@ export class DeepLTranslate implements ITranslate {
   private endpoint = "https://api.deepl.com";
   constructor(private subscriptionKey: string, private type: "free" | "pro") {
     if (this.type === "free") {
-      this.endpoint = "https://api.free.deepl.com";
+      this.endpoint = "https://api-free.deepl.com";
     }
   }
   isValidLocale(targetLocale: string): boolean {
