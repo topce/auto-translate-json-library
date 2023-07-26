@@ -30,7 +30,7 @@ export async function translate(
   let translateEngine: ITranslate;
 
   if (config.translationKeyInfo.kind === "google") {
-    translateEngine = new GoogleTranslate(config.translationKeyInfo.apiKey);
+    translateEngine = await GoogleTranslate.initialize(config.translationKeyInfo.apiKey);
   } else if (config.translationKeyInfo.kind === "aws") {
     translateEngine = new AWSTranslate(
       config.translationKeyInfo.accessKeyId,
