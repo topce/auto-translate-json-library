@@ -1,6 +1,6 @@
 # About  project
 
-This project is used in, (and refactored from) excelent vs code extension
+This project is used in, (and refactored from) excellent vs code extension
 Auto Translate JSON
 <https://marketplace.visualstudio.com/items?itemName=JeffJorczak.auto-translate-json>
 
