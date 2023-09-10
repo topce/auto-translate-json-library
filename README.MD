@@ -1,3 +1,12 @@
+# About  project
+
+This project is used in, (and refactored from) excelent vs code extension
+Auto Translate JSON
+<https://marketplace.visualstudio.com/items?itemName=JeffJorczak.auto-translate-json>
+
+It open posibility to use Auto Taransation JSON
+not just in vs code but as a library and command line interface
+
 # Use as library
 
 ```shell
