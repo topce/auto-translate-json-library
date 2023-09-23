@@ -1,3 +1,4 @@
 {
-  "hello.txt": "¡Hola, mundo!"
+  "hello.txt": "¡Hola Mundo!",
+  "@@ignore.me": "Ignorame"
 }

@@ -13,6 +13,8 @@ export const readFileAsync: (filename: string) => Promise<string> = (
   filename: string,
 ) =>
   new Promise((resolve, reject) => {
+    const exist = fs.existsSync(filename);
+    if (!exist) fs.writeFileSync(filename, "");
     fs.readFile(filename, (error, data) => {
       error ? reject(error) : resolve(data.toString());
     });
