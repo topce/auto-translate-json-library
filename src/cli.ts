@@ -141,8 +141,8 @@ switch (engine) {
 }
 
 config.sourceLocale = sourceLocale;
-config.keepTranslations = keepTranslations;
-config.keepExtraTranslations = keepExtraTranslations;
+config.keepTranslations = keepTranslations ? 'keep' : 'retranslate';
+config.keepExtraTranslations = keepExtraTranslations ? 'keep' : 'remove';
 config.mode = mode;
 const sourcePath = path.join(process.cwd(), inputPath);
 console.log(c.green(`🌐 Translating ${sourcePath}`));
