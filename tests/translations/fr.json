@@ -1,5 +1,6 @@
 {
   "hello.txt": "Bonjour tout le monde !",
+  "@@ignore.me": "Ignore-moi",
   "accountLayout": {
     "myProfile": "Mon profil",
     "myAddressBook": "Mon carnet d'adresses",

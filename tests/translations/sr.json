@@ -1,5 +1,6 @@
 {
   "hello.txt": "Zdravo, svet!",
+  "@@ignore.me": "Ignoriši me",
   "accountLayout": {
     "myProfile": "Moj profil",
     "myAddressBook": "Moj adresar",

@@ -129,5 +129,13 @@ ATJ_KEEP_EXTRA_TRANSLATIONS=keep
 
 ignore prefix translation keys to ignore
 ATJ_IGNORE_PREFIX=
+```
 
 You can also use .env file to store environment variables
+
+There is also improved version of CLI  for example:
+
+```shell
+atj tests/translations/en.json -e google -m file
+```
+since version 1.2.5
