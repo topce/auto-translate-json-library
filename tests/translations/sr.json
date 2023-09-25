@@ -1,0 +1,20 @@
+{
+  "hello.txt": "Zdravo, svet!",
+  "accountLayout": {
+    "myProfile": "Moj profil",
+    "myAddressBook": "Moj adresar",
+    "vouchers": "Vaučeri",
+    "myOrders": "Moje naređenja",
+    "myWishlist": "Moja lista želja",
+    "comparedList": "Upoređena lista"
+  },
+  "trackOrder": {
+    "estimatedDelivery": "Procenjena isporuka",
+    "estimated": "Procenjeno",
+    "enterCode": "Unesite kod numere vaše porudžbine",
+    "trackOrder": "Pratite svoju porudžbinu",
+    "orderStatus": "Status naloga",
+    "haveAnOrder": "Imate nalog? Želite da znate gde je vaša narudžba sada?",
+    "knowProgress": "Znajte napredak isporuke proizvoda."
+  }
+}

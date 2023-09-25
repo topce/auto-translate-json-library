@@ -5,12 +5,12 @@ import { FolderFiles } from "./folderFiles";
 
 import { AWSTranslate } from "./aws";
 import { AzureTranslate } from "./azure";
+import { Configuration } from "./config";
+import { DeepLTranslate } from "./deepl";
 import { GoogleTranslate } from "./google";
+import { OpenAITranslate } from "./openai";
 import { ITranslate, TranslationFile } from "./translate.interface";
 import { Util } from "./util";
-import { DeepLTranslate } from "./deepl";
-import { Configuration } from "./config";
-import { OpenAITranslate } from "./openai";
 
 export async function translate(
   sourceFile: string,
@@ -30,7 +30,9 @@ export async function translate(
   let translateEngine: ITranslate;
 
   if (config.translationKeyInfo.kind === "google") {
-    translateEngine = await GoogleTranslate.initialize(config.translationKeyInfo.apiKey);
+    translateEngine = await GoogleTranslate.initialize(
+      config.translationKeyInfo.apiKey,
+    );
   } else if (config.translationKeyInfo.kind === "aws") {
     translateEngine = new AWSTranslate(
       config.translationKeyInfo.accessKeyId,
@@ -155,7 +157,7 @@ async function recurseNode(
   ignorePrefix = "",
   isArray = false,
 ): Promise<TranslationFile> {
-  // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const destination: any = isArray ? [] : {};
 
   // defaults

@@ -1,4 +1,22 @@
 {
-    "hello.txt": "Hello, world!",
-    "@@ignore.me": "Ignore me"
+  "hello.txt": "Hello, world!",
+  "@@ignore.me": "Ignore me",
+
+  "accountLayout": {
+    "myProfile": "My profile",
+    "myAddressBook": "My address book",
+    "vouchers": "Vouchers",
+    "myOrders": "My orders",
+    "myWishlist": "My wishlist",
+    "comparedList": "Compared list"
+  },
+  "trackOrder": {
+    "estimatedDelivery": "Estimated delivery",
+    "estimated": "Estimated",
+    "enterCode": "Enter the track code of your order",
+    "trackOrder": "Track Your Order",
+    "orderStatus": "Status of the Order",
+    "haveAnOrder": "Have an order? Want to know where your order is now?",
+    "knowProgress": "Know the progress of your product delivery."
+  }
 }

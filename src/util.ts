@@ -1,3 +1,4 @@
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class Util {
   private static _startDelimiter = "{";
   private static _endDelimiter = "}";

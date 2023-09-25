@@ -8,6 +8,6 @@ export interface ITranslate {
 }
 
 export interface TranslationFile {
-  // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   [key: string]: any;
 }

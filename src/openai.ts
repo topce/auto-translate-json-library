@@ -1,6 +1,6 @@
+import { OpenAI } from "openai";
 import { ITranslate } from "./translate.interface";
 import { Util } from "./util";
-import { Configuration, OpenAIApi } from "openai";
 
 const supportedLanguages: { [key: string]: string } = {
   af: "Afrikaans",
@@ -115,11 +115,11 @@ const supportedLanguages: { [key: string]: string } = {
 
 export class OpenAITranslate implements ITranslate {
   private openai;
-  constructor(private apiKey: string) {
-    const configuration = new Configuration({
+  constructor(apiKey: string) {
+    const configuration = {
       apiKey: apiKey,
-    });
-    this.openai = new OpenAIApi(configuration);
+    };
+    this.openai = new OpenAI(configuration);
   }
   isValidLocale(targetLocale: string): boolean {
     return targetLocale in supportedLanguages;
@@ -138,23 +138,24 @@ export class OpenAITranslate implements ITranslate {
     let result = "";
     let args;
     ({ args, text } = Util.replaceContextVariables(text));
-    const prompt = `Translate this into ${
+    const prompt = `You will be provided with a sentence in English, and your task is to translate it into  ${
       supportedLanguages[targetLocale] as string
     }:\n${text}\n.`;
-    const response = await this.openai.createCompletion({
+    const response = await this.openai.chat.completions.create({
       model: "text-davinci-003",
-      prompt: prompt,
-      temperature: 0.3,
-      max_tokens: 1000,
+      messages: [{ role: "system", content: prompt }],
+      temperature: 0.2,
+      max_tokens: 250,
       top_p: 1.0,
+      n: 1,
       frequency_penalty: 0.0,
       presence_penalty: 0.0,
     });
 
-    if (response.data.choices[0].text !== undefined) {
+    if (response.choices[0].message.content !== null) {
       result = Util.replaceArgumentsWithNumbers(
         args,
-        response.data.choices[0].text,
+        response.choices[0].message.content,
       );
       result = result.replace(/^\n+|\n+$/g, "");
     } else {

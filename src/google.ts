@@ -1,29 +1,28 @@
 import { ITranslate } from "./translate.interface";
-
-//const {Translate} = require('@google-cloud/translate').v2;
 import { Translate } from "@google-cloud/translate/build/src/v2";
 import { Util } from "./util";
 
-async function getSupportedLanguages(translate: Translate): Promise<string[]> {
-  const [languages] = await translate.getLanguages();
-  return languages.map((language, _index, _array) => language.code.toLowerCase());
-}
-
 export class GoogleTranslate implements ITranslate {
-  private apikey: string;
-  private googleTranslate: Translate;
-  private supportedLanguages: string[] = [];
-
-  constructor(apikey: string, googleTranslate?: Translate, supportedLanguages: string[] = []) {
-    this.apikey = apikey;
-    this.googleTranslate = googleTranslate ?? new Translate({ key: this.apikey });
-    this.supportedLanguages = supportedLanguages;
-  }
+  private constructor(
+    private googleTranslate: Translate,
+    private supportedLanguages: string[] = [],
+  ) {}
 
   static async initialize(apiKey: string): Promise<GoogleTranslate> {
     const googleTranslate = new Translate({ key: apiKey });
-    const supportedLanguages = await getSupportedLanguages(googleTranslate);
-    return new GoogleTranslate(apiKey, googleTranslate, supportedLanguages);
+    const supportedLanguages = await GoogleTranslate.getSupportedLanguages(
+      googleTranslate,
+    );
+    return new GoogleTranslate(googleTranslate, supportedLanguages);
+  }
+
+  private static async getSupportedLanguages(
+    translate: Translate,
+  ): Promise<string[]> {
+    const [languages] = await translate.getLanguages();
+    return languages.map((language, _index, _array) =>
+      language.code.toLowerCase(),
+    );
   }
 
   isValidLocale(targetLocale: string): boolean {

@@ -1,9 +1,9 @@
+import path from "path";
 import minimist from "minimist";
 import c from "picocolors";
 import { version } from "../package.json";
-import { translate } from "./lib";
 import { Configuration } from "./config";
-import path from "path";
+import { translate } from "./lib";
 const arguments_ = process.argv.slice(2);
 const flags = minimist(arguments_, {
   alias: {
@@ -141,8 +141,8 @@ switch (engine) {
 }
 
 config.sourceLocale = sourceLocale;
-config.keepTranslations = keepTranslations ? 'keep' : 'retranslate';
-config.keepExtraTranslations = keepExtraTranslations ? 'keep' : 'remove';
+config.keepTranslations = keepTranslations ? "keep" : "retranslate";
+config.keepExtraTranslations = keepExtraTranslations ? "keep" : "remove";
 config.mode = mode;
 const sourcePath = path.join(process.cwd(), inputPath);
 console.log(c.green(`🌐 Translating ${sourcePath}`));
