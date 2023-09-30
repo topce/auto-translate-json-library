@@ -1,11 +1,13 @@
+#!/usr/bin/env node
+
 import path from "path";
 import minimist from "minimist";
 import c from "picocolors";
-import { version } from "../package.json";
-import { Configuration } from "./config";
-import { translate } from "./lib";
+import { version } from "../../package.json";
+import { Configuration } from "../config";
+import { translate } from "../lib";
 
-import "dotenv/config";
+require("dotenv").config();
 
 const arguments_ = process.argv.slice(2);
 const flags = minimist(arguments_, {

@@ -8,7 +8,7 @@ const config: Configuration = {} as Configuration;
 setDefaultConfiguration();
 setConfigurationFromEnvironment();
 setConfigurationFromCLI();
-// console.log(config);
+console.log(config);
 
 function setConfigurationFromCLI() {
   const argv = require("yargs").argv;
