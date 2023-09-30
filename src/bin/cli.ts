@@ -9,7 +9,29 @@ import { translate } from "../lib";
 
 require("dotenv").config();
 
+// Define a function to display the help message
+function displayHelp() {
+  console.log(`🔨 Auto translate json cli v${version}`);
+  console.log(`Usage: atj [options] <inputPath>`);
+  console.log("");
+  console.log("Options:");
+  console.log("  --help, -h               Display this help message");
+  console.log("  --mode, -m <mode>        Specify the translation mode (file, folder, etc.)");
+  console.log("  --engine, -e <engine>    Specify the translation engine (google, aws, etc.)");
+  console.log("  --sourceLocale, -s <locale>  Specify the source locale");
+  console.log("  --keepTranslations, --no-keepTranslations  Keep or retranslate existing translations");
+  console.log("  --keepExtraTranslations, --no-keepExtraTranslations  Keep or remove extra translations");
+  console.log("");
+}
+
+
 const arguments_ = process.argv.slice(2);
+
+if (arguments_.length === 0) {
+  displayHelp();
+  process.exit(0);
+}
+
 const flags = minimist(arguments_, {
   alias: {
     mode: ["m"],
@@ -17,9 +39,10 @@ const flags = minimist(arguments_, {
     keepTranslations: ["kt"],
     keepExtraTranslations: ["ket"],
     sourceLocale: ["s"],
+    help: ["h"],
   },
   string: ["mode", "engine", "sourceLocale"],
-  boolean: ["keepTranslations", "keepExtraTranslations"],
+  boolean: ["keepTranslations", "keepExtraTranslations", "help"],
   default: {
     engine: "google",
     sourceLocale: "en",
@@ -29,6 +52,11 @@ const flags = minimist(arguments_, {
   },
 });
 console.log(c.green(`🔨 Auto translate json cli v${version}`));
+
+if (flags.help) {
+  displayHelp();
+  process.exit(0);
+}
 
 const inputPath = flags._[0];
 const { mode, engine, sourceLocale, keepTranslations, keepExtraTranslations } =
