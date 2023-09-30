@@ -16,12 +16,18 @@ function displayHelp() {
   console.log("");
   console.log("Options:");
   console.log("  --help, -h               Display this help message");
-  console.log("  --mode, -m <mode>        Specify the translation mode (file, folder, etc.)");
-  console.log("  --engine, -e <engine>    Specify the translation engine (google, aws, etc.)");
+  console.log("  --mode, -m <mode>        Specify the translation mode:file or folder");
+  console.log("  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepl or openai");
   console.log("  --sourceLocale, -s <locale>  Specify the source locale");
   console.log("  --keepTranslations, --no-keepTranslations  Keep or retranslate existing translations");
   console.log("  --keepExtraTranslations, --no-keepExtraTranslations  Keep or remove extra translations");
   console.log("");
+  console.log("Default values");
+  console.log("  --mode, -m <mode>                                    file");
+  console.log("  --engine, -e <engine>                                aws");
+  console.log("  --sourceLocale, -s <locale>                          en");
+  console.log("  --keepTranslations, --no-keepTranslations            --keepTranslations");
+  console.log("  --keepExtraTranslations, --no-keepExtraTranslations  --no-keepExtraTranslations");
 }
 
 
@@ -44,10 +50,10 @@ const flags = minimist(arguments_, {
   string: ["mode", "engine", "sourceLocale"],
   boolean: ["keepTranslations", "keepExtraTranslations", "help"],
   default: {
-    engine: "google",
+    engine: "aws",
     sourceLocale: "en",
     keepTranslations: true,
-    keepExtraTranslations: true,
+    keepExtraTranslations: false,
     mode: "file",
   },
 });
