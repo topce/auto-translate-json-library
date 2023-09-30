@@ -7,7 +7,7 @@ Auto Translate JSON
 It opens posibility to use Auto Taransation JSON
 not just in vs code but as a library and command line interface
 
-# Use as library
+## Use as library
 
 ```shell
 npm i auto-translate-json-library
@@ -28,7 +28,7 @@ await translate(pivotTranslation, config) ;
 // translation for example fr.json in same folder as pivotTranslation should contain the translations
 ```
 
-# Use as command line tool
+## Use as command line tool
 
 first install it
 
@@ -50,9 +50,9 @@ npm run build
 node .\build\src\index.js --pivotTranslation=./tests/translations/en.json  
 ```
 
-``` 
-# CLI PARAMETERS
+## CLI PARAMETERS
 
+``` config
 mode,
 file or folder,
 default is file

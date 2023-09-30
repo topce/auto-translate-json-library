@@ -17,7 +17,7 @@ function displayHelp() {
   console.log("Options:");
   console.log("  --help, -h               Display this help message");
   console.log("  --mode, -m <mode>        Specify the translation mode:file or folder");
-  console.log("  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepl or openai");
+  console.log("  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepLPro,deepLFree or openai");
   console.log("  --sourceLocale, -s <locale>  Specify the source locale");
   console.log("  --keepTranslations, --no-keepTranslations  Keep or retranslate existing translations");
   console.log("  --keepExtraTranslations, --no-keepExtraTranslations  Keep or remove extra translations");
