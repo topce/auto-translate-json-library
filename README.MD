@@ -4,7 +4,7 @@ This project is used in, (and refactored from) excellent vs code extension
 Auto Translate JSON
 <https://marketplace.visualstudio.com/items?itemName=JeffJorczak.auto-translate-json>
 
-It open posibility to use Auto Taransation JSON
+It opens posibility to use Auto Taransation JSON
 not just in vs code but as a library and command line interface
 
 # Use as library
@@ -39,8 +39,6 @@ npm i auto-translate-json-library
 do not forget to set translation engine parameters in environment variables or .env file
 
 ```shell
-
-```shell
 node node_modules\auto-translate-json-library\index.js --pivotTranslation=./translations/en.json
 ```
 
@@ -52,7 +50,7 @@ npm run build
 node .\build\src\index.js --pivotTranslation=./tests/translations/en.json  
 ```
 
-```	
+``` 
 # CLI PARAMETERS
 
 mode,
@@ -133,9 +131,15 @@ ATJ_IGNORE_PREFIX=
 
 You can also use .env file to store environment variables
 
-There is also improved version of CLI  for example:
+There is also improved version of CLI  (since version 1.3.2) for example:
 
 ```shell
+npm install -g auto-translate-library
 atj tests/translations/en.json -e google -m file
 ```
-since version 1.2.5
+
+You can also use it with npx
+
+```shell
+npx auto-translate-library tests/translations/en.json -e google -m file
+```
