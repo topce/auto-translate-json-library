@@ -1,5 +1,6 @@
 {
   "formatter": {
+    "enabled": true,
     "indentStyle": "space"
   },
   "linter": {

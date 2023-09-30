@@ -12,7 +12,7 @@ require("dotenv").config();
 // Define a function to display the help message
 function displayHelp() {
   console.log(`🔨 Auto translate json cli v${version}`);
-  console.log(`Usage: atj [options] <inputPath>`);
+  console.log("Usage: atj [options] <inputPath>");
   console.log("");
   console.log("Options:");
   console.log("  --help, -h               Display this help message");
