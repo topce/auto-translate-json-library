@@ -145,5 +145,6 @@ npx auto-translate-library tests/translations/en.json -e google -m file
 ```
 
 ### Debug
-
-npm run debug
+ 1. Create .env file in main folder with the desired key/keys from # ENVIRONMENT VARIABLES 
+ 2. Add also in .env  source locale "ATJ_SOURCE_LOCALE=en" to test from en
+ 3. npm run debug
