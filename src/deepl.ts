@@ -69,7 +69,7 @@ export class DeepLTranslate implements ITranslate {
       responseType: "json",
     });
 
-    result = response.translations[1].text;
+    result = response.data.translations[0].text;
 
     result = Util.replaceArgumentsWithNumbers(args, result);
 

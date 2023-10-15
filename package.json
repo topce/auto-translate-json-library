@@ -11,6 +11,8 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
+    "build:run": "ts-node ./build/src/index.js --pivotTranslation=./tests/translations/en.json",
+    "debug": "ts-node src/index.ts --pivotTranslation=./tests/translations/en.json",
     "lint": "biome check ./src",
     "lint-fix": "biome check ./src --apply",
     "lint-fix-all": "biome check --apply-unsafe ./src",
