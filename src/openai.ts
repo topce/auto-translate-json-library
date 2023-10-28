@@ -138,13 +138,17 @@ export class OpenAITranslate implements ITranslate {
     let result = "";
     let args;
     ({ args, text } = Util.replaceContextVariables(text));
-    const prompt = `You will be provided with a sentence in English, and your task is to translate it into  ${
+    const systemPrompt = `You will be provided with a sentence in English, and your task is to translate it into  ${
       supportedLanguages[targetLocale] as string
-    }:\n${text}\n.`;
+    }`;
+    const userPrompt = text;
     const response = await this.openai.chat.completions.create({
       model: "text-davinci-003",
-      messages: [{ role: "system", content: prompt }],
-      temperature: 0.2,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0,
       max_tokens: 250,
       top_p: 1.0,
       n: 1,
@@ -159,7 +163,10 @@ export class OpenAITranslate implements ITranslate {
       );
       result = result.replace(/^\n+|\n+$/g, "");
     } else {
-      console.error(`can not translate text with prompt :${prompt}`);
+      console.error(`can not translate text with 
+      system prompt : ${systemPrompt} 
+      and 
+      user prompt : ${userPrompt} `);
       result = Util.replaceArgumentsWithNumbers(args, result);
     }
     return result;

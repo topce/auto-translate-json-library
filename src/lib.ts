@@ -92,7 +92,7 @@ export async function translate(
   }
 
   // Iterate target Locales
-  files.targetLocales.forEach(async (targetLocale, _index, _array) => {
+  for (const targetLocale of files.targetLocales) {
     try {
       const isValid = await translateEngine.isValidLocale(targetLocale);
       if (!isValid) {
@@ -124,7 +124,7 @@ export async function translate(
       }
       return;
     }
-  });
+  }
 }
 
 const readFiles: (filePath: string, mode: "file" | "folder") => IFiles | null =
@@ -181,7 +181,7 @@ async function recurseNode(
         locale,
         translateEngine,
         ignorePrefix,
-        node instanceof Array,
+        Array.isArray(node),
       );
     } else {
       // if we already have a translation, keep it
