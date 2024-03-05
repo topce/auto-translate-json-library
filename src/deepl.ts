@@ -37,7 +37,10 @@ const supportedLanguages = [
 
 export class DeepLTranslate implements ITranslate {
   private endpoint = "https://api.deepl.com";
-  constructor(private subscriptionKey: string, private type: "free" | "pro") {
+  constructor(
+    private subscriptionKey: string,
+    private type: "free" | "pro",
+  ) {
     if (this.type === "free") {
       this.endpoint = "https://api-free.deepl.com";
     }
@@ -50,7 +53,7 @@ export class DeepLTranslate implements ITranslate {
     sourceLocale: string,
     targetLocale: string,
   ): Promise<string> {
-    let args;
+    let args: RegExpMatchArray | null;
     ({ args, text } = Util.replaceContextVariables(text));
 
     let result = "";

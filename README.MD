@@ -4,8 +4,14 @@ This project is used in, (and refactored from) excellent vs code extension
 Auto Translate JSON
 <https://marketplace.visualstudio.com/items?itemName=JeffJorczak.auto-translate-json>
 
-It opens posibility to use Auto Translation JSON
+It opens possibility to use Auto Translation JSON
 not just in vs code but as a library and command line interface
+
+You can use Azure,AWS,Google,DeepL,Open AI or
+local OPEN AI compatible REST API
+for example [jan](https://jan.ai/) local server
+http://localhost:1337/v1
+and model mistral-ins-7b-q4
 
 ## Use as library
 
@@ -107,6 +113,31 @@ ATJ_DEEPL_FREE_SECRET_KEY=
 
 OpenAI parameters 
 ATJ_OPEN_AI_SECRET_KEY=
+ATJ_OPEN_AI_BASE_URL= 
+default value "https://api.openai.com/v1",
+ATJ_OPEN_AI_MODEL 
+default value gpt-3.5-turbo
+ATJ_OPEN_AI_MAX_TOKENS 
+default value 256
+ATJ_OPEN_AI_TEMPERATURE 
+default value 0
+ATJ_OPEN_AI_TOP_P 
+default value 1.0
+ATJ_OPEN_AI_N 
+default value 1
+ATJ_OPEN_AI_FREQUENCY_PENALTY 
+default value 0
+ATJ_OPEN_AI_PRESENCE_PENALTY 
+default value 0
+
+If you want to run it locally without using Open AI but compatible API 
+you need to modify base URL and model for example 
+if you use jan https://jan.ai/ you can modify base url model and maximum number of tokens (you do not pay for tokens anymore), secret key is not important 
+ATJ_OPEN_AI_SECRET_KEY=whatever
+ATJ_OPEN_AI_BASE_URL=http://localhost:1337/v1
+ATJ_OPEN_AI_MODEL=mistral-ins-7b-q4
+ATJ_OPEN_AI_MAX_TOKENS=4096
+
 
 start delimiter
 ATJ_START_DELIMITER={{

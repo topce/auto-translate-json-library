@@ -124,7 +124,7 @@ export class AzureTranslate implements ITranslate {
     sourceLocale: string,
     targetLocale: string,
   ): Promise<string> {
-    let args;
+    let args: RegExpMatchArray | null;
     ({ args, text } = Util.replaceContextVariables(text));
 
     let result = "";

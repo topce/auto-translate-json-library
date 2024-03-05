@@ -115,9 +115,20 @@ const supportedLanguages: { [key: string]: string } = {
 
 export class OpenAITranslate implements ITranslate {
   private openai;
-  constructor(apiKey: string) {
+  constructor(
+    apiKey: string,
+    baseUrl: string,
+    private model: string,
+    private maxTokens: number,
+    private temperature: number,
+    private topP: number,
+    private n: number,
+    private frequencyPenalty: number,
+    private presencePenalty: number,
+  ) {
     const configuration = {
       apiKey: apiKey,
+      baseURL: baseUrl,
     };
     this.openai = new OpenAI(configuration);
   }
@@ -136,25 +147,33 @@ export class OpenAITranslate implements ITranslate {
     }
 
     let result = "";
-    let args;
+    let args: RegExpMatchArray | null;
     ({ args, text } = Util.replaceContextVariables(text));
     const systemPrompt = `You will be provided with a sentence in English, and your task is to translate it into  ${
       supportedLanguages[targetLocale] as string
     }`;
     const userPrompt = text;
-    const response = await this.openai.chat.completions.create({
-      model: "text-davinci-003",
+    let response = await this.openai.chat.completions.create({
+      model: this.model,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },
       ],
-      temperature: 0,
-      max_tokens: 250,
-      top_p: 1.0,
-      n: 1,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
+      temperature: this.temperature,
+      max_tokens: this.maxTokens,
+      top_p: this.topP,
+      n: this.n,
+      frequency_penalty: this.frequencyPenalty,
+      presence_penalty: this.presencePenalty,
     });
+    try {
+      console.log(response.choices[0].message.content);
+    } catch {
+      // disable type script compiler for next line
+      // @ts-ignore
+      response = JSON.parse(response);
+      console.log(response.choices[0].message.content);
+    }
 
     if (response.choices[0].message.content !== null) {
       result = Util.replaceArgumentsWithNumbers(

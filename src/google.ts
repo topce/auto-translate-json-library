@@ -10,9 +10,8 @@ export class GoogleTranslate implements ITranslate {
 
   static async initialize(apiKey: string): Promise<GoogleTranslate> {
     const googleTranslate = new Translate({ key: apiKey });
-    const supportedLanguages = await GoogleTranslate.getSupportedLanguages(
-      googleTranslate,
-    );
+    const supportedLanguages =
+      await GoogleTranslate.getSupportedLanguages(googleTranslate);
     return new GoogleTranslate(googleTranslate, supportedLanguages);
   }
 
@@ -34,7 +33,7 @@ export class GoogleTranslate implements ITranslate {
     _sourceLocale: string,
     targetLocale: string,
   ): Promise<string> {
-    let args;
+    let args: RegExpMatchArray | null;
     ({ args, text } = Util.replaceContextVariables(text));
 
     let result = "";

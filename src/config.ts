@@ -37,4 +37,15 @@ type DeepLFreeTranslationKey = {
   secretKey: string;
 };
 
-type OpenAITranslationKey = { kind: "openai"; apiKey: string };
+type OpenAITranslationKey = {
+  kind: "openai";
+  apiKey: string;
+  baseUrl: string;
+  model: string;
+  maxTokens: number;
+  temperature: number;
+  topP: number;
+  n: number;
+  frequencyPenalty: number;
+  presencePenalty: number;
+};

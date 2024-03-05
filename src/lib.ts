@@ -55,7 +55,17 @@ export async function translate(
       "pro",
     );
   } else if (config.translationKeyInfo.kind === "openai") {
-    translateEngine = new OpenAITranslate(config.translationKeyInfo.apiKey);
+    translateEngine = new OpenAITranslate(
+      config.translationKeyInfo.apiKey,
+      config.translationKeyInfo.baseUrl,
+      config.translationKeyInfo.model,
+      config.translationKeyInfo.maxTokens,
+      config.translationKeyInfo.temperature,
+      config.translationKeyInfo.topP,
+      config.translationKeyInfo.n,
+      config.translationKeyInfo.presencePenalty,
+      config.translationKeyInfo.frequencyPenalty,
+    );
   } else {
     console.warn(
       "You must provide a Google, AWS, Azure, deepL, openai parameters first in the extension settings.",
