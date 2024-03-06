@@ -138,11 +138,11 @@ switch (engine) {
     break;
   }
   case "openai": {
-    const openaiApiKey = process.env.ATJ_OPENAI_API_KEY;
+    const openaiApiKey = process.env.ATJ_OPEN_AI_SECRET_KEY;
     if (!openaiApiKey) {
       console.error(
         c.red(
-          "❌ Openai api key not found in environment variable ATJ_OPENAI_API_KEY",
+          "❌ Openai api key not found in environment variable ATJ_OPEN_AI_SECRET_KEY",
         ),
       );
       process.exit(1);
