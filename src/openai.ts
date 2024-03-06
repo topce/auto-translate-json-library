@@ -169,10 +169,17 @@ export class OpenAITranslate implements ITranslate {
     try {
       console.log(response.choices[0].message.content);
     } catch {
-      // disable type script compiler for next line
-      // @ts-ignore
-      response = JSON.parse(response);
-      console.log(response.choices[0].message.content);
+      try {
+        // for local server sometimes does not return response in json format
+        // disable type script compiler for next line
+        // @ts-ignore
+        response = JSON.parse(response);
+        console.log(response.choices[0].message.content);
+      } catch (error) {
+        console.error(error);
+        console.log("can not parse response");
+        console.log(response);
+      }
     }
 
     if (response.choices[0].message.content !== null) {
