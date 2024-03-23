@@ -114,8 +114,8 @@ function setConfigurationFromEnvironment() {
       baseUrl: process.env.ATJ_OPEN_AI_BASE_URL ?? "https://api.openai.com/v1",
       model: process.env.ATJ_OPEN_AI_MODEL ?? "gpt-3.5-turbo",
       maxTokens: Number(process.env.ATJ_OPEN_AI_MAX_TOKENS ?? "256"),
-      temperature: Number(process.env.ATJ_OPEN_AI_TEMPERATURE ?? "0"),
-      topP: Number(process.env.ATJ_OPEN_AI_TOP_P ?? "1.0"),
+      temperature: Number(process.env.ATJ_OPEN_AI_TEMPERATURE ?? "0.7"),
+      topP: Number(process.env.ATJ_OPEN_AI_TOP_P ?? "0.9"),
       n: Number(process.env.ATJ_OPEN_AI_N ?? "1"),
       frequencyPenalty: Number(
         process.env.ATJ_OPEN_AI_FREQUENCY_PENALTY ?? "0",

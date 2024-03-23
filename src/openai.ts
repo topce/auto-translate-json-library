@@ -149,11 +149,11 @@ export class OpenAITranslate implements ITranslate {
     let result = "";
     let args: RegExpMatchArray | null;
     ({ args, text } = Util.replaceContextVariables(text));
-    const systemPrompt = `You will be provided with a sentence in English, and your task is to translate it into  ${
+    const systemPrompt = `You will be provided with a sentence or words in English, and your task is to translate it into  ${
       supportedLanguages[targetLocale] as string
     }`;
     const userPrompt = text;
-    let response = await this.openai.chat.completions.create({
+    const response = await this.openai.chat.completions.create({
       model: this.model,
       messages: [
         { role: "system", content: systemPrompt },
@@ -166,21 +166,6 @@ export class OpenAITranslate implements ITranslate {
       frequency_penalty: this.frequencyPenalty,
       presence_penalty: this.presencePenalty,
     });
-    try {
-      console.log(response.choices[0].message.content);
-    } catch {
-      try {
-        // for local server sometimes does not return response in json format
-        // disable type script compiler for next line
-        // @ts-ignore
-        response = JSON.parse(response);
-        console.log(response.choices[0].message.content);
-      } catch (error) {
-        console.error(error);
-        console.log("can not parse response");
-        console.log(response);
-      }
-    }
 
     if (response.choices[0].message.content !== null) {
       result = Util.replaceArgumentsWithNumbers(
