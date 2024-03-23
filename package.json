@@ -8,6 +8,8 @@
     "atj": "./build/src/bin/cli.js"
   },
   "types": "./build/src/index.d.ts",
+  "files": ["build",
+            "README.md"],
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
