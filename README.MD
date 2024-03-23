@@ -9,9 +9,9 @@ not just in vs code but as a library and command line interface
 
 You can use Azure,AWS,Google,DeepL,Open AI or
 local OPEN AI compatible REST API
-for example [jan](https://jan.ai/) local server
-http://localhost:1337/v1
-and model mistral-ins-7b-q4
+for example [ollama](https://ollama.com/) 
+because it is compatible with Open AI https://ollama.com/blog/openai-compatibility :
+
 
 ## Use as library
 
@@ -48,13 +48,24 @@ do not forget to set translation engine parameters in environment variables or .
 node node_modules\auto-translate-json-library\index.js --pivotTranslation=./translations/en.json
 ```
 
-if you clone repo you can use the following commands
+## Contribute
+
+Clone repo you can use the following commands
+
+install ollama 
+run ollama run llama2
+rename ollama.env to .env
+install
+build project
+and rune it
 
 ```shell
 npm i
 npm run build
 node .\build\src\index.js --pivotTranslation=./tests/translations/en.json
 ```
+
+After some time you should see es.json file with translation
 
 ## CLI PARAMETERS
 
