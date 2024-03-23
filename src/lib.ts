@@ -1,15 +1,15 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { Files, IFiles } from "./files";
+import { Files, type IFiles } from "./files";
 import { FolderFiles } from "./folderFiles";
 
 import { AWSTranslate } from "./aws";
 import { AzureTranslate } from "./azure";
-import { Configuration } from "./config";
+import type { Configuration } from "./config";
 import { DeepLTranslate } from "./deepl";
 import { GoogleTranslate } from "./google";
 import { OpenAITranslate } from "./openai";
-import { ITranslate, TranslationFile } from "./translate.interface";
+import type { ITranslate, TranslationFile } from "./translate.interface";
 import { Util } from "./util";
 
 export async function translate(

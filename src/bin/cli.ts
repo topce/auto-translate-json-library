@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import path from "path";
+import path from "node:path";
 import minimist from "minimist";
 import c from "picocolors";
 import { version } from "../../package.json";
-import { Configuration } from "../config";
+import type { Configuration } from "../config";
 import { translate } from "../lib";
 
 require("dotenv").config();

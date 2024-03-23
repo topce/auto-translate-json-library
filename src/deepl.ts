@@ -1,5 +1,5 @@
 import FormData = require("form-data");
-import { ITranslate } from "./translate.interface";
+import type { ITranslate } from "./translate.interface";
 
 const axios = require("axios").default;
 import { Util } from "./util";

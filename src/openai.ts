@@ -1,5 +1,5 @@
 import { OpenAI } from "openai";
-import { ITranslate } from "./translate.interface";
+import type { ITranslate } from "./translate.interface";
 import { Util } from "./util";
 
 const supportedLanguages: { [key: string]: string } = {

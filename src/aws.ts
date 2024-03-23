@@ -1,8 +1,8 @@
-import { ITranslate } from "./translate.interface";
+import type { ITranslate } from "./translate.interface";
 
 import {
   Translate,
-  TranslateTextCommandInput,
+  type TranslateTextCommandInput,
 } from "@aws-sdk/client-translate";
 import { Util } from "./util";
 

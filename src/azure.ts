@@ -1,4 +1,4 @@
-import { ITranslate } from "./translate.interface";
+import type { ITranslate } from "./translate.interface";
 import { Util } from "./util";
 
 const axios = require("axios").default;

@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import * as path from "path";
-import { TranslationFile } from "./translate.interface";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import type { TranslationFile } from "./translate.interface";
 
 export interface IFiles {
   sourceLocale: string;

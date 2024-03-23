@@ -1,7 +1,7 @@
-import * as fs from "fs";
-import * as path from "path";
-import { IFiles, loadJsonFromLocale, saveJsonToLocale } from "./files";
-import { TranslationFile } from "./translate.interface";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { type IFiles, loadJsonFromLocale, saveJsonToLocale } from "./files";
+import type { TranslationFile } from "./translate.interface";
 
 export class FolderFiles implements IFiles {
   folderPath: string;

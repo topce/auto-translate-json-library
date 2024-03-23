@@ -1,5 +1,5 @@
 import { Translate } from "@google-cloud/translate/build/src/v2";
-import { ITranslate } from "./translate.interface";
+import type { ITranslate } from "./translate.interface";
 import { Util } from "./util";
 
 export class GoogleTranslate implements ITranslate {
