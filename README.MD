@@ -57,7 +57,7 @@ run ollama run llama2
 rename ollama.env to .env
 install
 build project
-and rune it
+and run it
 
 ```shell
 npm i
