@@ -200,6 +200,14 @@ switch (engine) {
     process.exit(1);
 }
 
+if (process.env.ATJ_START_DELIMITER) {
+  config.startDelimiter = process.env.ATJ_START_DELIMITER;
+}
+
+if (process.env.ATJ_END_DELIMITER) {
+  config.endDelimiter = process.env.ATJ_END_DELIMITER;
+}
+
 config.sourceLocale = sourceLocale;
 config.keepTranslations = keepTranslations ? "keep" : "retranslate";
 config.keepExtraTranslations = keepExtraTranslations ? "keep" : "remove";
