@@ -5,11 +5,13 @@ const axios = require("axios").default;
 import { Util } from "./util";
 
 const supportedLanguages = [
+  "AR",
   "BG",
   "CS",
   "DA",
   "DE",
   "EL",
+  "EN",
   "EN-GB",
   "EN-US",
   "EN",
@@ -18,12 +20,15 @@ const supportedLanguages = [
   "FI",
   "FR",
   "HU",
+  "ID",
   "IT",
   "JA",
   "LT",
   "LV",
+  "NB",
   "NL",
   "PL",
+  "PT",
   "PT-PT",
   "PT-BR",
   "PT",
@@ -32,6 +37,8 @@ const supportedLanguages = [
   "SK",
   "SL",
   "SV",
+  "TR",
+  "UK",
   "ZH",
 ];
 
