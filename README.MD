@@ -141,6 +141,16 @@ default value 0
 ATJ_OPEN_AI_PRESENCE_PENALTY 
 default value 0
 
+Deepseek parameters 
+similar to OpenAI but you need to
+put your deepseek secret key 
+ATJ_OPEN_AI_SECRET_KEY=sk-xxxxxx
+and model
+ATJ_OPEN_AI_MODEL=deepseek-chat
+ATJ_OPEN_AI_BASE_URL=https://api.deepseek.com/v1
+ATJ_OPEN_AI_TEMPERATURE=1.3
+
+
 If you want to run it locally without using Open AI but compatible API 
 you need to modify base URL and model for example 
 if you use jan https://jan.ai/ you can modify base url model and maximum number of tokens (you do not pay for tokens anymore), secret key is not important 
