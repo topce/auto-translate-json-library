@@ -9,14 +9,24 @@ setDefaultConfiguration();
 console.log(config);
 try {
   setConfigurationFromEnvironment();
+} catch (error) {
+  console.log(config);
+  console.log(error);
+}
+
+try {
   setConfigurationFromCLI();
 } catch (error) {
-  console.log(error);
   console.log(config);
+  console.log(error);
 }
 
 function setConfigurationFromCLI() {
   const argv = require("yargs").argv;
+  if (argv === undefined) {
+    console.log("No arguments provided in CLI");
+    return;
+  }
 
   if (argv.mode === "file") {
     config.mode = "file";
