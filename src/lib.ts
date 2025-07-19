@@ -1,12 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { Files, type IFiles } from "./files";
-import { FolderFiles } from "./folderFiles";
 
 import { AWSTranslate } from "./aws";
 import { AzureTranslate } from "./azure";
 import type { Configuration } from "./config";
 import { DeepLTranslate } from "./deepl";
+import { Files, type IFiles } from "./files";
+import { FolderFiles } from "./folderFiles";
 import { GoogleTranslate } from "./google";
 import { OpenAITranslate } from "./openai";
 import type { ITranslate, TranslationFile } from "./translate.interface";
@@ -167,7 +167,7 @@ async function recurseNode(
   ignorePrefix = "",
   isArray = false,
 ): Promise<TranslationFile> {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: array and object types are used for flexibility
   const destination: any = isArray ? [] : {};
 
   // defaults

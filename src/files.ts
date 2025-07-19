@@ -55,7 +55,7 @@ export class Files implements IFiles {
   }
 
   private getTargetLocales(): string[] {
-    const locales = new Array();
+    const locales = [];
 
     const files = fs.readdirSync(this.folderPath);
 

@@ -1,6 +1,5 @@
-import type { ITranslate } from "./translate.interface";
-
 import * as deepl from "deepl-node";
+import type { ITranslate } from "./translate.interface";
 
 import { Util } from "./util";
 
@@ -65,7 +64,9 @@ export class DeepLTranslate implements ITranslate {
 
     let result = "";
 
-    const translator = new deepl.Translator(this.subscriptionKey);
+    const translator = new deepl.Translator(this.subscriptionKey, {
+      serverUrl: this.endpoint,
+    });
     const translation = await translator.translateText(
       text,
       sourceLocale as deepl.SourceLanguageCode,

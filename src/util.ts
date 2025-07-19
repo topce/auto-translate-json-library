@@ -1,4 +1,4 @@
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+// biome-ignore lint/complexity/noStaticOnlyClass: This class is used for utility functions that do not require instantiation
 export class Util {
   private static _startDelimiter = "{";
   private static _endDelimiter = "}";

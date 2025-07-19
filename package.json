@@ -18,8 +18,8 @@
     "build:run": "ts-node ./build/src/index.js --pivotTranslation=./tests/translations/en.json",
     "debug": "ts-node src/index.ts --pivotTranslation=./tests/translations/en.json",
     "lint": "biome check ./src",
-    "lint-fix": "biome check ./src --apply",
-    "lint-fix-all": "biome check --apply-unsafe ./src",
+    "lint-fix": "biome check ./src --write",
+    "lint-fix-all": "biome check --write --unsafe ./src",
     "format": "biome format ./src",
     "format-fix": "biome format ./src --write",
     "start": "ts-node src/index.ts"
@@ -53,24 +53,24 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.1.2",
     "@types/minimist": "1.2.5",
-    "@types/node": "22.10.10",
+    "@types/node": "24.0.15",
     "@types/yargs": "17.0.33",
     "ts-node": "10.9.2",
-    "typescript": "5.7.3"
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "@aws-sdk/client-translate": "3.734.0",
-    "@google-cloud/translate": "8.5.0",
-    "axios": "1.7.9",
-    "deepl-node": "1.16.0",
-    "dotenv": "16.4.7",
-    "form-data": "4.0.1",
+    "@aws-sdk/client-translate": "3.848.0",
+    "@google-cloud/translate": "9.2.0",
+    "axios": "1.10.0",
+    "deepl-node": "1.19.0",
+    "dotenv": "17.2.0",
+    "form-data": "4.0.4",
     "minimist": "1.2.8",
-    "openai": "4.80.1",
+    "openai": "5.10.1",
     "picocolors": "1.1.1",
-    "uuid": "11.0.5",
-    "yargs": "17.7.2"
+    "uuid": "11.1.0",
+    "yargs": "18.0.0"
   }
 }
