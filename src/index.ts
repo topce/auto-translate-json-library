@@ -6,9 +6,14 @@ export { Configuration, translate };
 const config: Configuration = {} as Configuration;
 
 setDefaultConfiguration();
-setConfigurationFromEnvironment();
-setConfigurationFromCLI();
 console.log(config);
+try {
+  setConfigurationFromEnvironment();
+  setConfigurationFromCLI();
+} catch (error) {
+  console.log(error);
+  console.log(config);
+}
 
 function setConfigurationFromCLI() {
   const argv = require("yargs").argv;

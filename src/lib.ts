@@ -73,7 +73,7 @@ export async function translate(
     return;
   }
 
-  const fileMode = config.mode;
+  const fileMode = config.mode ?? "file";
   const files = readFiles(sourceFile, fileMode);
   if (files === null) {
     return;
