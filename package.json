@@ -1,6 +1,6 @@
 {
   "name": "auto-translate-json-library",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Automatically translates JSON language files to other languages using Google Translate,AWS,Azure,DeepL,OpenAI or local OpenAI compatible server",
   "main": "./build/src/index.js",
   "bin": {
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "@types/minimist": "1.2.5",
-    "@types/node": "24.0.15",
+    "@types/node": "24.1.0",
     "@types/yargs": "17.0.33",
     "ts-node": "10.9.2",
     "typescript": "5.8.3"
@@ -63,12 +63,12 @@
   "dependencies": {
     "@aws-sdk/client-translate": "3.848.0",
     "@google-cloud/translate": "9.2.0",
-    "axios": "1.10.0",
+    "axios": "1.11.0",
     "deepl-node": "1.19.0",
     "dotenv": "17.2.0",
     "form-data": "4.0.4",
     "minimist": "1.2.8",
-    "openai": "5.10.1",
+    "openai": "5.10.2",
     "picocolors": "1.1.1",
     "uuid": "11.1.0",
     "yargs": "18.0.0"
