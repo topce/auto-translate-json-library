@@ -129,29 +129,45 @@ export class AzureTranslate implements ITranslate {
 
     let result = "";
 
-    const response = await axios({
-      baseURL: this.endpoint,
-      url: "/translate",
-      method: "post",
-      headers: {
-        "Ocp-Apim-Subscription-Key": this.subscriptionKey,
-        "Ocp-Apim-Subscription-Region": this.subscriptionRegion,
-        "Content-type": "application/json",
-        "X-ClientTraceId": uuidv4().toString(),
-      },
-      params: {
-        "api-version": "3.0",
-        from: sourceLocale,
-        to: [targetLocale],
-      },
-      data: [
-        {
-          text: text,
-        },
-      ],
-      responseType: "json",
-    });
-    result = response.data[0].translations[0].text;
+    const maxRetries = 5;
+    let retryCount = 0;
+
+    while (retryCount <= maxRetries) {
+      try {
+        const response = await axios({
+          baseURL: this.endpoint,
+          url: "/translate",
+          method: "post",
+          headers: {
+            "Ocp-Apim-Subscription-Key": this.subscriptionKey,
+            "Ocp-Apim-Subscription-Region": this.subscriptionRegion,
+            "Content-type": "application/json",
+            "X-ClientTraceId": uuidv4().toString(),
+          },
+          params: {
+            "api-version": "3.0",
+            from: sourceLocale,
+            to: [targetLocale],
+          },
+          data: [
+            {
+              text: text,
+            },
+          ],
+          responseType: "json",
+        });
+        result = response.data[0].translations[0].text;
+        break; // Success, exit the retry loop
+      } catch (error: any) {
+        if (error.response?.status === 429 && retryCount < maxRetries) {
+          retryCount++;
+          console.log(`Rate limit exceeded. Retrying in 10 seconds... (Attempt ${retryCount}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 second
+        } else {
+          throw error; // Re-throw if it's not a 429 error or we've exceeded max retries
+        }
+      }
+    }
 
     result = Util.replaceArgumentsWithNumbers(args, result);
 

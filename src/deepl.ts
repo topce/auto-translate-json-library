@@ -66,6 +66,8 @@ export class DeepLTranslate implements ITranslate {
 
     const translator = new deepl.Translator(this.subscriptionKey, {
       serverUrl: this.endpoint,
+      minTimeout: 10000,
+      maxRetries: 5,
     });
     const translation = await translator.translateText(
       text,
