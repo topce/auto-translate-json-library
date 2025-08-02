@@ -1,7 +1,6 @@
-
 import type { ITranslate } from "./translate.interface";
 import { Util } from "./util";
-import { setTimeout as sleep } from 'timers/promises';
+import { setTimeout as sleep } from "timers/promises";
 
 const axios = require("axios").default;
 const { v4: uuidv4 } = require("uuid");
@@ -163,7 +162,9 @@ export class AzureTranslate implements ITranslate {
       } catch (error: any) {
         if (error.response?.status === 429 && retryCount < maxRetries) {
           retryCount++;
-          console.log(`Rate limit exceeded. Retrying in 10 seconds... (Attempt ${retryCount}/${maxRetries})`);
+          console.log(
+            `Rate limit exceeded. Retrying in 10 seconds... (Attempt ${retryCount}/${maxRetries})`,
+          );
           await sleep(10000); // Wait 10 seconds using timers/promises
         } else {
           throw error; // Re-throw if it's not a 429 error or we've exceeded max retries
