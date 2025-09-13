@@ -65,7 +65,7 @@
   "dependencies": {
     "@aws-sdk/client-translate": "3.859.0",
     "@google-cloud/translate": "9.2.0",
-    "axios": "1.11.0",
+    "axios": "1.12.1",
     "deepl-node": "1.19.0",
     "dotenv": "17.2.1",
     "form-data": "4.0.4",
