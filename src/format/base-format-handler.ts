@@ -3,9 +3,9 @@ import type {
   FormatOptions, 
   ValidationResult, 
   EnhancedTranslationFile 
-} from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
-import { FormatValidator, type ValidationContext, ValidationService } from "../validation";
+} from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
+import { FormatValidator, type ValidationContext, ValidationService } from "../validation/index.js";
 
 /**
  * Base class for format handlers that provides common validation functionality

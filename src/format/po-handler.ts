@@ -5,10 +5,9 @@ import type {
   FormatOptions, 
   ValidationResult, 
   EnhancedTranslationFile 
-} from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
+} from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
 import { 
-  getPluralRule, 
   formatPluralFormsHeader, 
   validatePluralExpression,
   parseContext,
@@ -17,7 +16,7 @@ import {
   createPluralKey,
   validateContext,
   validatePluralForms
-} from "./po-utils";
+} from "./po-utils.js";
 
 interface POEntry {
   msgid: string;

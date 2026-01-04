@@ -1,7 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type IFiles, loadJsonFromLocale, saveJsonToLocale } from "./files";
-import type { TranslationFile } from "./translate.interface";
+import { type IFiles, loadJsonFromLocale, saveJsonToLocale } from "./files.js";
+import type { TranslationFile } from "./translate.interface.js";
+import { FormatDetector } from "./format-detector.js";
 
 export class FolderFiles implements IFiles {
   folderPath: string;
@@ -31,7 +32,6 @@ export class FolderFiles implements IFiles {
     const sourceFilePath = this.createFileName(this.sourceLocale);
     try {
       if (fs.existsSync(sourceFilePath)) {
-        const { FormatDetector } = require("./format-detector");
         const content = fs.readFileSync(sourceFilePath, 'utf8').substring(0, 1000);
         return FormatDetector.detectFormat(sourceFilePath, content);
       }

@@ -1,9 +1,9 @@
-import type { TranslationFile } from "../translate.interface";
-import type { IFormatHandler, ValidationResult } from "../format.interface";
-import { FormatValidator, type ValidationContext } from "./format-validator";
-import { EnhancedValidationResult } from "./enhanced-validation-result";
-import { ErrorRecoveryManager, UserGuidanceSystem, type RecoveryResult } from "./error-recovery";
-import { ErrorMessageFormatter } from "./error-messages";
+import type { TranslationFile } from "../translate.interface.js";
+import type { IFormatHandler, ValidationResult } from "../format.interface.js";
+import { FormatValidator, type ValidationContext } from "./format-validator.js";
+import { EnhancedValidationResult } from "./enhanced-validation-result.js";
+import { ErrorRecoveryManager, UserGuidanceSystem, type RecoveryResult } from "./error-recovery.js";
+import { ErrorMessageFormatter } from "./error-messages.js";
 
 /**
  * Comprehensive validation and recovery service

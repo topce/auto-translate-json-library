@@ -1,36 +1,36 @@
 // Export all format handlers and utilities
-export { XmlHandler } from "./xml-handler";
-export { JsonHandler } from "./json-handler";
-export { XliffHandler } from "./xliff-handler";
-export { ArbHandler } from "./arb-handler";
-export { XmbHandler } from "./xmb-handler";
-export { XtbHandler } from "./xtb-handler";
-export { XmbXtbUtils } from "./xmb-xtb-utils";
-export { POHandler } from "./po-handler";
-export { POTHandler } from "./pot-handler";
-export { YamlHandler } from "./yaml-handler";
-export { PropertiesHandler } from "./properties-handler";
-export { CsvHandler } from "./csv-handler";
-export { TsvHandler } from "./tsv-handler";
-export * from "./po-utils";
-export * from "../format.interface";
-export { FormatDetector } from "../format-detector";
-export { FormatHandlerFactory } from "../format-handler-factory";
+export { XmlHandler } from "./xml-handler.js";
+export { JsonHandler } from "./json-handler.js";
+export { XliffHandler } from "./xliff-handler.js";
+export { ArbHandler } from "./arb-handler.js";
+export { XmbHandler } from "./xmb-handler.js";
+export { XtbHandler } from "./xtb-handler.js";
+export { XmbXtbUtils } from "./xmb-xtb-utils.js";
+export { POHandler } from "./po-handler.js";
+export { POTHandler } from "./pot-handler.js";
+export { YamlHandler } from "./yaml-handler.js";
+export { PropertiesHandler } from "./properties-handler.js";
+export { CsvHandler } from "./csv-handler.js";
+export { TsvHandler } from "./tsv-handler.js";
+export * from "./po-utils.js";
+export * from "../format.interface.js";
+export { FormatDetector } from "../format-detector.js";
+export { FormatHandlerFactory } from "../format-handler-factory.js";
 
 // Register default handlers
-import { FormatHandlerFactory } from "../format-handler-factory";
-import { XmlHandler } from "./xml-handler";
-import { JsonHandler } from "./json-handler";
-import { XliffHandler } from "./xliff-handler";
-import { ArbHandler } from "./arb-handler";
-import { XmbHandler } from "./xmb-handler";
-import { XtbHandler } from "./xtb-handler";
-import { POHandler } from "./po-handler";
-import { POTHandler } from "./pot-handler";
-import { YamlHandler } from "./yaml-handler";
-import { PropertiesHandler } from "./properties-handler";
-import { CsvHandler } from "./csv-handler";
-import { TsvHandler } from "./tsv-handler";
+import { FormatHandlerFactory } from "../format-handler-factory.js";
+import { XmlHandler } from "./xml-handler.js";
+import { JsonHandler } from "./json-handler.js";
+import { XliffHandler } from "./xliff-handler.js";
+import { ArbHandler } from "./arb-handler.js";
+import { XmbHandler } from "./xmb-handler.js";
+import { XtbHandler } from "./xtb-handler.js";
+import { POHandler } from "./po-handler.js";
+import { POTHandler } from "./pot-handler.js";
+import { YamlHandler } from "./yaml-handler.js";
+import { PropertiesHandler } from "./properties-handler.js";
+import { CsvHandler } from "./csv-handler.js";
+import { TsvHandler } from "./tsv-handler.js";
 
 // Auto-register handlers when this module is imported
 FormatHandlerFactory.registerHandler("xml", new XmlHandler());

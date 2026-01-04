@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 
 import path from "node:path";
+import { existsSync } from "node:fs";
 import minimist from "minimist";
 import c from "picocolors";
-import { version } from "../../package.json";
-import type { Configuration } from "../config";
-import { translate } from "../lib";
-import { FormatHandlerFactory } from "../format-handler-factory";
+import packageJson from "../../package.json" with { type: "json" };
+const { version } = packageJson;
+import type { Configuration } from "../config.js";
+import { translate } from "../lib.js";
+import { FormatHandlerFactory } from "../format-handler-factory.js";
 // Import format handlers to ensure they are registered
-import "../format";
+import "../format/index.js";
+import { config as dotenvConfig } from "dotenv";
 
-require("dotenv").config();
+dotenvConfig();
 
 // Define a function to display the help message
 function displayHelp() {
@@ -200,7 +203,7 @@ if (engine && !validEngines.includes(engine)) {
 }
 
 // Check if input path exists
-if (!require("fs").existsSync(inputPath)) {
+if (!existsSync(inputPath)) {
   console.error(c.red(`❌ Input path does not exist: ${inputPath}`));
   process.exit(1);
 }

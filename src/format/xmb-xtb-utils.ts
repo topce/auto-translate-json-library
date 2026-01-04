@@ -1,7 +1,7 @@
-import type { ValidationResult } from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
-import { XmbHandler } from "./xmb-handler";
-import { XtbHandler } from "./xtb-handler";
+import type { ValidationResult } from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
+import { XmbHandler } from "./xmb-handler.js";
+import { XtbHandler } from "./xtb-handler.js";
 
 /**
  * Utility class for XMB/XTB message bundle operations and integrity validation

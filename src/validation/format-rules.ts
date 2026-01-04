@@ -1,6 +1,6 @@
-import type { FormatValidationRule, ValidationContext, ValidationIssue } from "./format-validator";
-import type { TranslationFile } from "../translate.interface";
-import type { EnhancedTranslationFile } from "../format.interface";
+import type { FormatValidationRule, ValidationContext, ValidationIssue } from "./format-validator.js";
+import type { TranslationFile } from "../translate.interface.js";
+import type { EnhancedTranslationFile } from "../format.interface.js";
 
 /**
  * Global validation rules that apply to all formats

@@ -1,5 +1,10 @@
-import { XliffHandler } from '../src/format/xliff-handler';
-import type { EnhancedTranslationFile } from '../src/format.interface';
+import { XliffHandler } from '../src/format/xliff-handler.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+import type { EnhancedTranslationFile } from '../src/format.interface.js';
 import * as fs from 'fs';
 import * as path from 'path';
 

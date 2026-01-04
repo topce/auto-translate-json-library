@@ -1,25 +1,25 @@
-import { Translate } from "@google-cloud/translate/build/src/v2";
-import type { ITranslate } from "./translate.interface";
-import { Util } from "./util";
+import { v2 as translate } from "@google-cloud/translate";
+import type { ITranslate } from "./translate.interface.js";
+import { Util } from "./util.js";
 
 export class GoogleTranslate implements ITranslate {
   private constructor(
-    private googleTranslate: Translate,
+    private googleTranslate: translate.Translate,
     private supportedLanguages: string[] = [],
   ) {}
 
   static async initialize(apiKey: string): Promise<GoogleTranslate> {
-    const googleTranslate = new Translate({ key: apiKey });
+    const googleTranslate = new translate.Translate({ key: apiKey });
     const supportedLanguages =
       await GoogleTranslate.getSupportedLanguages(googleTranslate);
     return new GoogleTranslate(googleTranslate, supportedLanguages);
   }
 
   private static async getSupportedLanguages(
-    translate: Translate,
+    translate: translate.Translate,
   ): Promise<string[]> {
     const [languages] = await translate.getLanguages();
-    return languages.map((language, _index, _array) =>
+    return languages.map((language: any, _index: number, _array: any[]) =>
       language.code.toLowerCase(),
     );
   }

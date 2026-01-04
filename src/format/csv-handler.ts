@@ -4,8 +4,8 @@ import type {
   FormatOptions, 
   ValidationResult, 
   EnhancedTranslationFile 
-} from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
+} from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
 
 export interface CsvOptions extends FormatOptions {
   delimiter?: string;

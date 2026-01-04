@@ -1,7 +1,12 @@
 import * as fs from "node:fs";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import * as path from "node:path";
-import { POHandler } from "../src/format/po-handler";
-import { POTHandler } from "../src/format/pot-handler";
+import { POHandler } from "../src/format/po-handler.js";
+import { POTHandler } from "../src/format/pot-handler.js";
 import { 
   getPluralRule, 
   formatPluralFormsHeader, 
@@ -16,7 +21,7 @@ import {
   getSupportedLanguages,
   hasComplexPlurals,
   generateSamplePlurals
-} from "../src/format/po-utils";
+} from "../src/format/po-utils.js";
 
 describe("PO Handler", () => {
   let handler: POHandler;

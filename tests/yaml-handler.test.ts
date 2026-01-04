@@ -1,6 +1,11 @@
-import { YamlHandler } from "../src/format/yaml-handler";
+import { YamlHandler } from "../src/format/yaml-handler.js";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import * as fs from "node:fs";
 import * as path from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe("YamlHandler", () => {
   let handler: YamlHandler;

@@ -1,12 +1,12 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { TranslationFile } from "./translate.interface";
+import type { TranslationFile } from "./translate.interface.js";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
-import { FormatDetector } from "./format-detector";
-import { FormatHandlerFactory } from "./format-handler-factory";
-import type { EnhancedTranslationFile } from "./format.interface";
+import { FormatDetector } from "./format-detector.js";
+import { FormatHandlerFactory } from "./format-handler-factory.js";
+import type { EnhancedTranslationFile } from "./format.interface.js";
 // Import format handlers to ensure they are registered
-import "./format";
+import "./format/index.js";
 
 // Helper function for format-specific error recovery suggestions
 function getFormatSpecificSuggestions(format: string, error: Error): string | null {

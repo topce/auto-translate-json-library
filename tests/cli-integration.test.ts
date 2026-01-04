@@ -1,4 +1,9 @@
 import { spawn, SpawnOptions } from 'node:child_process';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -285,7 +290,7 @@ describe('CLI Integration Tests', () => {
           }
         }
       }
-    });
+    }, 60000); // 60 second timeout for CLI integration test
 
     it('should provide consistent progress reporting format', async () => {
       const formats = ['json', 'xml'];

@@ -1,6 +1,11 @@
-import { CsvHandler } from '../src/format/csv-handler';
-import { TsvHandler } from '../src/format/tsv-handler';
-import type { EnhancedTranslationFile } from '../src/format.interface';
+import { CsvHandler } from '../src/format/csv-handler.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+import { TsvHandler } from '../src/format/tsv-handler.js';
+import type { EnhancedTranslationFile } from '../src/format.interface.js';
 import * as fs from 'fs';
 import * as path from 'path';
 

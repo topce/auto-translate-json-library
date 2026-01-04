@@ -1,4 +1,4 @@
-import type { TranslationFile } from "./translate.interface";
+import type { TranslationFile } from "./translate.interface.js";
 
 export interface FormatOptions {
   preserveFormatting?: boolean;

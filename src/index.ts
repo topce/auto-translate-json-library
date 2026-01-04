@@ -1,7 +1,8 @@
-import { Configuration } from "./config";
-import { translate } from "./lib";
+import { Configuration } from "./config.js";
+import { translate } from "./lib.js";
 
-export { Configuration, translate };
+export type { Configuration };
+export { translate };
 
 const config: Configuration = {} as Configuration;
 
@@ -21,8 +22,11 @@ try {
   console.log(error);
 }
 
+import minimist from 'minimist';
+import { config as dotenvConfig } from "dotenv";
+
 function setConfigurationFromCLI() {
-  const argv = require('minimist')(process.argv.slice(2));
+  const argv = minimist(process.argv.slice(2));
   
   if (argv === undefined) {
     console.log("No arguments provided in CLI");
@@ -82,7 +86,7 @@ function setDefaultConfiguration() {
 }
 
 function setConfigurationFromEnvironment() {
-  require("dotenv").config();
+  dotenvConfig();
   if (process.env.ATJ_GOOGLE_API_KEY) {
     config.translationKeyInfo = {
       kind: "google",

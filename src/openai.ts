@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
-import type { ITranslate } from "./translate.interface";
-import { Util } from "./util";
+import type { ITranslate } from "./translate.interface.js";
+import { Util } from "./util.js";
 
 const supportedLanguages: { [key: string]: string } = {
   af: "Afrikaans",

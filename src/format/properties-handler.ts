@@ -6,8 +6,8 @@ import type {
   FormatOptions, 
   ValidationResult, 
   EnhancedTranslationFile 
-} from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
+} from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
 
 export class PropertiesHandler implements IFormatHandler {
   canHandle(filePath: string, content?: string): boolean {

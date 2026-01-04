@@ -4,10 +4,10 @@ import type {
   ValidationWarning,
   IFormatHandler,
   EnhancedTranslationFile 
-} from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
-import { EnhancedValidationResult } from "./enhanced-validation-result";
-import { ErrorMessageFormatter, type ErrorMessageContext } from "./error-messages";
+} from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
+import { EnhancedValidationResult } from "./enhanced-validation-result.js";
+import { ErrorMessageFormatter, type ErrorMessageContext } from "./error-messages.js";
 
 export interface FormatValidationRule {
   code: string;

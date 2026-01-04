@@ -1,6 +1,11 @@
-import { Files } from '../src/files';
-import { FormatDetector } from '../src/format-detector';
-import { FormatHandlerFactory } from '../src/format-handler-factory';
+import { Files } from '../src/files.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+import { FormatDetector } from '../src/format-detector.js';
+import { FormatHandlerFactory } from '../src/format-handler-factory.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 

@@ -1,11 +1,16 @@
-import { ValidationService, type ValidationServiceResult } from '../src/validation/validation-service';
-import { EnhancedValidationResult } from '../src/validation/enhanced-validation-result';
-import { ErrorRecoveryManager, UserGuidanceSystem, initializeErrorRecovery } from '../src/validation/error-recovery';
-import { ErrorMessageFormatter } from '../src/validation/error-messages';
-import { FormatDetector } from '../src/format-detector';
-import { FormatHandlerFactory } from '../src/format-handler-factory';
-import type { IFormatHandler, ValidationResult } from '../src/format.interface';
-import type { TranslationFile } from '../src/translate.interface';
+import { ValidationService, type ValidationServiceResult } from '../src/validation/validation-service.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+import { EnhancedValidationResult } from '../src/validation/enhanced-validation-result.js';
+import { ErrorRecoveryManager, UserGuidanceSystem, initializeErrorRecovery } from '../src/validation/error-recovery.js';
+import { ErrorMessageFormatter } from '../src/validation/error-messages.js';
+import { FormatDetector } from '../src/format-detector.js';
+import { FormatHandlerFactory } from '../src/format-handler-factory.js';
+import type { IFormatHandler, ValidationResult } from '../src/format.interface.js';
+import type { TranslationFile } from '../src/translate.interface.js';
 
 // Mock handler for testing
 class MockFormatHandler implements IFormatHandler {

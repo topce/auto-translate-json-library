@@ -1,10 +1,10 @@
 app:
-  name: Mon application extraordinaire
-  description: C'est un démonstratif
+  name: Mon application géniale
+  description: C'est une démo
 menu:
   file: Fichier
-  edit: Modifier
+  edit: Editer
   view: Vue
 messages:
-  success: Opération réussie
+  success: L'opération a réussi
   error: Une erreur s'est produite

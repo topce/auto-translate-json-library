@@ -3,3 +3,5 @@
 
 // Increase timeout for tests that might involve file I/O
 jest.setTimeout(10000);
+
+export {};

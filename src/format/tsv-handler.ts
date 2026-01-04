@@ -4,9 +4,9 @@ import type {
   FormatOptions, 
   ValidationResult, 
   EnhancedTranslationFile 
-} from "../format.interface";
-import type { TranslationFile } from "../translate.interface";
-import { CsvHandler, type CsvOptions } from "./csv-handler";
+} from "../format.interface.js";
+import type { TranslationFile } from "../translate.interface.js";
+import { CsvHandler, type CsvOptions } from "./csv-handler.js";
 
 export class TsvHandler implements IFormatHandler {
   private csvHandler: CsvHandler;

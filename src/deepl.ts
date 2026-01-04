@@ -1,7 +1,7 @@
 import * as deepl from "deepl-node";
-import type { ITranslate } from "./translate.interface";
+import type { ITranslate } from "./translate.interface.js";
 
-import { Util } from "./util";
+import { Util } from "./util.js";
 
 const supportedLanguages = [
   "AR",

@@ -1,6 +1,11 @@
-import { XmbHandler } from "../src/format/xmb-handler";
-import { XtbHandler } from "../src/format/xtb-handler";
-import { XmbXtbUtils } from "../src/format/xmb-xtb-utils";
+import { XmbHandler } from "../src/format/xmb-handler.js";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+import { XtbHandler } from "../src/format/xtb-handler.js";
+import { XmbXtbUtils } from "../src/format/xmb-xtb-utils.js";
 import * as fs from "node:fs";
 import * as path from "node:path";
 

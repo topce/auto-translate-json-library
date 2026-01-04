@@ -1,8 +1,8 @@
-import type { TranslationFile } from "../translate.interface";
-import type { EnhancedTranslationFile } from "../format.interface";
-import { FormatDetector } from "../format-detector";
-import { FormatHandlerFactory } from "../format-handler-factory";
-import { ErrorMessageFormatter } from "./error-messages";
+import type { TranslationFile } from "../translate.interface.js";
+import type { EnhancedTranslationFile } from "../format.interface.js";
+import { FormatDetector } from "../format-detector.js";
+import { FormatHandlerFactory } from "../format-handler-factory.js";
+import { ErrorMessageFormatter } from "./error-messages.js";
 
 /**
  * Recovery strategy for handling corrupted or problematic files

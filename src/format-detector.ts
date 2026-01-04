@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import type { IFormatHandler } from "./format.interface";
+import type { IFormatHandler } from "./format.interface.js";
 
 export class FormatDetector {
   private static extensionMap: Map<string, string> = new Map([

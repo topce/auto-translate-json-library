@@ -2,8 +2,8 @@ import {
   Translate,
   type TranslateTextCommandInput,
 } from "@aws-sdk/client-translate";
-import type { ITranslate } from "./translate.interface";
-import { Util } from "./util";
+import type { ITranslate } from "./translate.interface.js";
+import { Util } from "./util.js";
 
 const supportedLanguages = [
   "af",

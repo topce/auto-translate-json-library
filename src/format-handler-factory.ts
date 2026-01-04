@@ -1,4 +1,4 @@
-import type { IFormatHandler } from "./format.interface";
+import type { IFormatHandler } from "./format.interface.js";
 
 export class FormatHandlerFactory {
   private static handlers: Map<string, IFormatHandler> = new Map();

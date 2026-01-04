@@ -1,5 +1,5 @@
-import type { ValidationResult, ValidationError, ValidationWarning } from "../format.interface";
-import { ErrorMessageFormatter, type ErrorMessageContext } from "./error-messages";
+import type { ValidationResult, ValidationError, ValidationWarning } from "../format.interface.js";
+import { ErrorMessageFormatter, type ErrorMessageContext } from "./error-messages.js";
 
 /**
  * Enhanced validation error with detailed messaging and context
