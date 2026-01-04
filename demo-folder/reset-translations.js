@@ -51,8 +51,8 @@ msgstr ""
 
 `
     },
-    { file: 'content.csv', content: 'key,fr' },
-    { file: 'layout.csv', content: 'key,fr' }
+    { file: 'content.csv', content: 'key,fr\nheader.title,\nheader.subtitle,' },
+    { file: 'layout.csv', content: 'key,fr\nbody.text,\nfooter.copyright,' }
 ];
 
 console.log('🧹 Resetting French translation files in folder structure...\n');

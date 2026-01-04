@@ -1,3 +1,5 @@
 {
-
+  "greeting": "Bonjour le monde",
+  "farewell": "Au revoir",
+  "welcome": "Bienvenue dans notre application"
 }

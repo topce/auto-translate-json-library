@@ -2,11 +2,23 @@
 
 This folder contains a demonstration of the `auto-translate-json-library` capabilities with support for multiple translation engines including local AI models via Ollama.
 
+## Demo Folders
+
+- **`demo/`** (this folder) - **File Mode Demo**: Individual translation files (e.g., `en.json`, `fr.json`)
+- **`demo-folder/`** - **Folder Mode Demo**: Language-organized directories (e.g., `en/common.json`, `fr/common.json`)
+
+Choose the demo that matches your project structure:
+- Use **file mode** for simple projects with one file per language
+- Use **folder mode** for complex projects with multiple files per language
+
 ## Contents
-- `source/`: Sample translation files in different formats (JSON, Android XML, PO, YAML, Properties, CSV, ARB).
-- `run-demo.js`: A Node.js script that runs the translation tool against the sample files to demonstrate various features.
-- `ollama.env`: Pre-configured environment variables for local Ollama setup.
-- `reset-translations.js`: Script to reset all translated files to their original state.
+- `source/`: Sample translation files in different formats (JSON, Android XML, PO, YAML, Properties, CSV, ARB)
+- `run-demo.js`: A Node.js script that runs the translation tool against individual files to demonstrate various features
+- `ollama.env`: Pre-configured environment variables for local Ollama setup (file mode)
+- `reset-translations.js`: Script to reset all translated files to their original state
+- `README.md`: This documentation
+
+**For folder mode demo, see the `../demo-folder/` directory.**
 
 ## Prerequisites
 - Node.js installed
@@ -108,7 +120,7 @@ node reset-translations.js
 ```
 
 ## What it does
-The `run-demo.js` script executes the auto-translate CLI tool to demonstrate translation of various formats:
+The `run-demo.js` script executes the auto-translate CLI tool to demonstrate translation of various formats in **file mode**:
 
 1. **JSON**: Basic translation (`en.json` -> `fr.json`)
 2. **Android XML**: Preserving attributes and structure (`en.xml` -> `fr.xml`)
@@ -123,7 +135,21 @@ It demonstrates:
 - **Source Locale**: Setting the source language (e.g., `-s en`)
 - **Engine Selection**: Specifying different engines (Google, OpenAI, Ollama, etc.)
 - **Local AI Integration**: Using local OpenAI-compatible servers like Ollama
-- **Batch Processing**: Translating multiple files in different formats
+- **Individual File Processing**: Translating single files at a time
+
+## File Mode vs Folder Mode
+
+This demo uses **file mode** where each language has separate files:
+```
+demo/source/
+├── en.json     # English JSON
+├── fr.json     # French JSON
+├── en.xml      # English XML
+├── fr.xml      # French XML
+└── ...
+```
+
+For **folder mode** where files are organized by language directories, see `../demo-folder/`.
 
 ## Configuration
 

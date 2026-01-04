@@ -57,38 +57,86 @@ function runCommand(desc, cmd) {
 
 // Define all demo commands for folder mode
 const demoCommands = {
-    json: () => runCommand(
-        'JSON Folder Translation: en/ -> fr/ (JSON files)',
-        `${cliPath} -s en -e openai -f json source`
-    ),
-    xml: () => runCommand(
-        'XML Folder Translation: en/ -> fr/ (Android XML files)',
-        `${cliPath} -s en -f android-xml -e openai source`
-    ),
-    arb: () => runCommand(
-        'ARB Folder Translation: en/ -> fr/ (Flutter ARB files)',
-        `${cliPath} -s en -f arb -e openai source`
-    ),
-    po: () => runCommand(
-        'PO Folder Translation: en/ -> fr/ (Gettext PO files)',
-        `${cliPath} -s en -f po -e openai source`
-    ),
-    yaml: () => runCommand(
-        'YAML Folder Translation: en/ -> fr/ (YAML files)',
-        `${cliPath} -s en -f yaml -e openai source`
-    ),
-    properties: () => runCommand(
-        'Properties Folder Translation: en/ -> fr/ (Java Properties files)',
-        `${cliPath} -s en -f properties -e openai source`
-    ),
-    csv: () => runCommand(
-        'CSV Folder Translation: en/ -> fr/ (CSV files)',
-        `${cliPath} -s en -f csv -e openai source`
-    ),
-    all: () => runCommand(
-        'All Formats Folder Translation: en/ -> fr/ (All supported formats)',
-        `${cliPath} -s en -e openai source`
-    )
+    json: () => {
+        runCommand(
+            'JSON Folder Translation: common.json (en/ -> fr/)',
+            `${cliPath} -s en -e openai -f json -m folder source\\en\\common.json`
+        );
+        runCommand(
+            'JSON Folder Translation: ui.json (en/ -> fr/)',
+            `${cliPath} -s en -e openai -f json -m folder source\\en\\ui.json`
+        );
+    },
+    xml: () => {
+        runCommand(
+            'XML Folder Translation: app.xml (en/ -> fr/)',
+            `${cliPath} -s en -f android-xml -e openai -m folder source\\en\\app.xml`
+        );
+        runCommand(
+            'XML Folder Translation: errors.xml (en/ -> fr/)',
+            `${cliPath} -s en -f android-xml -e openai -m folder source\\en\\errors.xml`
+        );
+    },
+    arb: () => {
+        runCommand(
+            'ARB Folder Translation: app.arb (en/ -> fr/)',
+            `${cliPath} -s en -f arb -e openai -m folder source\\en\\app.arb`
+        );
+        runCommand(
+            'ARB Folder Translation: welcome.arb (en/ -> fr/)',
+            `${cliPath} -s en -f arb -e openai -m folder source\\en\\welcome.arb`
+        );
+    },
+    po: () => {
+        runCommand(
+            'PO Folder Translation: main.po (en/ -> fr/)',
+            `${cliPath} -s en -f po -e openai -m folder source\\en\\main.po`
+        );
+        runCommand(
+            'PO Folder Translation: user.po (en/ -> fr/)',
+            `${cliPath} -s en -f po -e openai -m folder source\\en\\user.po`
+        );
+    },
+    yaml: () => {
+        runCommand(
+            'YAML Folder Translation: config.yaml (en/ -> fr/)',
+            `${cliPath} -s en -f yaml -e openai -m folder source\\en\\config.yaml`
+        );
+        runCommand(
+            'YAML Folder Translation: messages.yaml (en/ -> fr/)',
+            `${cliPath} -s en -f yaml -e openai -m folder source\\en\\messages.yaml`
+        );
+    },
+    properties: () => {
+        runCommand(
+            'Properties Folder Translation: site.properties (en/ -> fr/)',
+            `${cliPath} -s en -f properties -e openai -m folder source\\en\\site.properties`
+        );
+        runCommand(
+            'Properties Folder Translation: buttons.properties (en/ -> fr/)',
+            `${cliPath} -s en -f properties -e openai -m folder source\\en\\buttons.properties`
+        );
+    },
+    csv: () => {
+        runCommand(
+            'CSV Folder Translation: content.csv (en/ -> fr/)',
+            `${cliPath} -s en -f csv -e openai -m folder source\\en\\content.csv`
+        );
+        runCommand(
+            'CSV Folder Translation: layout.csv (en/ -> fr/)',
+            `${cliPath} -s en -f csv -e openai -m folder source\\en\\layout.csv`
+        );
+    },
+    all: () => {
+        console.log('\n>>> Running all folder mode translations...');
+        demoCommands.json();
+        demoCommands.xml();
+        demoCommands.arb();
+        demoCommands.po();
+        demoCommands.yaml();
+        demoCommands.properties();
+        demoCommands.csv();
+    }
 };
 
 console.log('--- Auto Translate JSON Library - Folder Mode Demo ---');

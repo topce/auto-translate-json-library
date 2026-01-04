@@ -346,13 +346,33 @@ Do not forget to set translation engine parameters in environment variables or .
 
 ## Demo and Examples
 
-The project includes a comprehensive demo system with examples for all supported formats:
+The project includes a comprehensive demo system with examples for all supported formats and both translation modes:
 
+### File Mode Demo (demo/)
+Individual translation files - one file per language:
 ```shell
 cd demo
 npm install
-npm run demo
+node run-demo.js
 ```
+
+### Folder Mode Demo (demo-folder/)
+Language-organized directories - multiple files per language:
+```shell
+cd demo-folder
+npm install
+node run-demo.js
+```
+
+Both demos support:
+- **Local AI translation** using Ollama (recommended for testing)
+- **Cloud translation services** (Google, OpenAI, AWS, Azure, DeepL)
+- **All supported formats** (JSON, XML, YAML, Properties, ARB, PO, CSV)
+- **Interactive examples** with real translation results
+
+Choose the demo that matches your project structure:
+- **File mode**: Simple projects with one file per language (`en.json`, `fr.json`)
+- **Folder mode**: Complex projects with multiple files per language (`en/common.json`, `fr/common.json`)
 
 This will run translations on sample files in multiple formats (JSON, XML, YAML, ARB, PO, Properties, CSV) using the local Ollama setup with the `qwen2.5:14b` model and show the results.
 
@@ -391,8 +411,11 @@ npm run format-fix
 # Build project
 npm run build
 
-# Run demo
-cd demo && npm run demo
+# Run demo (file mode)
+cd demo && node run-demo.js
+
+# Run demo (folder mode)
+cd demo-folder && node run-demo.js
 ```
 
 ## Multi-Format Support
@@ -1097,10 +1120,13 @@ This major release represents a complete rewrite and enhancement of the library:
 - Enhanced debugging and troubleshooting information
 
 #### 🎯 **Demo System**
-- Interactive demo with examples for all supported formats
+- **Dual demo modes**: File mode (`demo/`) and Folder mode (`demo-folder/`)
+- Interactive examples with examples for all supported formats
+- **Local AI integration** with Ollama for offline testing
 - Automated reset and run scripts for easy testing
 - Sample files demonstrating real-world usage patterns
 - Quick start examples for new users
+- **Comprehensive format coverage**: JSON, XML, YAML, Properties, ARB, PO, CSV
 
 #### 🧪 **Comprehensive Testing**
 - 100% test coverage for all format handlers
