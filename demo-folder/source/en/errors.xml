@@ -1,0 +1,6 @@
+<resources>
+    <group name="errors">
+        <string name="network_error">Network error</string>
+        <string name="unknown_error">Unknown error</string>
+    </group>
+</resources>

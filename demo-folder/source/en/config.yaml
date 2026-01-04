@@ -1,0 +1,7 @@
+app:
+  name: "My Awesome App"
+  description: "This is a demo"
+menu:
+  file: "File"
+  edit: "Edit"
+  view: "View"

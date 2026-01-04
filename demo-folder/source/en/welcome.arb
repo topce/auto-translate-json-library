@@ -1,0 +1,10 @@
+{
+  "@@locale": "en",
+  "welcome": "Welcome {name}",
+  "@welcome": {
+    "description": "Welcome message",
+    "placeholders": {
+      "name": {}
+    }
+  }
+}

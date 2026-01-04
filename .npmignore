@@ -1,12 +1,54 @@
-tests/
-.vscode/
-biome.json
+# Source files (TypeScript source is not needed in published package)
 src/
 tsconfig.json
 
-# dotenv environment variable files
+# Test files and coverage
+tests/
+coverage/
+jest.config.mjs
+
+# Development tools and configuration
+.vscode/
+biome.json
+.github/
+
+# Demo and example files (not needed in published package)
+demo/
+
+# Environment files
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.*
+*.env
+deepseek.env
+ollama.env
+openai.env
+google.env
+aws.env
+azure.env
+deepl.env
+
+# Development dependencies
+node_modules/
+
+# Git files
+.git/
+.gitignore
+
+# Build artifacts that shouldn't be in source (but build/ is included via files array)
+# Uncomment if you want to exclude specific build files
+# build/src/**/*.test.*
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
