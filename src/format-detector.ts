@@ -36,6 +36,12 @@ export class FormatDetector {
 
     // First try extension-based detection
     const formatFromExtension = this.extensionMap.get(extension);
+    
+    // For YAML files, prioritize extension-based detection to avoid confusion with properties
+    if (formatFromExtension === 'yaml') {
+      return formatFromExtension;
+    }
+    
     if (formatFromExtension && !content) {
       return formatFromExtension;
     }

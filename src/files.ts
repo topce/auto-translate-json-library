@@ -158,6 +158,11 @@ export const loadJsonFromLocale: (
           );
         }
 
+        // For formats that need metadata for proper reconstruction (like YAML), preserve it
+        if (format === 'yaml' || format === 'yml') {
+          return tempResult;
+        }
+
         // Remove metadata for backward compatibility
         const { _metadata, ...cleanResult } =
           tempResult as EnhancedTranslationFile;
