@@ -1,0 +1,42 @@
+# Sample YAML translation file
+app:
+  title: "My Application"
+  description: "This is a sample application"
+  version: 1.0.0
+  isActive: true
+  releaseDate: 2024-01-01
+  
+navigation:
+  home: "Home"
+  about: "About"
+  contact: "Contact"
+  
+messages:
+  welcome: "Welcome to our application"
+  errors:
+    notFound: "Page not found"
+    serverError: "Internal server error"
+    validation:
+      required: "This field is required"
+      email: "Please enter a valid email"
+  
+features:
+  - "Feature One"
+  - "Feature Two" 
+  - "Feature Three"
+  
+settings:
+  theme: "dark"
+  language: "en"
+  notifications:
+    email: true
+    push: false
+    sms: null
+    
+metadata:
+  created: 2024-01-01T00:00:00Z
+  tags: ["app", "translation", "yaml"]
+  config:
+    maxUsers: 1000
+    timeout: 30.5
+    debug: false

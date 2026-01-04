@@ -1,0 +1,10 @@
+{
+    "greeting": "Hello world",
+    "farewell": "Goodbye",
+    "welcome": "Welcome to our application",
+    "description": "This is a demo file for automatic translation",
+    "button": {
+        "save": "Save",
+        "cancel": "Cancel"
+    }
+}

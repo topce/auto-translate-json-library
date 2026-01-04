@@ -1,0 +1,9 @@
+<common>
+  <item key="dashboard">Dashboard</item>
+  <item key="pricing">Pricing</item>
+  <item key="sign-in">Sign in</item>
+  <item key="settings">Settings</item>
+  <item key="language">Language</item>
+  <item key="get-credit">Get credit</item>
+  <item key="logout">Logout</item>
+</common>

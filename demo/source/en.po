@@ -1,0 +1,25 @@
+# English translation file
+# Source file for auto-translate-json-library demo
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Language-Team: English\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2026-01-04 12:00:00+0000\n"
+"PO-Revision-Date: 2026-01-04 12:00:00+0000\n"
+"X-Generator: auto-translate-json-library\n"
+
+msgid "hello_world"
+msgstr "Hello world"
+
+msgid "goodbye"
+msgstr "Goodbye"
+
+msgid "user_profile"
+msgstr "User Profile"
+
+msgid "settings"
+msgstr "Settings"

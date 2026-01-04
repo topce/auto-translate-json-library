@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">Mon application de démonstration</string>
+    <string name="welcome_message">Bienvenue à tous</string>
+    <string name="login">Connexion</string>
+    <string name="logout">Se déconnecter</string>
+    <group name="errors">
+        <string name="network_error">Erreur de réseau</string>
+        <string name="unknown_error">Erreur inconnue</string>
+    </group>
+</resources>

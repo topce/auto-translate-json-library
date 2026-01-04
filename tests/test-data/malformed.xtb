@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translationbundle lang="es">
+  <translation id="BROKEN_PLACEHOLDER">¡Hola, {$username! Falta llave de cierre.</translation>
+  <translation id="UNMATCHED_PH">Bienvenido <ph name="USER">Juan</ph>, tienes mensajes.</translation>
+  <translation>Esta traducción no tiene ID.</translation>
+  <translation id="MISSING_ORIGINAL">Esta traducción no tiene mensaje original correspondiente.</translation>
+</translationbundle>

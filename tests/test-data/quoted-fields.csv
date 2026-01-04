@@ -1,0 +1,8 @@
+key,value
+simple_text,Hello World
+quoted_text,"Hello, World!"
+text_with_quotes,"She said ""Hello"" to me"
+multiline_text,"This is a
+multiline text"
+text_with_commas,"Red, Green, Blue"
+text_with_semicolon,"Name: John; Age: 30"

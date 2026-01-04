@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>app_name</key>
+    <string>My iOS App</string>
+    <key>welcome_message</key>
+    <string>Welcome to iOS!</string>
+    <key>settings_title</key>
+    <string>Settings</string>
+    <key>empty_value</key>
+    <string></string>
+    <key>special_chars</key>
+    <string>Special: &amp; &lt; &gt;</string>
+</dict>
+</plist>

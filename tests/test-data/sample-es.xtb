@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translationbundle lang="es">
+  <translation id="HELLO_WORLD">¡Hola, Mundo!</translation>
+  <translation id="USER_GREETING">¡Hola, {$username}!</translation>
+  <translation id="PLACEHOLDER_EXAMPLE">
+    Bienvenido <ph name="USER_NAME">Juan</ph>, tienes <ph name="COUNT">5</ph> mensajes.
+  </translation>
+  <translation id="COMPLEX_MESSAGE">
+    Tu pedido <ph name="ORDER_ID">12345</ph> de {$itemCount} artículos llegará el <ex>lunes</ex>.
+  </translation>
+  <translation id="SIMPLE_TEXT">Este es un mensaje simple.</translation>
+  <translation id="NESTED_PLACEHOLDERS">
+    Estado: <ph name="STATUS"><ex>Activo</ex></ph> para usuario {$userId} en <ph name="REGION">US</ph>.
+  </translation>
+</translationbundle>

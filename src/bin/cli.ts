@@ -6,16 +6,20 @@ import c from "picocolors";
 import { version } from "../../package.json";
 import type { Configuration } from "../config";
 import { translate } from "../lib";
+import { FormatHandlerFactory } from "../format-handler-factory";
+// Import format handlers to ensure they are registered
+import "../format";
 
 require("dotenv").config();
 
 // Define a function to display the help message
 function displayHelp() {
-  console.log(`🔨 Auto translate json cli v${version}`);
+  console.log(`🔨 Auto translate json/xml cli v${version}`);
   console.log("Usage: atj [options] <inputPath>");
   console.log("");
   console.log("Options:");
   console.log("  --help, -h               Display this help message");
+  console.log("  --list-formats           List all supported file formats");
   console.log(
     "  --mode, -m <mode>        Specify the translation mode:file or folder",
   );
@@ -23,6 +27,8 @@ function displayHelp() {
     "  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepLPro,deepLFree or openai",
   );
   console.log("  --sourceLocale, -s <locale>  Specify the source locale");
+  console.log("  --format, -f <format>    Manually specify the file format (overrides auto-detection)");
+  console.log("  Note: inputPath can be a translation file in any supported format, or a folder structure");
   console.log(
     "  --keepTranslations, --no-keepTranslations  Keep or retranslate existing translations",
   );
@@ -30,16 +36,95 @@ function displayHelp() {
     "  --keepExtraTranslations, --no-keepExtraTranslations  Keep or remove extra translations",
   );
   console.log("");
+  console.log("Supported formats:");
+  const formats = FormatHandlerFactory.getSupportedFormats();
+  const formatGroups = {
+    "JSON-based": ["json", "arb"],
+    "XML-based": ["xml", "android-xml", "ios-xml", "generic-xml", "xliff", "xmb", "xtb"],
+    "Text-based": ["po", "pot", "yaml", "properties"],
+    "Tabular": ["csv", "tsv"]
+  };
+  
+  for (const [group, groupFormats] of Object.entries(formatGroups)) {
+    const availableFormats = groupFormats.filter(f => formats.includes(f));
+    if (availableFormats.length > 0) {
+      console.log(`  ${group}: ${availableFormats.join(", ")}`);
+    }
+  }
+  console.log("");
+  console.log("Format examples:");
+  console.log("  JSON:        translations.json, app.arb (Flutter)");
+  console.log("  XML:         strings.xml (Android), messages.xlf (XLIFF), template.xmb (Google)");
+  console.log("  Text:        messages.po (gettext), config.yaml, app.properties (Java)");
+  console.log("  Tabular:     translations.csv, data.tsv");
+  console.log("");
+  console.log("Usage examples:");
+  console.log("  atj translations.json                    # Auto-detect JSON format");
+  console.log("  atj --format xliff messages.xlf         # Force XLIFF format");
+  console.log("  atj --mode folder locales/               # Process entire folder");
+  console.log("  atj --engine google --format po msgs.po # Use Google Translate with PO files");
+  console.log("");
   console.log("Default values");
   console.log("  --mode, -m <mode>                                    file");
   console.log("  --engine, -e <engine>                                aws");
   console.log("  --sourceLocale, -s <locale>                          en");
+  console.log("  --format, -f <format>                                auto-detect");
   console.log(
     "  --keepTranslations, --no-keepTranslations            --keepTranslations",
   );
   console.log(
     "  --keepExtraTranslations, --no-keepExtraTranslations  --no-keepExtraTranslations",
   );
+}
+
+// Define a function to list supported formats
+function listFormats() {
+  console.log(`🔨 Auto translate json/xml cli v${version}`);
+  console.log("");
+  console.log("Supported file formats:");
+  console.log("");
+  
+  const formats = FormatHandlerFactory.getSupportedFormats();
+  const formatDetails = {
+    "json": { extensions: [".json"], description: "JSON translation files" },
+    "arb": { extensions: [".arb"], description: "Flutter Application Resource Bundle" },
+    "xml": { extensions: [".xml"], description: "Generic XML translation files" },
+    "android-xml": { extensions: [".xml"], description: "Android strings.xml format" },
+    "ios-xml": { extensions: [".xml"], description: "iOS localization XML format" },
+    "generic-xml": { extensions: [".xml"], description: "Generic XML format" },
+    "xliff": { extensions: [".xlf", ".xliff"], description: "XLIFF 1.2 and 2.x translation files" },
+    "xmb": { extensions: [".xmb"], description: "XML Message Bundle source files" },
+    "xtb": { extensions: [".xtb"], description: "XML Translation Bundle files" },
+    "po": { extensions: [".po"], description: "GNU gettext PO files" },
+    "pot": { extensions: [".pot"], description: "GNU gettext POT template files" },
+    "yaml": { extensions: [".yaml", ".yml"], description: "YAML translation files" },
+    "properties": { extensions: [".properties"], description: "Java Properties files" },
+    "csv": { extensions: [".csv"], description: "Comma-separated values files" },
+    "tsv": { extensions: [".tsv"], description: "Tab-separated values files" }
+  };
+
+  for (const format of formats.sort()) {
+    const details = formatDetails[format as keyof typeof formatDetails];
+    if (details) {
+      console.log(`  ${format.padEnd(15)} ${details.extensions.join(", ").padEnd(20)} ${details.description}`);
+    }
+  }
+  
+  console.log("");
+  console.log("Usage examples:");
+  console.log("  atj --format json translations.json");
+  console.log("  atj --format xliff messages.xlf");
+  console.log("  atj --format po locales/messages.po");
+  console.log("  atj --format yaml config/translations.yaml");
+  console.log("  atj --format arb --engine google lib/l10n/app_en.arb");
+  console.log("  atj --format android-xml --sourceLocale en res/values/strings.xml");
+  console.log("");
+  console.log("Best practices:");
+  console.log("  • Format is usually auto-detected from file extension");
+  console.log("  • Use --format to override auto-detection when needed");
+  console.log("  • For XML files, specify the exact variant (android-xml, ios-xml, xliff)");
+  console.log("  • Use --keepTranslations to preserve existing translations");
+  console.log("  • Test with a single file before processing entire folders");
 }
 
 const arguments_ = process.argv.slice(2);
@@ -56,10 +141,11 @@ const flags = minimist(arguments_, {
     keepTranslations: ["kt"],
     keepExtraTranslations: ["ket"],
     sourceLocale: ["s"],
+    format: ["f"],
     help: ["h"],
   },
-  string: ["mode", "engine", "sourceLocale"],
-  boolean: ["keepTranslations", "keepExtraTranslations", "help"],
+  string: ["mode", "engine", "sourceLocale", "format"],
+  boolean: ["keepTranslations", "keepExtraTranslations", "help", "list-formats"],
   default: {
     engine: "aws",
     sourceLocale: "en",
@@ -75,9 +161,49 @@ if (flags.help) {
   process.exit(0);
 }
 
+if (flags["list-formats"]) {
+  listFormats();
+  process.exit(0);
+}
+
 const inputPath = flags._[0];
-const { mode, engine, sourceLocale, keepTranslations, keepExtraTranslations } =
+const { mode, engine, sourceLocale, keepTranslations, keepExtraTranslations, format } =
   flags;
+
+// Validate input path
+if (!inputPath) {
+  console.error(c.red("❌ Input path is required"));
+  console.error(c.yellow("💡 Usage: atj [options] <inputPath>"));
+  process.exit(1);
+}
+
+// Validate format if specified
+if (format && !FormatHandlerFactory.hasHandler(format)) {
+  console.error(c.red(`❌ Unsupported format: ${format}`));
+  console.error(c.yellow("💡 Use --list-formats to see all supported formats"));
+  process.exit(1);
+}
+
+// Validate mode
+if (mode && !["file", "folder"].includes(mode)) {
+  console.error(c.red(`❌ Invalid mode: ${mode}`));
+  console.error(c.yellow("💡 Mode must be either 'file' or 'folder'"));
+  process.exit(1);
+}
+
+// Validate engine
+const validEngines = ["aws", "azure", "google", "deepLPro", "deepLFree", "openai"];
+if (engine && !validEngines.includes(engine)) {
+  console.error(c.red(`❌ Invalid engine: ${engine}`));
+  console.error(c.yellow(`💡 Supported engines: ${validEngines.join(", ")}`));
+  process.exit(1);
+}
+
+// Check if input path exists
+if (!require("fs").existsSync(inputPath)) {
+  console.error(c.red(`❌ Input path does not exist: ${inputPath}`));
+  process.exit(1);
+}
 
 const config: Configuration = {} as Configuration;
 
@@ -212,6 +338,9 @@ config.sourceLocale = sourceLocale;
 config.keepTranslations = keepTranslations ? "keep" : "retranslate";
 config.keepExtraTranslations = keepExtraTranslations ? "keep" : "remove";
 config.mode = mode;
+if (format) {
+  config.format = format;
+}
 const sourcePath = path.join(process.cwd(), inputPath);
 console.log(c.green(`🌐 Translating ${sourcePath}`));
 

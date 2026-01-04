@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Demo Application</string>
+    <string name="welcome_message">Welcome everyone</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <group name="errors">
+        <string name="network_error">Network error</string>
+        <string name="unknown_error">Unknown error</string>
+    </group>
+</resources>

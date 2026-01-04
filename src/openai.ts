@@ -139,6 +139,7 @@ export class OpenAITranslate implements ITranslate {
     text: string,
     sourceLocale: string,
     targetLocale: string,
+    context?: string,
   ): Promise<string> {
     if (sourceLocale !== "en") {
       throw Error(
@@ -146,13 +147,32 @@ export class OpenAITranslate implements ITranslate {
       );
     }
 
+    // DEBUG: Log what text is being sent for translation
+    console.log(`🔍 DEBUG - Translating text: "${text}" (length: ${text.length})`);
+    console.log(`🔍 DEBUG - Source locale: ${sourceLocale}, Target locale: ${targetLocale}`);
+    if (context) {
+      console.log(`🔍 DEBUG - Context: ${context}`);
+    }
+
     let result = "";
     let args: RegExpMatchArray | null;
     ({ args, text } = Util.replaceContextVariables(text));
-    const systemPrompt = `You will be provided with a sentence or words in English, and your task is to translate it into  ${
-      supportedLanguages[targetLocale] as string
-    }`;
+    
+    // DEBUG: Log text after context variable replacement
+    console.log(`🔍 DEBUG - Text after context replacement: "${text}" (length: ${text.length})`);
+    
+    let systemPrompt = `You will be provided with a sentence or words in English, and your task is to translate it into  ${supportedLanguages[targetLocale] as string
+      }. Return ONLY the translation, without any additional text or explanations.`;
+
+    if (context) {
+      systemPrompt += `\nContext for the translation: ${context}`;
+    }
     const userPrompt = text;
+    
+    // DEBUG: Log the prompts being sent
+    console.log(`🔍 DEBUG - System prompt: "${systemPrompt}"`);
+    console.log(`🔍 DEBUG - User prompt: "${userPrompt}"`);
+    
     const response = await this.openai.chat.completions.create({
       model: this.model,
       messages: [
@@ -173,6 +193,9 @@ export class OpenAITranslate implements ITranslate {
         response.choices[0].message.content,
       );
       result = result.replace(/^\n+|\n+$/g, "");
+      
+      // DEBUG: Log the translation result
+      console.log(`🔍 DEBUG - Translation result: "${result}"`);
     } else {
       console.error(`can not translate text with 
       system prompt : ${systemPrompt} 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messagebundle locale="en">
+  <msg id="BROKEN_PLACEHOLDER" desc="Message with unmatched braces">Hello, {$username! Missing closing brace.</msg>
+  <msg id="UNMATCHED_PH" desc="Message with unmatched ph tags">Welcome <ph name="USER">John</ph>, you have messages.</msg>
+  <msg desc="Missing ID attribute">This message has no ID.</msg>
+  <msg id="EMPTY_PH_NAME" desc="Message with empty placeholder name">Hello <ph name="">World</ph>!</msg>
+</messagebundle>

@@ -1,0 +1,41 @@
+<resources>
+  <string name="hello.txt">Hola, mundo.</string>
+  <string name="@@ignore.me">Ignórame.</string>
+  <group name="accountLayout">
+    <string name="myProfile">Mi perfil</string>
+    <string name="myAddressBook">Libreta de direcciones.</string>
+    <string name="vouchers">Boletos o cupones</string>
+    <string name="myOrders">Mis órdenes.</string>
+    <string name="myWishlist">La lista de deseos</string>
+    <string name="comparedList">Lista comparativa.</string>
+
+    
+    
+    
+    
+    
+    
+    </group>
+  <group name="trackOrder">
+    <string name="estimatedDelivery">Entrega estimada.</string>
+    <string name="estimated">Estimado</string>
+    <string name="enterCode">El código de la pista de tu pedido.</string>
+    <string name="trackOrder">Seguimiento de tu Orden</string>
+    <string name="orderStatus">Estado del Pedido.</string>
+    <string name="haveAnOrder">&quot;¿Tiene un pedido? ¿Quiere saber dónde está su pedido ahora?&quot;</string>
+    <string name="knowProgress">Saber el progreso de la entrega de su producto.</string>
+
+    
+    
+    
+    
+    
+    
+    
+    </group>
+
+  
+  
+  
+  
+</resources>

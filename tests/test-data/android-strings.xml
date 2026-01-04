@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">My Android App</string>
+    <string name="welcome_message">Welcome to our application!</string>
+    <string name="button_text">Click me</string>
+    <!-- This is a comment -->
+    <string name="formatted_text"><![CDATA[This is <b>bold</b> text]]></string>
+    <string name="empty_string"></string>
+    <string name="special_chars">Special chars: &amp; &lt; &gt; &quot; &apos;</string>
+</resources>

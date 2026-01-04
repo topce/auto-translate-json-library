@@ -4,6 +4,7 @@ export interface ITranslate {
     text: string,
     sourceLocale: string,
     targetLocale: string,
+    context?: string,
   ): Promise<string>;
 }
 

@@ -13,6 +13,7 @@ export type Configuration = {
   keepTranslations: "keep" | "retranslate";
   keepExtraTranslations: "keep" | "remove";
   ignorePrefix: string;
+  format?: string;
 };
 
 type GoogleTranslationKey = { kind: "google"; apiKey: string };

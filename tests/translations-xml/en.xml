@@ -1,0 +1,21 @@
+<resources>
+  <string name="hello.txt">Hello, world!</string>
+  <string name="@@ignore.me">Ignore me</string>
+  <group name="accountLayout">
+    <string name="myProfile">My profile</string>
+    <string name="myAddressBook">My address book</string>
+    <string name="vouchers">Vouchers</string>
+    <string name="myOrders">My orders</string>
+    <string name="myWishlist">My wishlist</string>
+    <string name="comparedList">Compared list</string>
+  </group>
+  <group name="trackOrder">
+    <string name="estimatedDelivery">Estimated delivery</string>
+    <string name="estimated">Estimated</string>
+    <string name="enterCode">Enter the track code of your order</string>
+    <string name="trackOrder">Track Your Order</string>
+    <string name="orderStatus">Status of the Order</string>
+    <string name="haveAnOrder">Have an order? Want to know where your order is now?</string>
+    <string name="knowProgress">Know the progress of your product delivery.</string>
+  </group>
+</resources>

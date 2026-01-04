@@ -1,0 +1,10 @@
+app:
+  name: Mon application extraordinaire
+  description: C'est un démonstratif
+menu:
+  file: Fichier
+  edit: Modifier
+  view: Vue
+messages:
+  success: Opération réussie
+  error: Une erreur s'est produite

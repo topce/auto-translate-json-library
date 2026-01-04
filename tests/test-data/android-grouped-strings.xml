@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">My Android App</string>
+    <group name="errors">
+        <string name="network_error">Network connection failed</string>
+        <string name="validation_error">Please check your input</string>
+        <string name="server_error">Server is temporarily unavailable</string>
+    </group>
+    <group name="buttons">
+        <string name="submit">Submit</string>
+        <string name="cancel">Cancel</string>
+        <string name="retry">Retry</string>
+    </group>
+</resources>

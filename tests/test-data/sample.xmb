@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messagebundle locale="en">
+  <msg id="HELLO_WORLD" desc="Simple greeting message">Hello, World!</msg>
+  <msg id="USER_GREETING" desc="Personalized greeting with username" meaning="greeting">Hello, {$username}!</msg>
+  <msg id="PLACEHOLDER_EXAMPLE" desc="Example with multiple placeholders">
+    Welcome <ph name="USER_NAME">John</ph>, you have <ph name="COUNT">5</ph> messages.
+  </msg>
+  <msg id="COMPLEX_MESSAGE" desc="Message with variables and examples">
+    Your order <ph name="ORDER_ID">12345</ph> for {$itemCount} items will arrive on <ex>Monday</ex>.
+  </msg>
+  <msg id="SIMPLE_TEXT" desc="Plain text without placeholders">This is a simple message.</msg>
+  <msg id="NESTED_PLACEHOLDERS" desc="Message with nested placeholder structures">
+    Status: <ph name="STATUS"><ex>Active</ex></ph> for user {$userId} in <ph name="REGION">US</ph>.
+  </msg>
+</messagebundle>

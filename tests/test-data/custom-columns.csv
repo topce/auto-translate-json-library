@@ -1,0 +1,5 @@
+identifier,text,description
+app_name,My Application,The name of the application
+welcome_message,Welcome to our app!,Message shown on welcome screen
+button_text,Click here,Text for the main action button
+error_message,Something went wrong,Generic error message

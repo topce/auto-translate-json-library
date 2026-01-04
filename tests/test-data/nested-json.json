@@ -1,0 +1,55 @@
+{
+  "app": {
+    "name": "My Application",
+    "version": "1.0.0",
+    "config": {
+      "timeout": 5000,
+      "retries": 3,
+      "debug": true
+    }
+  },
+  "messages": {
+    "welcome": "Welcome to our app!",
+    "errors": {
+      "network": "Network connection failed",
+      "validation": "Please check your input",
+      "server": "Server error occurred"
+    },
+    "success": {
+      "login": "Login successful",
+      "logout": "Logout successful"
+    }
+  },
+  "buttons": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "retry": "Retry"
+  },
+  "arrays": {
+    "items": [
+      "First item",
+      "Second item", 
+      "Third item"
+    ],
+    "complex_items": [
+      {
+        "title": "Item 1",
+        "description": "Description 1",
+        "priority": 1
+      },
+      {
+        "title": "Item 2",
+        "description": "Description 2", 
+        "priority": 2
+      }
+    ],
+    "mixed_array": [
+      "String item",
+      42,
+      true,
+      {
+        "nested": "Nested value"
+      }
+    ]
+  }
+}

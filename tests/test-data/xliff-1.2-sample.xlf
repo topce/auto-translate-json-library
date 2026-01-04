@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file original="messages.properties" source-language="en" target-language="es" datatype="plaintext">
+    <body>
+      <trans-unit id="welcome_message" approved="no">
+        <source>Welcome to our application!</source>
+        <target>¡Bienvenido a nuestra aplicación!</target>
+        <note>Greeting message shown on the home screen</note>
+      </trans-unit>
+      <trans-unit id="button_submit" approved="yes">
+        <source>Submit</source>
+        <target>Enviar</target>
+        <note>Submit button text</note>
+      </trans-unit>
+      <trans-unit id="error_network" approved="no">
+        <source>Network connection failed</source>
+        <target></target>
+        <note>Error message for network failures</note>
+      </trans-unit>
+      <trans-unit id="app_name">
+        <source>My Application</source>
+        <note>Application name</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -22,7 +22,8 @@ try {
 }
 
 function setConfigurationFromCLI() {
-  const argv = require("yargs").argv;
+  const argv = require('minimist')(process.argv.slice(2));
+  
   if (argv === undefined) {
     console.log("No arguments provided in CLI");
     return;

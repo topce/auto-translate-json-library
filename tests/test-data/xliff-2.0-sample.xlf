@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en" trgLang="fr">
+  <file id="messages">
+    <unit id="welcome_message" approved="no">
+      <notes>
+        <note>Greeting message shown on the home screen</note>
+      </notes>
+      <segment>
+        <source>Welcome to our application!</source>
+        <target>Bienvenue dans notre application!</target>
+      </segment>
+    </unit>
+    <unit id="button_submit" approved="yes">
+      <notes>
+        <note>Submit button text</note>
+      </notes>
+      <segment>
+        <source>Submit</source>
+        <target>Soumettre</target>
+      </segment>
+    </unit>
+    <unit id="error_network" approved="no">
+      <notes>
+        <note>Error message for network failures</note>
+      </notes>
+      <segment>
+        <source>Network connection failed</source>
+        <target></target>
+      </segment>
+    </unit>
+    <unit id="app_name">
+      <notes>
+        <note>Application name</note>
+      </notes>
+      <segment>
+        <source>My Application</source>
+      </segment>
+    </unit>
+    <unit id="multi_segment_message" approved="no">
+      <segment>
+        <source>First part of message</source>
+        <target>Première partie du message</target>
+      </segment>
+      <segment>
+        <source>Second part of message</source>
+        <target>Deuxième partie du message</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>

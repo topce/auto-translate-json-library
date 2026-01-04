@@ -1,0 +1,20 @@
+{
+  "hello.txt": "¡Hola, mundo!",
+  "accountLayout": {
+    "myProfile": "Mi perfil.",
+    "myAddressBook": "\"Mi libro de direcciones\" \n\nor \n\n\"Mi agenda de contactos\"",
+    "vouchers": "Boletos de regalo",
+    "myOrders": "Mis órdenes.",
+    "myWishlist": "Mi lista de deseos.",
+    "comparedList": "Lista de comparación."
+  },
+  "trackOrder": {
+    "estimatedDelivery": "Entrega estimada",
+    "estimated": "Estimado",
+    "enterCode": "Introduzca el código de la vía de su pedido.",
+    "trackOrder": "Seguir mi pedido.",
+    "orderStatus": "Estado del Pedido.",
+    "haveAnOrder": "\"¿Quiere poner un pedido? ¿Quiere saber dónde se encuentra su pedido en este momento?\" \n\nor more commonly:\n\n\"Tenga un orden? Quiere saber el estado de su pedido ahora?\"",
+    "knowProgress": "Saber el progreso de la entrega de su producto."
+  }
+}
