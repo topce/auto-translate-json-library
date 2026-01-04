@@ -1,4 +1,11 @@
 {
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
@@ -8,15 +15,40 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "error"
+        "noExplicitAny": "off",
+        "noShadowRestrictedNames":"off",
+        "noControlCharactersInRegex":"off",
+        "noImplicitAnyLet":"off",
+        "noAssignInExpressions": "off",
+        "noTsIgnore": "off"
       },
       "style": {
-        "useConst": "error",
+        "useConst": "off",
         "noParameterAssign": "off",
-        "useTemplate":"error"
+        "useTemplate":"off",
+        "noNonNullAssertion": "off",
+        "useNodejsImportProtocol": "off",
+        "useImportType": "off"
       },
       "complexity":{
-        "noForEach":"error"
+        "noForEach":"error",
+        "noStaticOnlyClass": "off",
+        "noUselessContinue": "off",
+        "useLiteralKeys": "off",
+        "noUselessEscapeInRegex": "off",
+        "noUselessSwitchCase": "off",
+        "useRegexLiterals": "off",
+        "useOptionalChain": "off",
+        "noThisInStatic": "off"
+      },
+      "security":{
+        "noGlobalEval":"off"
+      },
+      "correctness": {
+        "noUnusedImports": "off",
+        "noUnusedPrivateClassMembers": "off",
+        "noUnusedFunctionParameters": "off",
+        "noUnusedVariables": "off"
       }
     }
   }

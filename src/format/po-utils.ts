@@ -21,183 +21,190 @@ export interface ContextualTranslation {
  */
 export const PLURAL_FORMS: Record<string, PluralRule> = {
   // Germanic languages
-  "en": {
+  en: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "English: singular for 1, plural for others"
+    description: "English: singular for 1, plural for others",
   },
-  "de": {
+  de: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "German: singular for 1, plural for others"
+    description: "German: singular for 1, plural for others",
   },
-  "nl": {
+  nl: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Dutch: singular for 1, plural for others"
+    description: "Dutch: singular for 1, plural for others",
   },
-  "da": {
+  da: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Danish: singular for 1, plural for others"
+    description: "Danish: singular for 1, plural for others",
   },
-  "sv": {
+  sv: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Swedish: singular for 1, plural for others"
+    description: "Swedish: singular for 1, plural for others",
   },
-  "no": {
+  no: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Norwegian: singular for 1, plural for others"
+    description: "Norwegian: singular for 1, plural for others",
   },
 
   // Romance languages
-  "es": {
+  es: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Spanish: singular for 1, plural for others"
+    description: "Spanish: singular for 1, plural for others",
   },
-  "pt": {
+  pt: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Portuguese: singular for 1, plural for others"
+    description: "Portuguese: singular for 1, plural for others",
   },
-  "it": {
+  it: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Italian: singular for 1, plural for others"
+    description: "Italian: singular for 1, plural for others",
   },
-  "ca": {
+  ca: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Catalan: singular for 1, plural for others"
+    description: "Catalan: singular for 1, plural for others",
   },
-  "fr": {
+  fr: {
     nplurals: 2,
     plural: "(n > 1)",
-    description: "French: singular for 0 and 1, plural for others"
+    description: "French: singular for 0 and 1, plural for others",
   },
-  "ro": {
+  ro: {
     nplurals: 3,
     plural: "(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2)",
-    description: "Romanian: complex plural rules"
+    description: "Romanian: complex plural rules",
   },
 
   // Slavic languages
-  "ru": {
+  ru: {
     nplurals: 3,
-    plural: "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
-    description: "Russian: complex plural rules based on last digits"
+    plural:
+      "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
+    description: "Russian: complex plural rules based on last digits",
   },
-  "uk": {
+  uk: {
     nplurals: 3,
-    plural: "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
-    description: "Ukrainian: same as Russian"
+    plural:
+      "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
+    description: "Ukrainian: same as Russian",
   },
-  "pl": {
+  pl: {
     nplurals: 3,
-    plural: "(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
-    description: "Polish: complex plural rules"
+    plural:
+      "(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
+    description: "Polish: complex plural rules",
   },
-  "cs": {
-    nplurals: 3,
-    plural: "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2",
-    description: "Czech: 1, 2-4, 5+"
-  },
-  "sk": {
+  cs: {
     nplurals: 3,
     plural: "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2",
-    description: "Slovak: same as Czech"
+    description: "Czech: 1, 2-4, 5+",
   },
-  "hr": {
+  sk: {
     nplurals: 3,
-    plural: "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
-    description: "Croatian: same as Russian"
+    plural: "(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2",
+    description: "Slovak: same as Czech",
   },
-  "sr": {
+  hr: {
     nplurals: 3,
-    plural: "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
-    description: "Serbian: same as Russian"
+    plural:
+      "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
+    description: "Croatian: same as Russian",
   },
-  "bg": {
+  sr: {
+    nplurals: 3,
+    plural:
+      "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)",
+    description: "Serbian: same as Russian",
+  },
+  bg: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Bulgarian: singular for 1, plural for others"
+    description: "Bulgarian: singular for 1, plural for others",
   },
-  "sl": {
+  sl: {
     nplurals: 4,
     plural: "(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)",
-    description: "Slovenian: very complex plural rules"
+    description: "Slovenian: very complex plural rules",
   },
 
   // Asian languages
-  "zh": {
+  zh: {
     nplurals: 1,
     plural: "0",
-    description: "Chinese: no plural forms"
+    description: "Chinese: no plural forms",
   },
-  "ja": {
+  ja: {
     nplurals: 1,
     plural: "0",
-    description: "Japanese: no plural forms"
+    description: "Japanese: no plural forms",
   },
-  "ko": {
+  ko: {
     nplurals: 1,
     plural: "0",
-    description: "Korean: no plural forms"
+    description: "Korean: no plural forms",
   },
-  "th": {
+  th: {
     nplurals: 1,
     plural: "0",
-    description: "Thai: no plural forms"
+    description: "Thai: no plural forms",
   },
-  "vi": {
+  vi: {
     nplurals: 1,
     plural: "0",
-    description: "Vietnamese: no plural forms"
+    description: "Vietnamese: no plural forms",
   },
 
   // Other languages
-  "ar": {
+  ar: {
     nplurals: 6,
-    plural: "(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)",
-    description: "Arabic: very complex plural rules"
+    plural:
+      "(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)",
+    description: "Arabic: very complex plural rules",
   },
-  "he": {
+  he: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Hebrew: singular for 1, plural for others"
+    description: "Hebrew: singular for 1, plural for others",
   },
-  "tr": {
+  tr: {
     nplurals: 2,
     plural: "(n > 1)",
-    description: "Turkish: singular for 0 and 1, plural for others"
+    description: "Turkish: singular for 0 and 1, plural for others",
   },
-  "fi": {
+  fi: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Finnish: singular for 1, plural for others"
+    description: "Finnish: singular for 1, plural for others",
   },
-  "hu": {
+  hu: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Hungarian: singular for 1, plural for others"
+    description: "Hungarian: singular for 1, plural for others",
   },
-  "et": {
+  et: {
     nplurals: 2,
     plural: "(n != 1)",
-    description: "Estonian: singular for 1, plural for others"
+    description: "Estonian: singular for 1, plural for others",
   },
-  "lv": {
+  lv: {
     nplurals: 3,
     plural: "(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2)",
-    description: "Latvian: complex plural rules"
+    description: "Latvian: complex plural rules",
   },
-  "lt": {
+  lt: {
     nplurals: 3,
-    plural: "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)",
-    description: "Lithuanian: complex plural rules"
+    plural:
+      "(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)",
+    description: "Lithuanian: complex plural rules",
   },
 };
 
@@ -207,7 +214,7 @@ export const PLURAL_FORMS: Record<string, PluralRule> = {
 export function getPluralRule(language: string): PluralRule {
   // Extract language code (e.g., "en-US" -> "en")
   const langCode = language.split("-")[0].toLowerCase();
-  
+
   return PLURAL_FORMS[langCode] || PLURAL_FORMS["en"]; // Default to English
 }
 
@@ -222,7 +229,10 @@ export function formatPluralFormsHeader(language: string): string {
 /**
  * Validate plural form expression
  */
-export function validatePluralExpression(expression: string, nplurals: number): boolean {
+export function validatePluralExpression(
+  expression: string,
+  nplurals: number,
+): boolean {
   try {
     // Basic validation - check if expression contains valid operators and variables
     const validPattern = /^[n\d\s+\-*/%()!=<>&|?:]+$/;
@@ -233,7 +243,7 @@ export function validatePluralExpression(expression: string, nplurals: number): 
     // Check if expression uses only 'n' as variable
     const variablePattern = /[a-zA-Z]+/g;
     const variables = expression.match(variablePattern) || [];
-    const invalidVars = variables.filter(v => v !== "n");
+    const invalidVars = variables.filter((v) => v !== "n");
     if (invalidVars.length > 0) {
       return false;
     }
@@ -256,16 +266,22 @@ export function validatePluralExpression(expression: string, nplurals: number): 
  * Evaluate plural expression for a given number
  * WARNING: This uses eval() and should only be used with trusted input
  */
-export function evaluatePluralExpression(expression: string, n: number): number {
+export function evaluatePluralExpression(
+  expression: string,
+  n: number,
+): number {
   try {
     // Replace 'n' with the actual number (ensure it's not part of another word)
-    const code = expression.replace(/(^|[^a-zA-Z_])n([^a-zA-Z_]|$)/g, `$1${n.toString()}$2`);
-    
+    const code = expression.replace(
+      /(^|[^a-zA-Z_])n([^a-zA-Z_]|$)/g,
+      `$1${n.toString()}$2`,
+    );
+
     // Basic safety check - only allow mathematical expressions
     if (!/^[\d\s+\*/%()!=<>&|?:-]+$/.test(code)) {
       throw new Error("Invalid expression");
     }
-    
+
     // eslint-disable-next-line no-eval
     const result = eval(code);
     // Convert boolean to number: true -> 1, false -> 0
@@ -284,14 +300,14 @@ export function evaluatePluralExpression(expression: string, n: number): number 
 export function parseContext(key: string): { context: string; msgid: string } {
   const contextSeparator = "|";
   const separatorIndex = key.indexOf(contextSeparator);
-  
+
   if (separatorIndex === -1) {
     return { context: "", msgid: key };
   }
-  
+
   return {
     context: key.substring(0, separatorIndex),
-    msgid: key.substring(separatorIndex + 1)
+    msgid: key.substring(separatorIndex + 1),
   };
 }
 
@@ -305,16 +321,19 @@ export function createContextKey(context: string, msgid: string): string {
 /**
  * Parse plural form index from a translation key
  */
-export function parsePluralIndex(key: string): { baseKey: string; pluralIndex?: number } {
+export function parsePluralIndex(key: string): {
+  baseKey: string;
+  pluralIndex?: number;
+} {
   const pluralMatch = key.match(/^(.+)\[(\d+)\]$/);
-  
+
   if (!pluralMatch) {
     return { baseKey: key };
   }
-  
+
   return {
     baseKey: pluralMatch[1],
-    pluralIndex: parseInt(pluralMatch[2], 10)
+    pluralIndex: parseInt(pluralMatch[2], 10),
   };
 }
 
@@ -358,10 +377,14 @@ export function hasComplexPlurals(language: string): boolean {
 /**
  * Generate sample plural forms for a language
  */
-export function generateSamplePlurals(language: string, msgid: string, msgidPlural?: string): string[] {
+export function generateSamplePlurals(
+  language: string,
+  msgid: string,
+  msgidPlural?: string,
+): string[] {
   const rule = getPluralRule(language);
   const samples: string[] = [];
-  
+
   // Generate sample translations for each plural form
   for (let i = 0; i < rule.nplurals; i++) {
     if (i === 0) {
@@ -372,7 +395,7 @@ export function generateSamplePlurals(language: string, msgid: string, msgidPlur
       samples.push(`${msgidPlural || msgid} (form ${i})`); // Additional plural forms
     }
   }
-  
+
   return samples;
 }
 
@@ -380,28 +403,28 @@ export function generateSamplePlurals(language: string, msgid: string, msgidPlur
  * Validate that all required plural forms are present
  */
 export function validatePluralForms(
-  translations: Record<string, string>, 
-  language: string
+  translations: Record<string, string>,
+  language: string,
 ): { isValid: boolean; missing: string[]; extra: string[] } {
   const rule = getPluralRule(language);
   const missing: string[] = [];
   const extra: string[] = [];
-  
+
   // Group translations by base key
   const pluralGroups = new Map<string, Set<number>>();
   const singularKeys = new Set<string>();
-  
+
   for (const key of Object.keys(translations)) {
     if (key === "_metadata") continue;
-    
+
     const { baseKey, pluralIndex } = parsePluralIndex(key);
-    
+
     if (pluralIndex !== undefined) {
       if (!pluralGroups.has(baseKey)) {
         pluralGroups.set(baseKey, new Set());
       }
       pluralGroups.get(baseKey)!.add(pluralIndex);
-      
+
       // Check for extra plural forms
       if (pluralIndex >= rule.nplurals) {
         extra.push(key);
@@ -410,14 +433,14 @@ export function validatePluralForms(
       singularKeys.add(key);
     }
   }
-  
+
   // Check for missing plural forms - only for keys that have plural forms
   for (const [baseKey, indices] of pluralGroups) {
     // Ensure singular form exists (index 0)
     if (!indices.has(0) && !singularKeys.has(baseKey)) {
       missing.push(baseKey); // Singular form
     }
-    
+
     // Check for missing plural indices
     for (let i = 1; i < rule.nplurals; i++) {
       if (!indices.has(i)) {
@@ -425,10 +448,10 @@ export function validatePluralForms(
       }
     }
   }
-  
+
   return {
     isValid: missing.length === 0 && extra.length === 0,
     missing,
-    extra
+    extra,
   };
 }

@@ -1,10 +1,10 @@
 import * as path from "node:path";
 import * as yaml from "js-yaml";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 
@@ -30,22 +30,24 @@ export class YamlHandler implements IFormatHandler {
 
   parse(content: string): EnhancedTranslationFile {
     try {
-      const parsed = yaml.load(content, { 
+      const parsed = yaml.load(content, {
         schema: yaml.DEFAULT_SCHEMA,
-        json: false // Allow YAML-specific features
+        json: false, // Allow YAML-specific features
       });
-      
+
       if (parsed === null || parsed === undefined) {
         throw new Error("YAML file is empty or contains only null/undefined");
       }
 
       if (typeof parsed !== "object" || Array.isArray(parsed)) {
-        throw new Error("YAML root must be an object, not an array or primitive value");
+        throw new Error(
+          "YAML root must be an object, not an array or primitive value",
+        );
       }
-      
+
       // Flatten nested structures for translation while preserving metadata
       const flattened = this.flattenObject(parsed);
-      
+
       // Add metadata
       const result: EnhancedTranslationFile = {
         ...flattened,
@@ -54,12 +56,14 @@ export class YamlHandler implements IFormatHandler {
           originalStructure: parsed,
           preserveComments: true, // YAML supports comments
           preserveAttributes: false,
-        }
+        },
       };
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to parse YAML: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse YAML: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -67,12 +71,15 @@ export class YamlHandler implements IFormatHandler {
     try {
       // Remove metadata for serialization
       const { _metadata, ...cleanData } = data;
-      
+
       let result: any;
-      
+
       if (_metadata?.originalStructure) {
         // Reconstruct original nested structure with translated values
-        result = this.reconstructNestedStructure(_metadata.originalStructure, cleanData);
+        result = this.reconstructNestedStructure(
+          _metadata.originalStructure,
+          cleanData,
+        );
       } else {
         // Use flat structure or attempt to reconstruct from dot notation
         result = this.reconstructFromFlatStructure(cleanData);
@@ -91,10 +98,12 @@ export class YamlHandler implements IFormatHandler {
       if (options?.preserveFormatting !== false) {
         yamlOptions.flowLevel = -1; // Use block style by default
       }
-      
+
       return yaml.dump(result, yamlOptions);
     } catch (error) {
-      throw new Error(`Failed to serialize YAML: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize YAML: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -159,17 +168,26 @@ export class YamlHandler implements IFormatHandler {
     };
   }
 
-  private validateYamlDataTypes(obj: any, path: string, errors: any[], warnings: any[]): void {
+  private validateYamlDataTypes(
+    obj: any,
+    path: string,
+    errors: any[],
+    warnings: any[],
+  ): void {
     for (const [key, value] of Object.entries(obj)) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       // Check for YAML-specific data types
       if (value instanceof Date) {
         warnings.push({
           code: "DATE_VALUE",
           message: `Date value at ${currentPath} will be preserved but not translated`,
         });
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Recursively validate nested objects
         this.validateYamlDataTypes(value, currentPath, errors, warnings);
       } else if (Array.isArray(value)) {
@@ -179,16 +197,25 @@ export class YamlHandler implements IFormatHandler {
     }
   }
 
-  private validateArrayDataTypes(arr: any[], path: string, errors: any[], warnings: any[]): void {
+  private validateArrayDataTypes(
+    arr: any[],
+    path: string,
+    errors: any[],
+    warnings: any[],
+  ): void {
     arr.forEach((item, index) => {
       const arrayPath = `${path}[${index}]`;
-      
+
       if (item instanceof Date) {
         warnings.push({
           code: "DATE_VALUE_IN_ARRAY",
           message: `Date value at ${arrayPath} will be preserved but not translated`,
         });
-      } else if (typeof item === "object" && item !== null && !Array.isArray(item)) {
+      } else if (
+        typeof item === "object" &&
+        item !== null &&
+        !Array.isArray(item)
+      ) {
         this.validateYamlDataTypes(item, arrayPath, errors, warnings);
       } else if (Array.isArray(item)) {
         this.validateArrayDataTypes(item, arrayPath, errors, warnings);
@@ -196,35 +223,49 @@ export class YamlHandler implements IFormatHandler {
     });
   }
 
-  private validateHierarchicalStructure(obj: any, path: string, errors: any[], warnings: any[]): void {
+  private validateHierarchicalStructure(
+    obj: any,
+    path: string,
+    errors: any[],
+    warnings: any[],
+  ): void {
     const keys = Object.keys(obj);
-    
+
     // Check for deeply nested structures (more than 10 levels)
-    const depth = path.split('.').length;
+    const depth = path.split(".").length;
     if (depth > 10) {
       warnings.push({
         code: "DEEP_NESTING",
         message: `Very deep nesting detected at ${path} (${depth} levels). Consider flattening the structure.`,
       });
     }
-    
+
     // Check for mixed array and object structures at the same level
     let hasArrays = false;
     let hasObjects = false;
-    
+
     for (const [key, value] of Object.entries(obj)) {
       if (Array.isArray(value)) {
         hasArrays = true;
       } else if (typeof value === "object" && value !== null) {
         hasObjects = true;
       }
-      
+
       // Recursively check nested structures
-      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-        this.validateHierarchicalStructure(value, path ? `${path}.${key}` : key, errors, warnings);
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        this.validateHierarchicalStructure(
+          value,
+          path ? `${path}.${key}` : key,
+          errors,
+          warnings,
+        );
       }
     }
-    
+
     if (hasArrays && hasObjects && path) {
       warnings.push({
         code: "MIXED_STRUCTURE",
@@ -233,16 +274,24 @@ export class YamlHandler implements IFormatHandler {
     }
   }
 
-  private flattenObject(obj: any, prefix = "", result: Record<string, any> = {}): Record<string, any> {
+  private flattenObject(
+    obj: any,
+    prefix = "",
+    result: Record<string, any> = {},
+  ): Record<string, any> {
     for (const [key, value] of Object.entries(obj)) {
       const newKey = prefix ? `${prefix}.${key}` : key;
-      
+
       if (typeof value === "string") {
         result[newKey] = value;
       } else if (this.isNonStringPreservableValue(value)) {
         // Preserve non-string values as-is (numbers, booleans, dates, null, etc.)
         result[newKey] = value;
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Recursively flatten nested objects
         this.flattenObject(value, newKey, result);
       } else if (Array.isArray(value)) {
@@ -253,20 +302,28 @@ export class YamlHandler implements IFormatHandler {
         result[newKey] = value;
       }
     }
-    
+
     return result;
   }
 
-  private flattenArray(arr: any[], prefix: string, result: Record<string, any>): void {
+  private flattenArray(
+    arr: any[],
+    prefix: string,
+    result: Record<string, any>,
+  ): void {
     arr.forEach((item, index) => {
       const arrayKey = `${prefix}[${index}]`;
-      
+
       if (typeof item === "string") {
         result[arrayKey] = item;
       } else if (this.isNonStringPreservableValue(item)) {
         // Preserve non-string values as-is
         result[arrayKey] = item;
-      } else if (typeof item === "object" && item !== null && !Array.isArray(item)) {
+      } else if (
+        typeof item === "object" &&
+        item !== null &&
+        !Array.isArray(item)
+      ) {
         // Handle objects within arrays
         this.flattenObject(item, arrayKey, result);
       } else if (Array.isArray(item)) {
@@ -279,20 +336,27 @@ export class YamlHandler implements IFormatHandler {
     });
   }
 
-  private reconstructNestedStructure(original: any, translations: Record<string, any>): any {
+  private reconstructNestedStructure(
+    original: any,
+    translations: Record<string, any>,
+  ): any {
     // Deep clone the original structure
     const result = this.deepClone(original);
-    
+
     // Update with translated values
     this.updateNestedValues(result, translations);
-    
+
     return result;
   }
 
-  private updateNestedValues(obj: any, translations: Record<string, any>, path = ""): void {
+  private updateNestedValues(
+    obj: any,
+    translations: Record<string, any>,
+    path = "",
+  ): void {
     for (const [key, value] of Object.entries(obj)) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       if (typeof value === "string") {
         // Check if we have a translation for this path
         if (translations[currentPath] !== undefined) {
@@ -304,7 +368,11 @@ export class YamlHandler implements IFormatHandler {
           obj[key] = translations[currentPath];
         }
         // Otherwise, keep the original non-string value
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Recursively update nested objects
         this.updateNestedValues(value, translations, currentPath);
       } else if (Array.isArray(value)) {
@@ -314,10 +382,14 @@ export class YamlHandler implements IFormatHandler {
     }
   }
 
-  private updateArrayValues(arr: any[], translations: Record<string, any>, path: string): void {
+  private updateArrayValues(
+    arr: any[],
+    translations: Record<string, any>,
+    path: string,
+  ): void {
     arr.forEach((item, index) => {
       const arrayPath = `${path}[${index}]`;
-      
+
       if (typeof item === "string" && translations[arrayPath] !== undefined) {
         arr[index] = translations[arrayPath];
       } else if (this.isNonStringPreservableValue(item)) {
@@ -326,7 +398,11 @@ export class YamlHandler implements IFormatHandler {
           arr[index] = translations[arrayPath];
         }
         // Otherwise, keep the original non-string value
-      } else if (typeof item === "object" && item !== null && !Array.isArray(item)) {
+      } else if (
+        typeof item === "object" &&
+        item !== null &&
+        !Array.isArray(item)
+      ) {
         this.updateNestedValues(item, translations, arrayPath);
       } else if (Array.isArray(item)) {
         this.updateArrayValues(item, translations, arrayPath);
@@ -336,33 +412,35 @@ export class YamlHandler implements IFormatHandler {
 
   private reconstructFromFlatStructure(flatData: Record<string, any>): any {
     const result: any = {};
-    
+
     for (const [key, value] of Object.entries(flatData)) {
       this.setNestedValue(result, key, value);
     }
-    
+
     return result;
   }
 
   private setNestedValue(obj: any, path: string, value: any): void {
     const keys = this.parsePath(path);
     let current = obj;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      
+
       if (key.isArray) {
         if (!Array.isArray(current[key.name])) {
           current[key.name] = [];
         }
-        
+
         // Ensure array has enough elements
         while (current[key.name].length <= key.index!) {
           // For non-string preservable values, use appropriate default
-          const defaultValue = this.isNonStringPreservableValue(value) ? null : {};
+          const defaultValue = this.isNonStringPreservableValue(value)
+            ? null
+            : {};
           current[key.name].push(defaultValue);
         }
-        
+
         current = current[key.name][key.index!];
       } else {
         if (!(key.name in current)) {
@@ -371,28 +449,31 @@ export class YamlHandler implements IFormatHandler {
         current = current[key.name];
       }
     }
-    
+
     const lastKey = keys[keys.length - 1];
     if (lastKey.isArray) {
       if (!Array.isArray(current[lastKey.name])) {
         current[lastKey.name] = [];
       }
-      
+
       // Ensure array has enough elements
       while (current[lastKey.name].length <= lastKey.index!) {
         current[lastKey.name].push(null);
       }
-      
+
       current[lastKey.name][lastKey.index!] = value;
     } else {
       current[lastKey.name] = value;
     }
   }
 
-  private parsePath(path: string): Array<{ name: string; isArray: boolean; index?: number }> {
+  private parsePath(
+    path: string,
+  ): Array<{ name: string; isArray: boolean; index?: number }> {
     const parts = path.split(".");
-    const result: Array<{ name: string; isArray: boolean; index?: number }> = [];
-    
+    const result: Array<{ name: string; isArray: boolean; index?: number }> =
+      [];
+
     for (const part of parts) {
       const arrayMatch = part.match(/^(.+)\[(\d+)\]$/);
       if (arrayMatch) {
@@ -408,23 +489,29 @@ export class YamlHandler implements IFormatHandler {
         });
       }
     }
-    
+
     return result;
   }
 
-  private validateTranslatableContent(obj: any, path: string, errors: any[], warnings: any[], visited = new Set()): void {
+  private validateTranslatableContent(
+    obj: any,
+    path: string,
+    errors: any[],
+    warnings: any[],
+    visited = new Set(),
+  ): void {
     // Check for circular references
     if (visited.has(obj)) {
       return; // Already processed this object
     }
-    
+
     if (typeof obj === "object" && obj !== null) {
       visited.add(obj);
     }
-    
+
     for (const [key, value] of Object.entries(obj)) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       if (typeof value === "string") {
         // String values are translatable - this is good
         continue;
@@ -435,12 +522,28 @@ export class YamlHandler implements IFormatHandler {
           code: "NON_TRANSLATABLE_VALUE_PRESERVED",
           message: `${valueType} value at ${currentPath} will be preserved unchanged`,
         });
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Nested objects - recursively validate
-        this.validateTranslatableContent(value, currentPath, errors, warnings, visited);
+        this.validateTranslatableContent(
+          value,
+          currentPath,
+          errors,
+          warnings,
+          visited,
+        );
       } else if (Array.isArray(value)) {
         // Arrays - check each element
-        this.validateArrayTranslatableContent(value, currentPath, errors, warnings, visited);
+        this.validateArrayTranslatableContent(
+          value,
+          currentPath,
+          errors,
+          warnings,
+          visited,
+        );
       } else {
         // Other non-string, non-object values
         const valueType = this.getValueTypeDescription(value);
@@ -450,16 +553,22 @@ export class YamlHandler implements IFormatHandler {
         });
       }
     }
-    
+
     if (typeof obj === "object" && obj !== null) {
       visited.delete(obj);
     }
   }
 
-  private validateArrayTranslatableContent(arr: any[], path: string, errors: any[], warnings: any[], visited: Set<any>): void {
+  private validateArrayTranslatableContent(
+    arr: any[],
+    path: string,
+    errors: any[],
+    warnings: any[],
+    visited: Set<any>,
+  ): void {
     arr.forEach((item, index) => {
       const arrayPath = `${path}[${index}]`;
-      
+
       if (typeof item === "string") {
         // String in array is translatable
         return;
@@ -470,10 +579,26 @@ export class YamlHandler implements IFormatHandler {
           code: "NON_TRANSLATABLE_ARRAY_ITEM_PRESERVED",
           message: `${valueType} value at ${arrayPath} will be preserved unchanged`,
         });
-      } else if (typeof item === "object" && item !== null && !Array.isArray(item)) {
-        this.validateTranslatableContent(item, arrayPath, errors, warnings, visited);
+      } else if (
+        typeof item === "object" &&
+        item !== null &&
+        !Array.isArray(item)
+      ) {
+        this.validateTranslatableContent(
+          item,
+          arrayPath,
+          errors,
+          warnings,
+          visited,
+        );
       } else if (Array.isArray(item)) {
-        this.validateArrayTranslatableContent(item, arrayPath, errors, warnings, visited);
+        this.validateArrayTranslatableContent(
+          item,
+          arrayPath,
+          errors,
+          warnings,
+          visited,
+        );
       } else {
         // Other non-string, non-object values in arrays
         const valueType = this.getValueTypeDescription(item);
@@ -494,8 +619,10 @@ export class YamlHandler implements IFormatHandler {
       value === undefined ||
       value instanceof Date ||
       // YAML-specific types that should be preserved
-      (typeof value === "object" && value !== null && value.constructor && 
-       ["RegExp", "Buffer"].includes(value.constructor.name))
+      (typeof value === "object" &&
+        value !== null &&
+        value.constructor &&
+        ["RegExp", "Buffer"].includes(value.constructor.name))
     );
   }
 
@@ -528,16 +655,16 @@ export class YamlHandler implements IFormatHandler {
     if (obj === null || typeof obj !== "object") {
       return obj;
     }
-    
+
     if (Array.isArray(obj)) {
-      return obj.map(item => this.deepClone(item));
+      return obj.map((item) => this.deepClone(item));
     }
-    
+
     const cloned: any = {};
     for (const [key, value] of Object.entries(obj)) {
       cloned[key] = this.deepClone(value);
     }
-    
+
     return cloned;
   }
 }

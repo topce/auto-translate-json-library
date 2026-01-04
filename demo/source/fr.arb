@@ -1,4 +1,3 @@
 {
-  "appTitle": "Application de démonstration",
-  "welcome": "Bienvenue {name}"
+  "@@locale": "fr"
 }

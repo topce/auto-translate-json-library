@@ -35,12 +35,16 @@ export interface IFormatHandler {
   serialize(data: TranslationFile, options?: FormatOptions): string;
   getFileExtension(): string;
   validateStructure(data: TranslationFile): ValidationResult;
-  
+
   /**
    * Enhanced validation using the centralized validation system
    * This method should be preferred over validateStructure for comprehensive validation
    */
-  validateWithRules?(data: TranslationFile, filePath?: string, originalContent?: string): ValidationResult;
+  validateWithRules?(
+    data: TranslationFile,
+    filePath?: string,
+    originalContent?: string,
+  ): ValidationResult;
 }
 
 export interface EnhancedTranslationFile extends TranslationFile {

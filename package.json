@@ -22,7 +22,7 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "biome check ./src",
+    "lint": "biome check ./src --max-diagnostics 1000",
     "lint-fix": "biome check ./src --write",
     "lint-fix-all": "biome check --write --unsafe ./src",
     "format": "biome format ./src",
@@ -59,6 +59,7 @@
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
+    "@topce/native-preview": "7.0.0-dev.20250824",
     "@types/gettext-parser": "8.0.0",
     "@types/jest": "30.0.0",
     "@types/minimist": "1.2.5",

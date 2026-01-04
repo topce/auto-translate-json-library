@@ -104,23 +104,31 @@ export async function translate(
   }
 
   // Iterate target Locales
-  console.log(`🌍 Processing ${files.targetLocales.length} target locale(s)...`);
+  console.log(
+    `🌍 Processing ${files.targetLocales.length} target locale(s)...`,
+  );
 
   for (let i = 0; i < files.targetLocales.length; i++) {
     const targetLocale = files.targetLocales[i];
     try {
-      console.log(`🔄 [${i + 1}/${files.targetLocales.length}] Processing locale '${targetLocale}'...`);
+      console.log(
+        `🔄 [${i + 1}/${files.targetLocales.length}] Processing locale '${targetLocale}'...`,
+      );
 
       const isValid = await translateEngine.isValidLocale(targetLocale);
       if (!isValid) {
-        console.warn(`⚠️  Locale '${targetLocale}' is not supported by ${config.translationKeyInfo.kind}. Skipping.`);
+        console.warn(
+          `⚠️  Locale '${targetLocale}' is not supported by ${config.translationKeyInfo.kind}. Skipping.`,
+        );
         continue;
       }
 
       console.log(`📖 Loading existing translations for '${targetLocale}'...`);
       const targetOriginal = await files.loadJsonFromLocale(targetLocale);
 
-      console.log(`🔤 Translating content from '${files.sourceLocale}' to '${targetLocale}'...`);
+      console.log(
+        `🔤 Translating content from '${files.sourceLocale}' to '${targetLocale}'...`,
+      );
       // Iterate source terms
       const targetNew = await recurseNode(
         source,
@@ -140,7 +148,9 @@ export async function translate(
       console.log(`✅ Successfully translated locale '${targetLocale}'`);
     } catch (error) {
       if (error instanceof Error) {
-        console.error(`❌ Error processing locale '${targetLocale}': ${error.message}`);
+        console.error(
+          `❌ Error processing locale '${targetLocale}': ${error.message}`,
+        );
         // Continue with other locales instead of stopping completely
         continue;
       }
@@ -151,36 +161,41 @@ export async function translate(
   console.log(`🎉 Translation completed for all locales!`);
 }
 
-const readFiles: (filePath: string, mode: "file" | "folder", format?: string) => IFiles | null =
-  (filePath: string, mode: string, format?: string) => {
-    try {
-      const files: IFiles =
-        mode === "file" ? new Files(filePath, format) : new FolderFiles(filePath, format);
+const readFiles: (
+  filePath: string,
+  mode: "file" | "folder",
+  format?: string,
+) => IFiles | null = (filePath: string, mode: string, format?: string) => {
+  try {
+    const files: IFiles =
+      mode === "file"
+        ? new Files(filePath, format)
+        : new FolderFiles(filePath, format);
 
-      // log locale info
-      console.log(`Source locale = ${files.sourceLocale}`);
-      console.log(`Target locales = ${files.targetLocales}`);
+    // log locale info
+    console.log(`Source locale = ${files.sourceLocale}`);
+    console.log(`Target locales = ${files.targetLocales}`);
 
-      // Log format information for better user feedback
-      if (files.getDetectedFormat && files.getFormatOverride) {
-        const detectedFormat = files.getDetectedFormat();
-        const formatOverride = files.getFormatOverride();
+    // Log format information for better user feedback
+    if (files.getDetectedFormat && files.getFormatOverride) {
+      const detectedFormat = files.getDetectedFormat();
+      const formatOverride = files.getFormatOverride();
 
-        if (formatOverride) {
-          console.log(`Format override = ${formatOverride}`);
-        } else if (detectedFormat) {
-          console.log(`Detected format = ${detectedFormat}`);
-        }
+      if (formatOverride) {
+        console.log(`Format override = ${formatOverride}`);
+      } else if (detectedFormat) {
+        console.log(`Detected format = ${detectedFormat}`);
       }
-
-      return files;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error);
-      }
-      return null;
     }
-  };
+
+    return files;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+    }
+    return null;
+  }
+};
 
 async function recurseNode(
   source: TranslationFile,
@@ -193,7 +208,6 @@ async function recurseNode(
   ignorePrefix = "",
   isArray = false,
 ): Promise<TranslationFile> {
-  // biome-ignore lint/suspicious/noExplicitAny: array and object types are used for flexibility
   const destination: any = isArray ? [] : {};
 
   // defaults
@@ -214,7 +228,9 @@ async function recurseNode(
     // Handle metadata specially to prevent translation and ensure correctness
     if (term === "_metadata") {
       // Start with original metadata or clone source metadata
-      destination[term] = original[term] ? JSON.parse(JSON.stringify(original[term])) : JSON.parse(JSON.stringify(node));
+      destination[term] = original[term]
+        ? JSON.parse(JSON.stringify(original[term]))
+        : JSON.parse(JSON.stringify(node));
 
       // If ARB format, ensure @@locale matches the target locale
       if (destination[term]?.arbMetadata) {
@@ -249,7 +265,11 @@ async function recurseNode(
       }
 
       // Skip translation for empty/whitespace-only text
-      if (term === "#text" && typeof node === "string" && node.trim().length === 0) {
+      if (
+        term === "#text" &&
+        typeof node === "string" &&
+        node.trim().length === 0
+      ) {
         destination[term] = original[term] ?? node;
         continue;
       }
@@ -272,7 +292,10 @@ async function recurseNode(
           continue;
         }
 
-        if (ignorePrefix === "" || (ignorePrefix !== "" && !term.startsWith(ignorePrefix))) {
+        if (
+          ignorePrefix === "" ||
+          (ignorePrefix !== "" && !term.startsWith(ignorePrefix))
+        ) {
           // Extract context if available (e.g. from ARB metadata)
           let context: string | undefined;
           // @ts-ignore: _metadata is loosely typed

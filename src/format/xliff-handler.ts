@@ -1,10 +1,10 @@
 import * as path from "node:path";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 
@@ -22,13 +22,15 @@ interface XliffUnit {
   "@_id": string;
   "@_approved"?: string;
   "@_translate"?: string;
-  segment?: {
-    source: string | { "#text": string };
-    target?: string | { "#text": string };
-  } | {
-    source: string | { "#text": string };
-    target?: string | { "#text": string };
-  }[];
+  segment?:
+    | {
+        source: string | { "#text": string };
+        target?: string | { "#text": string };
+      }
+    | {
+        source: string | { "#text": string };
+        target?: string | { "#text": string };
+      }[];
   notes?: {
     note: string | { "#text": string } | (string | { "#text": string })[];
   };
@@ -94,19 +96,19 @@ export class XliffHandler implements IFormatHandler {
   parse(content: string): EnhancedTranslationFile {
     try {
       const parsed = this.parser.parse(content);
-      
+
       if (!parsed.xliff) {
         throw new Error("Invalid XLIFF format: missing xliff root element");
       }
 
       // Detect XLIFF version
       const version = this.detectXliffVersion(parsed.xliff);
-      
+
       // Transform based on version
-      const transformed = version.startsWith("2.") 
+      const transformed = version.startsWith("2.")
         ? this.transformXliff2x(parsed.xliff)
         : this.transformXliff12(parsed.xliff);
-      
+
       // Add metadata
       const result: EnhancedTranslationFile = {
         ...transformed,
@@ -118,22 +120,27 @@ export class XliffHandler implements IFormatHandler {
           originalStructure: parsed,
           preserveComments: true,
           preserveAttributes: true,
-        }
+        },
       };
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to parse XLIFF: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse XLIFF: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
   serialize(data: EnhancedTranslationFile, options?: FormatOptions): string {
     try {
       let xliffData: any;
-      
+
       if (data._metadata?.originalStructure) {
         // Update the original structure with translated values
-        xliffData = this.updateOriginalStructure(data._metadata.originalStructure, data);
+        xliffData = this.updateOriginalStructure(
+          data._metadata.originalStructure,
+          data,
+        );
       } else {
         // Reconstruct XLIFF structure (default to 1.2 format)
         xliffData = this.reconstructXliff12Structure(data);
@@ -143,12 +150,15 @@ export class XliffHandler implements IFormatHandler {
       if (options?.indentation) {
         this.builder = new XMLBuilder({
           ...this.builder,
-          indentBy: typeof options.indentation === "string" ? options.indentation : "  ".repeat(options.indentation),
+          indentBy:
+            typeof options.indentation === "string"
+              ? options.indentation
+              : "  ".repeat(options.indentation),
         });
       }
 
       let result = this.builder.build(xliffData);
-      
+
       // Add XML declaration if needed
       if (options?.xmlDeclaration !== false && !result.startsWith("<?xml")) {
         result = `<?xml version="1.0" encoding="UTF-8"?>\n${result}`;
@@ -156,7 +166,9 @@ export class XliffHandler implements IFormatHandler {
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to serialize XLIFF: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize XLIFF: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -179,10 +191,10 @@ export class XliffHandler implements IFormatHandler {
 
     // Check if this is an EnhancedTranslationFile with metadata
     const enhancedData = data as EnhancedTranslationFile;
-    
+
     if (enhancedData._metadata?.originalStructure) {
       const originalStructure = enhancedData._metadata.originalStructure;
-      
+
       if (!originalStructure.xliff) {
         errors.push({
           code: "MISSING_XLIFF_ROOT",
@@ -191,8 +203,10 @@ export class XliffHandler implements IFormatHandler {
         return { isValid: false, errors, warnings };
       }
 
-      const version = enhancedData._metadata.version || this.detectXliffVersion(originalStructure.xliff);
-      
+      const version =
+        enhancedData._metadata.version ||
+        this.detectXliffVersion(originalStructure.xliff);
+
       if (version.startsWith("2.")) {
         this.validateXliff2x(originalStructure.xliff, errors, warnings);
       } else {
@@ -203,7 +217,8 @@ export class XliffHandler implements IFormatHandler {
       if (Object.keys(data).length === 0) {
         warnings.push({
           code: "EMPTY_XLIFF",
-          message: "XLIFF file appears to be empty or contains no translatable content",
+          message:
+            "XLIFF file appears to be empty or contains no translatable content",
         });
       }
     }
@@ -220,14 +235,14 @@ export class XliffHandler implements IFormatHandler {
     if (version) {
       return version;
     }
-    
+
     // Try to detect based on structure
     if (xliff.file && xliff.file.unit) {
       return "2.0"; // XLIFF 2.x uses 'unit' elements
     } else if (xliff.file && xliff.file.body && xliff.file.body["trans-unit"]) {
       return "1.2"; // XLIFF 1.2 uses 'trans-unit' elements
     }
-    
+
     return "1.2"; // Default to 1.2
   }
 
@@ -241,38 +256,40 @@ export class XliffHandler implements IFormatHandler {
 
   private transformXliff12(xliff: any): TranslationFile {
     const result: TranslationFile = {};
-    
+
     if (!xliff.file || !xliff.file.body) {
       return result;
     }
 
     const body = xliff.file.body;
     const transUnits = body["trans-unit"];
-    
+
     if (!transUnits) {
       return result;
     }
 
     const units = Array.isArray(transUnits) ? transUnits : [transUnits];
-    
+
     for (const unit of units) {
       const transUnit = unit as XliffTransUnit;
       const id = transUnit["@_id"];
-      
+
       if (!id) {
         continue;
       }
 
       // Extract source text
       const source = this.extractTextContent(transUnit.source);
-      
+
       // Extract target text if available
-      const target = transUnit.target ? this.extractTextContent(transUnit.target) : source;
-      
+      const target = transUnit.target
+        ? this.extractTextContent(transUnit.target)
+        : source;
+
       // Only include if not approved (to allow translation) or if no target exists
       const isApproved = transUnit["@_approved"] === "yes";
       const hasTarget = transUnit.target !== undefined;
-      
+
       if (!isApproved || !hasTarget) {
         result[id] = target || source;
       }
@@ -283,46 +300,50 @@ export class XliffHandler implements IFormatHandler {
 
   private transformXliff2x(xliff: any): TranslationFile {
     const result: TranslationFile = {};
-    
+
     if (!xliff.file) {
       return result;
     }
 
     const file = xliff.file;
     const units = file.unit;
-    
+
     if (!units) {
       return result;
     }
 
     const unitArray = Array.isArray(units) ? units : [units];
-    
+
     for (const unit of unitArray) {
       const xliffUnit = unit as XliffUnit;
       const id = xliffUnit["@_id"];
-      
+
       if (!id) {
         continue;
       }
 
       // Handle segments
       if (xliffUnit.segment) {
-        const segments = Array.isArray(xliffUnit.segment) ? xliffUnit.segment : [xliffUnit.segment];
-        
+        const segments = Array.isArray(xliffUnit.segment)
+          ? xliffUnit.segment
+          : [xliffUnit.segment];
+
         for (let i = 0; i < segments.length; i++) {
           const segment = segments[i];
           const segmentId = segments.length > 1 ? `${id}.${i}` : id;
-          
+
           // Extract source text
           const source = this.extractTextContent(segment.source);
-          
+
           // Extract target text if available
-          const target = segment.target ? this.extractTextContent(segment.target) : source;
-          
+          const target = segment.target
+            ? this.extractTextContent(segment.target)
+            : source;
+
           // Only include if not approved or if no target exists
           const isApproved = xliffUnit["@_approved"] === "yes";
           const hasTarget = segment.target !== undefined;
-          
+
           if (!isApproved || !hasTarget) {
             result[segmentId] = target || source;
           }
@@ -337,7 +358,7 @@ export class XliffHandler implements IFormatHandler {
     if (typeof element === "string") {
       return element;
     }
-    
+
     if (typeof element === "object" && element !== null) {
       if (element["#text"] !== undefined) {
         return element["#text"];
@@ -346,41 +367,47 @@ export class XliffHandler implements IFormatHandler {
         return element["#cdata"];
       }
     }
-    
+
     return "";
   }
 
-  private updateOriginalStructure(original: any, translated: TranslationFile): any {
+  private updateOriginalStructure(
+    original: any,
+    translated: TranslationFile,
+  ): any {
     // Deep clone the original structure
     const updated = JSON.parse(JSON.stringify(original));
-    
+
     if (!updated.xliff) {
       return updated;
     }
 
     const version = this.detectXliffVersion(updated.xliff);
-    
+
     if (version.startsWith("2.")) {
       this.updateXliff2xStructure(updated.xliff, translated);
     } else {
       this.updateXliff12Structure(updated.xliff, translated);
     }
-    
+
     return updated;
   }
 
-  private updateXliff12Structure(xliff: any, translations: TranslationFile): void {
+  private updateXliff12Structure(
+    xliff: any,
+    translations: TranslationFile,
+  ): void {
     if (!xliff.file || !xliff.file.body || !xliff.file.body["trans-unit"]) {
       return;
     }
 
-    const transUnits = Array.isArray(xliff.file.body["trans-unit"]) 
-      ? xliff.file.body["trans-unit"] 
+    const transUnits = Array.isArray(xliff.file.body["trans-unit"])
+      ? xliff.file.body["trans-unit"]
       : [xliff.file.body["trans-unit"]];
 
     for (const unit of transUnits) {
       const id = unit["@_id"];
-      
+
       if (id && translations[id] !== undefined) {
         // Don't update if already approved
         if (unit["@_approved"] === "yes") {
@@ -391,7 +418,7 @@ export class XliffHandler implements IFormatHandler {
         if (!unit.target) {
           unit.target = {};
         }
-        
+
         if (typeof unit.target === "object") {
           unit.target["#text"] = translations[id];
         } else {
@@ -404,26 +431,33 @@ export class XliffHandler implements IFormatHandler {
     }
   }
 
-  private updateXliff2xStructure(xliff: any, translations: TranslationFile): void {
+  private updateXliff2xStructure(
+    xliff: any,
+    translations: TranslationFile,
+  ): void {
     if (!xliff.file || !xliff.file.unit) {
       return;
     }
 
-    const units = Array.isArray(xliff.file.unit) ? xliff.file.unit : [xliff.file.unit];
+    const units = Array.isArray(xliff.file.unit)
+      ? xliff.file.unit
+      : [xliff.file.unit];
 
     for (const unit of units) {
       const id = unit["@_id"];
-      
+
       if (!id || !unit.segment) {
         continue;
       }
 
-      const segments = Array.isArray(unit.segment) ? unit.segment : [unit.segment];
-      
+      const segments = Array.isArray(unit.segment)
+        ? unit.segment
+        : [unit.segment];
+
       for (let i = 0; i < segments.length; i++) {
         const segment = segments[i];
         const segmentId = segments.length > 1 ? `${id}.${i}` : id;
-        
+
         if (translations[segmentId] !== undefined) {
           // Don't update if already approved
           if (unit["@_approved"] === "yes") {
@@ -434,7 +468,7 @@ export class XliffHandler implements IFormatHandler {
           if (!segment.target) {
             segment.target = {};
           }
-          
+
           if (typeof segment.target === "object") {
             segment.target["#text"] = translations[segmentId];
           } else {
@@ -451,7 +485,7 @@ export class XliffHandler implements IFormatHandler {
   private reconstructXliff12Structure(data: EnhancedTranslationFile): any {
     // Remove metadata for reconstruction
     const { _metadata, ...cleanData } = data;
-    
+
     // Create XLIFF 1.2 structure
     const transUnits = Object.entries(cleanData).map(([id, text]) => ({
       "@_id": id,

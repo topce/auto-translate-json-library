@@ -1,9 +1,9 @@
 import * as path from "node:path";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import { CsvHandler, type CsvOptions } from "./csv-handler.js";
@@ -32,13 +32,13 @@ export class TsvHandler implements IFormatHandler {
   parse(content: string): EnhancedTranslationFile {
     // Use CSV handler with tab delimiter
     const data = this.csvHandler.parse(content);
-    
+
     // Update metadata to indicate TSV format
     if (data._metadata) {
       data._metadata.format = "tsv";
-      data._metadata.csvDelimiter = '\t';
+      data._metadata.csvDelimiter = "\t";
     }
-    
+
     return data;
   }
 
@@ -46,9 +46,9 @@ export class TsvHandler implements IFormatHandler {
     // Force tab delimiter for TSV
     const tsvOptions: CsvOptions = {
       ...options,
-      delimiter: '\t'
+      delimiter: "\t",
     };
-    
+
     return this.csvHandler.serialize(data, tsvOptions);
   }
 
@@ -63,23 +63,23 @@ export class TsvHandler implements IFormatHandler {
   private isValidTsvContent(content: string): boolean {
     try {
       // Check if content has tab characters and consistent tab-separated structure
-      const lines = content.split('\n').filter(line => line.trim());
+      const lines = content.split("\n").filter((line) => line.trim());
       if (lines.length === 0) return false;
-      
+
       // Must contain tabs
-      if (!content.includes('\t')) return false;
-      
-      const firstLineFields = lines[0].split('\t').length;
-      
+      if (!content.includes("\t")) return false;
+
+      const firstLineFields = lines[0].split("\t").length;
+
       // Check if most lines have consistent field count
       let consistentLines = 0;
       for (const line of lines.slice(0, Math.min(10, lines.length))) {
-        const fields = line.split('\t');
+        const fields = line.split("\t");
         if (fields.length === firstLineFields) {
           consistentLines++;
         }
       }
-      
+
       return consistentLines >= Math.ceil(lines.length * 0.7); // 70% consistency threshold
     } catch {
       return false;

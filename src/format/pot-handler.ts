@@ -1,19 +1,19 @@
 import * as path from "node:path";
 import * as gettextParser from "gettext-parser";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
-import { 
+import {
   formatPluralFormsHeader,
   parseContext,
   createContextKey,
   parsePluralIndex,
   createPluralKey,
-  validateContext
+  validateContext,
 } from "./po-utils.js";
 
 interface POTEntry {
@@ -45,8 +45,10 @@ export class POTHandler implements IFormatHandler {
 
     // If content is provided, check for POT format signatures
     if (content) {
-      return /^\s*#.*POT-Creation-Date/m.test(content) || 
-             (/^\s*msgid\s+"/m.test(content) && /^\s*msgstr\s+""/m.test(content));
+      return (
+        /^\s*#.*POT-Creation-Date/m.test(content) ||
+        (/^\s*msgid\s+"/m.test(content) && /^\s*msgstr\s+""/m.test(content))
+      );
     }
 
     return true;
@@ -55,10 +57,10 @@ export class POTHandler implements IFormatHandler {
   parse(content: string): EnhancedTranslationFile {
     try {
       const parsed = gettextParser.po.parse(content) as POTData;
-      
+
       // Extract template strings from POT structure
       const templateStrings = this.extractTemplateStrings(parsed);
-      
+
       // Add metadata
       const result: EnhancedTranslationFile = {
         ...templateStrings,
@@ -71,21 +73,23 @@ export class POTHandler implements IFormatHandler {
           potHeaders: parsed.headers,
           sourceLanguage: this.extractLanguageFromHeaders(parsed.headers),
           isTemplate: true,
-        }
+        },
       };
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to parse POT file: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse POT file: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
   serialize(data: EnhancedTranslationFile, options?: FormatOptions): string {
     try {
       const { _metadata, ...translations } = data;
-      
+
       let potData: POTData;
-      
+
       if (_metadata?.originalStructure) {
         // Use original structure - POT files typically don't get updated with translations
         potData = JSON.parse(JSON.stringify(_metadata.originalStructure));
@@ -100,7 +104,9 @@ export class POTHandler implements IFormatHandler {
 
       return gettextParser.po.compile(potData, { foldLength: 76 }).toString();
     } catch (error) {
-      throw new Error(`Failed to serialize POT file: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize POT file: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -122,7 +128,7 @@ export class POTHandler implements IFormatHandler {
     }
 
     // Check for empty template
-    const templateKeys = Object.keys(data).filter(key => key !== "_metadata");
+    const templateKeys = Object.keys(data).filter((key) => key !== "_metadata");
     if (templateKeys.length === 0) {
       warnings.push({
         code: "EMPTY_POT",
@@ -133,7 +139,7 @@ export class POTHandler implements IFormatHandler {
     // Validate template structure - POT files should have empty msgstr values
     for (const [key, value] of Object.entries(data)) {
       if (key === "_metadata") continue;
-      
+
       if (typeof value !== "string") {
         errors.push({
           code: "INVALID_TEMPLATE_VALUE",
@@ -164,43 +170,51 @@ export class POTHandler implements IFormatHandler {
   /**
    * Generate PO file content from POT template for a specific target language
    */
-  generatePOFromTemplate(potContent: string, targetLanguage: string, translations?: Record<string, string>): string {
+  generatePOFromTemplate(
+    potContent: string,
+    targetLanguage: string,
+    translations?: Record<string, string>,
+  ): string {
     try {
       const potData = gettextParser.po.parse(potContent) as POTData;
-      
+
       // Clone the POT structure to create PO
       const poData: POTData = JSON.parse(JSON.stringify(potData));
-      
+
       // Update headers for target language
       this.updateHeadersForLanguage(poData.headers, targetLanguage);
-      
+
       // Apply translations if provided
       if (translations) {
         this.applyTranslationsToTemplate(poData, translations);
       }
-      
+
       return gettextParser.po.compile(poData, { foldLength: 76 }).toString();
     } catch (error) {
-      throw new Error(`Failed to generate PO from POT template: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to generate PO from POT template: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
   private extractTemplateStrings(potData: POTData): Record<string, string> {
     const result: Record<string, string> = {};
-    
-    for (const [context, translations] of Object.entries(potData.translations)) {
+
+    for (const [context, translations] of Object.entries(
+      potData.translations,
+    )) {
       for (const [msgid, entry] of Object.entries(translations)) {
         // Skip empty msgid (header entry)
         if (!msgid) continue;
-        
+
         // Create unique key for context + msgid using utility function
         const key = createContextKey(context, msgid);
-        
+
         // Handle plural forms
         if (entry.msgid_plural) {
           // For plural forms in templates, all msgstr entries are typically empty
           result[key] = ""; // Singular form
-          
+
           // Add plural form entries (typically empty in templates)
           for (let i = 1; i < entry.msgstr.length; i++) {
             const pluralKey = createPluralKey(key, i);
@@ -212,49 +226,54 @@ export class POTHandler implements IFormatHandler {
         }
       }
     }
-    
+
     return result;
   }
 
-  private createPOTStructure(templateStrings: Record<string, string>, metadata?: any): POTData {
+  private createPOTStructure(
+    templateStrings: Record<string, string>,
+    metadata?: any,
+  ): POTData {
     const potData: POTData = {
       charset: metadata?.encoding || "utf-8",
       headers: metadata?.potHeaders || this.getDefaultPOTHeaders(),
       translations: {
-        "": {} // Default context
-      }
+        "": {}, // Default context
+      },
     };
 
     // Add header entry
     potData.translations[""][""] = {
       msgid: "",
-      msgstr: [this.formatHeaders(potData.headers)]
+      msgstr: [this.formatHeaders(potData.headers)],
     };
 
     // Process template strings
     for (const [key, value] of Object.entries(templateStrings)) {
       const { context, msgid, pluralIndex } = this.parseTranslationKey(key);
-      
+
       // Validate context
       if (context && !validateContext(context)) {
-        throw new Error(`Invalid context in key "${key}": context cannot contain separator character`);
+        throw new Error(
+          `Invalid context in key "${key}": context cannot contain separator character`,
+        );
       }
-      
+
       // Ensure context exists
       if (!potData.translations[context]) {
         potData.translations[context] = {};
       }
-      
+
       // Ensure entry exists
       if (!potData.translations[context][msgid]) {
         potData.translations[context][msgid] = {
           msgid,
-          msgstr: [""] // Empty in templates
+          msgstr: [""], // Empty in templates
         };
       }
-      
+
       const entry = potData.translations[context][msgid];
-      
+
       // Handle plural forms
       if (pluralIndex !== undefined) {
         // Ensure msgstr array is large enough
@@ -263,7 +282,7 @@ export class POTHandler implements IFormatHandler {
         }
         // Keep empty for templates
         entry.msgstr[pluralIndex] = "";
-        
+
         // Set msgid_plural if this is a plural form
         if (pluralIndex > 0 && !entry.msgid_plural) {
           entry.msgid_plural = msgid;
@@ -277,34 +296,40 @@ export class POTHandler implements IFormatHandler {
     return potData;
   }
 
-  private parseTranslationKey(key: string): { context: string; msgid: string; pluralIndex?: number } {
+  private parseTranslationKey(key: string): {
+    context: string;
+    msgid: string;
+    pluralIndex?: number;
+  } {
     // Parse plural form index first
     const { baseKey, pluralIndex } = parsePluralIndex(key);
-    
+
     // Parse context from base key
     const { context, msgid } = parseContext(baseKey);
-    
+
     return {
       context,
       msgid,
-      pluralIndex
+      pluralIndex,
     };
   }
 
-  private extractLanguageFromHeaders(headers: Record<string, string>): string | undefined {
+  private extractLanguageFromHeaders(
+    headers: Record<string, string>,
+  ): string | undefined {
     const languageHeader = headers["Language"];
     const localeHeader = headers["Language-Team"];
-    
+
     if (languageHeader) {
       return languageHeader;
     }
-    
+
     if (localeHeader) {
       // Extract language code from Language-Team header
       const match = localeHeader.match(/\(([^)]+)\)/);
       return match ? match[1] : undefined;
     }
-    
+
     return undefined;
   }
 
@@ -313,15 +338,18 @@ export class POTHandler implements IFormatHandler {
     return {
       "Project-Id-Version": "PACKAGE VERSION",
       "Report-Msgid-Bugs-To": "",
-      "POT-Creation-Date": now.toISOString().replace(/T/, " ").replace(/\..+/, " +0000"),
+      "POT-Creation-Date": now
+        .toISOString()
+        .replace(/T/, " ")
+        .replace(/\..+/, " +0000"),
       "PO-Revision-Date": "YEAR-MO-DA HO:MI+ZONE",
       "Last-Translator": "FULL NAME <EMAIL@ADDRESS>",
       "Language-Team": "LANGUAGE <LL@li.org>",
-      "Language": "",
+      Language: "",
       "MIME-Version": "1.0",
       "Content-Type": "text/plain; charset=UTF-8",
       "Content-Transfer-Encoding": "8bit",
-      "Plural-Forms": "nplurals=INTEGER; plural=EXPRESSION;"
+      "Plural-Forms": "nplurals=INTEGER; plural=EXPRESSION;",
     };
   }
 
@@ -331,35 +359,47 @@ export class POTHandler implements IFormatHandler {
       .join("");
   }
 
-  private updateHeadersForLanguage(headers: Record<string, string>, targetLanguage: string): void {
+  private updateHeadersForLanguage(
+    headers: Record<string, string>,
+    targetLanguage: string,
+  ): void {
     const now = new Date();
-    
+
     headers["Language"] = targetLanguage;
-    headers["PO-Revision-Date"] = now.toISOString().replace(/T/, " ").replace(/\..+/, " +0000");
+    headers["PO-Revision-Date"] = now
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/\..+/, " +0000");
     headers["Last-Translator"] = "auto-translate-json-library";
-    
+
     // Update Language-Team if it's still the template value
     if (headers["Language-Team"] === "LANGUAGE <LL@li.org>") {
-      headers["Language-Team"] = `${targetLanguage.toUpperCase()} <${targetLanguage}@li.org>`;
+      headers["Language-Team"] =
+        `${targetLanguage.toUpperCase()} <${targetLanguage}@li.org>`;
     }
-    
+
     // Set appropriate plural forms based on language using utility function
     headers["Plural-Forms"] = formatPluralFormsHeader(targetLanguage);
   }
 
-  private applyTranslationsToTemplate(poData: POTData, translations: Record<string, string>): void {
-    for (const [context, contextTranslations] of Object.entries(poData.translations)) {
+  private applyTranslationsToTemplate(
+    poData: POTData,
+    translations: Record<string, string>,
+  ): void {
+    for (const [context, contextTranslations] of Object.entries(
+      poData.translations,
+    )) {
       for (const [msgid, entry] of Object.entries(contextTranslations)) {
         // Skip empty msgid (header entry)
         if (!msgid) continue;
-        
+
         const key = createContextKey(context, msgid);
-        
+
         // Update regular translation
         if (translations[key] !== undefined) {
           entry.msgstr[0] = translations[key];
         }
-        
+
         // Update plural forms if they exist
         if (entry.msgid_plural) {
           for (let i = 1; i < entry.msgstr.length; i++) {
@@ -373,16 +413,17 @@ export class POTHandler implements IFormatHandler {
     }
   }
 
-
-
-  private validatePOTHeaders(headers: Record<string, string>, warnings: any[]): void {
+  private validatePOTHeaders(
+    headers: Record<string, string>,
+    warnings: any[],
+  ): void {
     const requiredHeaders = [
       "Project-Id-Version",
       "POT-Creation-Date",
       "Content-Type",
-      "Content-Transfer-Encoding"
+      "Content-Transfer-Encoding",
     ];
-    
+
     for (const header of requiredHeaders) {
       if (!headers[header]) {
         warnings.push({
@@ -391,17 +432,19 @@ export class POTHandler implements IFormatHandler {
         });
       }
     }
-    
+
     // Check for template placeholders that should be filled
     const templatePlaceholders = [
       "YEAR-MO-DA HO:MI+ZONE",
       "FULL NAME <EMAIL@ADDRESS>",
       "LANGUAGE <LL@li.org>",
-      "PACKAGE VERSION"
+      "PACKAGE VERSION",
     ];
-    
+
     for (const [key, value] of Object.entries(headers)) {
-      if (templatePlaceholders.some(placeholder => value.includes(placeholder))) {
+      if (
+        templatePlaceholders.some((placeholder) => value.includes(placeholder))
+      ) {
         warnings.push({
           code: "TEMPLATE_PLACEHOLDER",
           message: `Header "${key}" contains template placeholder: ${value}`,

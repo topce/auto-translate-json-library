@@ -1,10 +1,10 @@
 import * as path from "node:path";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 
@@ -75,24 +75,28 @@ export class XmbHandler implements IFormatHandler {
   parse(content: string): EnhancedTranslationFile {
     try {
       const parsed = this.parser.parse(content);
-      
+
       if (!parsed.messagebundle) {
-        throw new Error("Invalid XMB format: missing messagebundle root element");
+        throw new Error(
+          "Invalid XMB format: missing messagebundle root element",
+        );
       }
 
       const result: TranslationFile = {};
       const messagebundle = parsed.messagebundle;
-      
+
       // Extract messages from the bundle
       if (messagebundle.msg) {
-        const messages = Array.isArray(messagebundle.msg) ? messagebundle.msg : [messagebundle.msg];
-        
+        const messages = Array.isArray(messagebundle.msg)
+          ? messagebundle.msg
+          : [messagebundle.msg];
+
         for (const msg of messages) {
           const xmbMsg = msg as XmbMessage;
           if (xmbMsg["@_id"]) {
             const messageId = xmbMsg["@_id"];
             let messageText = "";
-            
+
             // Handle different content structures
             if (typeof msg === "string") {
               messageText = msg;
@@ -105,10 +109,10 @@ export class XmbHandler implements IFormatHandler {
               // Fallback to mixed content extraction
               messageText = this.extractMixedContent(msg);
             }
-            
+
             // Handle placeholder variables in the message text
             messageText = this.preservePlaceholders(messageText);
-            
+
             result[messageId] = messageText;
           }
         }
@@ -125,14 +129,16 @@ export class XmbHandler implements IFormatHandler {
           xmbMetadata: {
             locale: messagebundle["@_locale"] || "en",
             version: messagebundle["@_version"] || "1.0",
-            messages: this.extractMessageMetadata(messagebundle.msg)
-          }
-        }
+            messages: this.extractMessageMetadata(messagebundle.msg),
+          },
+        },
       };
 
       return enhancedResult;
     } catch (error) {
-      throw new Error(`Failed to parse XMB: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse XMB: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -140,10 +146,13 @@ export class XmbHandler implements IFormatHandler {
     try {
       // Use original structure if available, otherwise reconstruct
       let xmbData: any;
-      
+
       if (data._metadata?.originalStructure) {
         // Update the original structure with translated values
-        xmbData = this.updateOriginalStructure(data._metadata.originalStructure, data);
+        xmbData = this.updateOriginalStructure(
+          data._metadata.originalStructure,
+          data,
+        );
       } else {
         // Reconstruct XMB structure
         xmbData = this.reconstructXmbStructure(data);
@@ -153,12 +162,15 @@ export class XmbHandler implements IFormatHandler {
       if (options?.indentation) {
         this.builder = new XMLBuilder({
           ...this.builder,
-          indentBy: typeof options.indentation === "string" ? options.indentation : "  ".repeat(options.indentation),
+          indentBy:
+            typeof options.indentation === "string"
+              ? options.indentation
+              : "  ".repeat(options.indentation),
         });
       }
 
       let result = this.builder.build(xmbData);
-      
+
       // Add XML declaration if needed
       if (options?.xmlDeclaration !== false && !result.startsWith("<?xml")) {
         result = `<?xml version="1.0" encoding="UTF-8"?>\n${result}`;
@@ -166,7 +178,9 @@ export class XmbHandler implements IFormatHandler {
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to serialize XMB: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize XMB: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -188,10 +202,10 @@ export class XmbHandler implements IFormatHandler {
     }
 
     const enhancedData = data as EnhancedTranslationFile;
-    
+
     if (enhancedData._metadata?.originalStructure) {
       const originalStructure = enhancedData._metadata.originalStructure;
-      
+
       if (!originalStructure.messagebundle) {
         errors.push({
           code: "MISSING_MESSAGEBUNDLE",
@@ -199,7 +213,7 @@ export class XmbHandler implements IFormatHandler {
         });
       } else {
         const messagebundle = originalStructure.messagebundle;
-        
+
         // Validate required attributes
         if (!messagebundle["@_locale"]) {
           warnings.push({
@@ -207,7 +221,7 @@ export class XmbHandler implements IFormatHandler {
             message: "XMB messagebundle should have a locale attribute",
           });
         }
-        
+
         // Validate messages
         if (!messagebundle.msg) {
           warnings.push({
@@ -215,8 +229,10 @@ export class XmbHandler implements IFormatHandler {
             message: "No messages found in XMB file",
           });
         } else {
-          const messages = Array.isArray(messagebundle.msg) ? messagebundle.msg : [messagebundle.msg];
-          
+          const messages = Array.isArray(messagebundle.msg)
+            ? messagebundle.msg
+            : [messagebundle.msg];
+
           for (const msg of messages) {
             if (!msg["@_id"]) {
               errors.push({
@@ -224,9 +240,11 @@ export class XmbHandler implements IFormatHandler {
                 message: "XMB message must have an id attribute",
               });
             }
-            
+
             // Validate placeholder integrity
-            const placeholderErrors = this.validatePlaceholders(msg["#text"] || "");
+            const placeholderErrors = this.validatePlaceholders(
+              msg["#text"] || "",
+            );
             errors.push(...placeholderErrors);
           }
         }
@@ -243,26 +261,34 @@ export class XmbHandler implements IFormatHandler {
   /**
    * Generate XTB file content from XMB source for a target language
    */
-  generateXtbFromXmb(xmbContent: string, targetLanguage: string, translations: TranslationFile): string {
+  generateXtbFromXmb(
+    xmbContent: string,
+    targetLanguage: string,
+    translations: TranslationFile,
+  ): string {
     try {
       const parsed = this.parser.parse(xmbContent);
-      
+
       if (!parsed.messagebundle) {
-        throw new Error("Invalid XMB format: missing messagebundle root element");
+        throw new Error(
+          "Invalid XMB format: missing messagebundle root element",
+        );
       }
 
       const messagebundle = parsed.messagebundle;
       const translationUnits: any[] = [];
-      
+
       if (messagebundle.msg) {
-        const messages = Array.isArray(messagebundle.msg) ? messagebundle.msg : [messagebundle.msg];
-        
+        const messages = Array.isArray(messagebundle.msg)
+          ? messagebundle.msg
+          : [messagebundle.msg];
+
         for (const msg of messages) {
           const messageId = msg["@_id"];
           if (messageId && translations[messageId]) {
             translationUnits.push({
               "@_id": messageId,
-              "#text": this.preservePlaceholders(translations[messageId])
+              "#text": this.preservePlaceholders(translations[messageId]),
             });
           }
         }
@@ -272,12 +298,12 @@ export class XmbHandler implements IFormatHandler {
       const xtbData = {
         translationbundle: {
           "@_lang": targetLanguage,
-          translation: translationUnits
-        }
+          translation: translationUnits,
+        },
       };
 
       let result = this.builder.build(xtbData);
-      
+
       // Add XML declaration
       if (!result.startsWith("<?xml")) {
         result = `<?xml version="1.0" encoding="UTF-8"?>\n${result}`;
@@ -285,7 +311,9 @@ export class XmbHandler implements IFormatHandler {
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to generate XTB from XMB: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to generate XTB from XMB: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -301,40 +329,40 @@ export class XmbHandler implements IFormatHandler {
 
   private validatePlaceholders(text: string): any[] {
     const errors: any[] = [];
-    
+
     // Check for unmatched braces in placeholder syntax
     const openBraces = (text.match(/\{/g) || []).length;
     const closeBraces = (text.match(/\}/g) || []).length;
-    
+
     if (openBraces !== closeBraces) {
       errors.push({
         code: "UNMATCHED_PLACEHOLDER_BRACES",
         message: `Unmatched placeholder braces in message: ${text}`,
       });
     }
-    
+
     // Check for unmatched XML placeholder elements
     const phOpenTags = (text.match(/<ph\s+[^>]*>/g) || []).length;
     const phCloseTags = (text.match(/<\/ph>/g) || []).length;
-    
+
     if (phOpenTags !== phCloseTags) {
       errors.push({
         code: "UNMATCHED_PH_TAGS",
         message: `Unmatched <ph> placeholder tags in message: ${text}`,
       });
     }
-    
+
     // Check for unmatched example elements
     const exOpenTags = (text.match(/<ex>/g) || []).length;
     const exCloseTags = (text.match(/<\/ex>/g) || []).length;
-    
+
     if (exOpenTags !== exCloseTags) {
       errors.push({
         code: "UNMATCHED_EX_TAGS",
         message: `Unmatched <ex> example tags in message: ${text}`,
       });
     }
-    
+
     // Validate placeholder name attributes
     const phTags = text.match(/<ph\s+name="([^"]*)"[^>]*>/g);
     if (phTags) {
@@ -348,7 +376,7 @@ export class XmbHandler implements IFormatHandler {
         }
       }
     }
-    
+
     return errors;
   }
 
@@ -363,13 +391,13 @@ export class XmbHandler implements IFormatHandler {
     const variables: string[] = [];
     const phElements: Array<{ name: string; content: string }> = [];
     const examples: string[] = [];
-    
+
     // Extract {$variable} and {VARIABLE} patterns
     const variableMatches = text.match(/\{[^}]+\}/g);
     if (variableMatches) {
       variables.push(...variableMatches);
     }
-    
+
     // Extract <ph> elements
     const phMatches = text.match(/<ph\s+name="([^"]*)"[^>]*>(.*?)<\/ph>/g);
     if (phMatches) {
@@ -379,12 +407,12 @@ export class XmbHandler implements IFormatHandler {
         if (nameMatch && contentMatch) {
           phElements.push({
             name: nameMatch[1],
-            content: contentMatch[1]
+            content: contentMatch[1],
           });
         }
       }
     }
-    
+
     // Extract <ex> elements
     const exMatches = text.match(/<ex>(.*?)<\/ex>/g);
     if (exMatches) {
@@ -395,20 +423,23 @@ export class XmbHandler implements IFormatHandler {
         }
       }
     }
-    
+
     return { variables, phElements, examples };
   }
 
   /**
    * Validate message integrity by checking placeholder consistency
    */
-  validateMessageIntegrity(originalText: string, translatedText: string): ValidationResult {
+  validateMessageIntegrity(
+    originalText: string,
+    translatedText: string,
+  ): ValidationResult {
     const errors: any[] = [];
     const warnings: any[] = [];
-    
+
     const originalPlaceholders = this.extractPlaceholderInfo(originalText);
     const translatedPlaceholders = this.extractPlaceholderInfo(translatedText);
-    
+
     // Check that all original variables are preserved
     for (const variable of originalPlaceholders.variables) {
       if (!translatedPlaceholders.variables.includes(variable)) {
@@ -418,10 +449,12 @@ export class XmbHandler implements IFormatHandler {
         });
       }
     }
-    
+
     // Check that all original ph elements are preserved
     for (const phElement of originalPlaceholders.phElements) {
-      const found = translatedPlaceholders.phElements.find(p => p.name === phElement.name);
+      const found = translatedPlaceholders.phElements.find(
+        (p) => p.name === phElement.name,
+      );
       if (!found) {
         errors.push({
           code: "MISSING_PH_PLACEHOLDER",
@@ -429,7 +462,7 @@ export class XmbHandler implements IFormatHandler {
         });
       }
     }
-    
+
     // Warn about extra placeholders in translation
     for (const variable of translatedPlaceholders.variables) {
       if (!originalPlaceholders.variables.includes(variable)) {
@@ -439,7 +472,7 @@ export class XmbHandler implements IFormatHandler {
         });
       }
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
@@ -449,33 +482,36 @@ export class XmbHandler implements IFormatHandler {
 
   private extractMessageMetadata(messages: any): Record<string, any> {
     const metadata: Record<string, any> = {};
-    
+
     if (!messages) return metadata;
-    
+
     const msgArray = Array.isArray(messages) ? messages : [messages];
-    
+
     for (const msg of msgArray) {
       if (msg["@_id"]) {
         metadata[msg["@_id"]] = {
           description: msg["@_desc"] || "",
           meaning: msg["@_meaning"] || "",
-          originalText: msg["#text"] || ""
+          originalText: msg["#text"] || "",
         };
       }
     }
-    
+
     return metadata;
   }
 
-  private updateOriginalStructure(original: any, translated: TranslationFile): any {
+  private updateOriginalStructure(
+    original: any,
+    translated: TranslationFile,
+  ): any {
     // Deep clone the original structure
     const updated = JSON.parse(JSON.stringify(original));
-    
+
     if (updated.messagebundle && updated.messagebundle.msg) {
-      const messages = Array.isArray(updated.messagebundle.msg) 
-        ? updated.messagebundle.msg 
+      const messages = Array.isArray(updated.messagebundle.msg)
+        ? updated.messagebundle.msg
         : [updated.messagebundle.msg];
-      
+
       for (const msg of messages) {
         const messageId = msg["@_id"];
         if (messageId && translated[messageId] !== undefined) {
@@ -483,19 +519,19 @@ export class XmbHandler implements IFormatHandler {
         }
       }
     }
-    
+
     return updated;
   }
 
   private reconstructXmbStructure(data: EnhancedTranslationFile): any {
     // Remove metadata for reconstruction
     const { _metadata, ...cleanData } = data;
-    
+
     const messages = Object.entries(cleanData).map(([id, text]) => ({
       "@_id": id,
       "#text": String(text),
     }));
-    
+
     return {
       messagebundle: {
         "@_locale": _metadata?.xmbMetadata?.locale || "en",
@@ -512,30 +548,36 @@ export class XmbHandler implements IFormatHandler {
     if (typeof element === "string") {
       return element;
     }
-    
+
     // For XMB messages with mixed content, we need to reconstruct the original text
     // The fast-xml-parser separates text and elements, so we need to combine them
     let result = "";
-    
+
     // Start with the base text content
     if (element["#text"]) {
       result = element["#text"];
     }
-    
+
     // Insert placeholder elements back into the text
     if (element.ph) {
       const phElements = Array.isArray(element.ph) ? element.ph : [element.ph];
-      
+
       // For the test case, we need to reconstruct the original message structure
       // The original was: "Welcome <ph name="USER_NAME">John</ph>, you have <ph name="COUNT">5</ph> messages."
       // But the parser gives us: text="Welcome, you havemessages." and separate ph elements
-      
+
       // Try to reconstruct by inserting placeholders at logical positions
-      if (result.includes("Welcome") && result.includes("you have") && result.includes("messages")) {
+      if (
+        result.includes("Welcome") &&
+        result.includes("you have") &&
+        result.includes("messages")
+      ) {
         // Find the USER_NAME placeholder
-        const userNamePh = phElements.find((ph: any) => ph["@_name"] === "USER_NAME");
+        const userNamePh = phElements.find(
+          (ph: any) => ph["@_name"] === "USER_NAME",
+        );
         const countPh = phElements.find((ph: any) => ph["@_name"] === "COUNT");
-        
+
         if (userNamePh && countPh) {
           // Reconstruct the message with placeholders
           result = `Welcome <ph name="${userNamePh["@_name"]}">${userNamePh["#text"]}</ph>, you have <ph name="${countPh["@_name"]}">${countPh["#text"]}</ph> messages.`;
@@ -550,7 +592,7 @@ export class XmbHandler implements IFormatHandler {
         }
       }
     }
-    
+
     // Handle example elements
     if (element.ex) {
       const exElements = Array.isArray(element.ex) ? element.ex : [element.ex];
@@ -559,7 +601,7 @@ export class XmbHandler implements IFormatHandler {
         result += ` <ex>${content}</ex>`;
       }
     }
-    
+
     return result.trim();
   }
 }

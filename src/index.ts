@@ -22,12 +22,12 @@ try {
   console.log(error);
 }
 
-import minimist from 'minimist';
+import minimist from "minimist";
 import { config as dotenvConfig } from "dotenv";
 
 function setConfigurationFromCLI() {
   const argv = minimist(process.argv.slice(2));
-  
+
   if (argv === undefined) {
     console.log("No arguments provided in CLI");
     return;

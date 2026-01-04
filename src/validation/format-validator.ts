@@ -1,20 +1,26 @@
-import type { 
-  ValidationResult, 
-  ValidationError, 
+import type {
+  ValidationResult,
+  ValidationError,
   ValidationWarning,
   IFormatHandler,
-  EnhancedTranslationFile 
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import { EnhancedValidationResult } from "./enhanced-validation-result.js";
-import { ErrorMessageFormatter, type ErrorMessageContext } from "./error-messages.js";
+import {
+  ErrorMessageFormatter,
+  type ErrorMessageContext,
+} from "./error-messages.js";
 
 export interface FormatValidationRule {
   code: string;
   name: string;
   description: string;
-  severity: 'error' | 'warning' | 'info';
-  validate: (data: TranslationFile, context?: ValidationContext) => ValidationIssue[];
+  severity: "error" | "warning" | "info";
+  validate: (
+    data: TranslationFile,
+    context?: ValidationContext,
+  ) => ValidationIssue[];
 }
 
 export interface ValidationContext {
@@ -28,7 +34,7 @@ export interface ValidationContext {
 export interface ValidationIssue {
   code: string;
   message: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   line?: number;
   column?: number;
   path?: string;
@@ -42,7 +48,10 @@ export class FormatValidator {
   /**
    * Register format-specific validation rules
    */
-  static registerFormatRules(format: string, rules: FormatValidationRule[]): void {
+  static registerFormatRules(
+    format: string,
+    rules: FormatValidationRule[],
+  ): void {
     const existingRules = this.rules.get(format) || [];
     this.rules.set(format, [...existingRules, ...rules]);
   }
@@ -57,7 +66,10 @@ export class FormatValidator {
   /**
    * Validate translation file data using format-specific and global rules
    */
-  static validate(data: TranslationFile, context: ValidationContext): ValidationResult {
+  static validate(
+    data: TranslationFile,
+    context: ValidationContext,
+  ): ValidationResult {
     const issues: ValidationIssue[] = [];
 
     // Apply global rules
@@ -67,11 +79,14 @@ export class FormatValidator {
         issues.push(...ruleIssues);
       } catch (error) {
         issues.push({
-          code: 'VALIDATION_RULE_ERROR',
-          message: ErrorMessageFormatter.formatMessage('VALIDATION_RULE_ERROR', {
-            error: error instanceof Error ? error.message : String(error)
-          }),
-          severity: 'warning'
+          code: "VALIDATION_RULE_ERROR",
+          message: ErrorMessageFormatter.formatMessage(
+            "VALIDATION_RULE_ERROR",
+            {
+              error: error instanceof Error ? error.message : String(error),
+            },
+          ),
+          severity: "warning",
         });
       }
     }
@@ -84,11 +99,14 @@ export class FormatValidator {
         issues.push(...ruleIssues);
       } catch (error) {
         issues.push({
-          code: 'VALIDATION_RULE_ERROR',
-          message: ErrorMessageFormatter.formatMessage('VALIDATION_RULE_ERROR', {
-            error: error instanceof Error ? error.message : String(error)
-          }),
-          severity: 'warning'
+          code: "VALIDATION_RULE_ERROR",
+          message: ErrorMessageFormatter.formatMessage(
+            "VALIDATION_RULE_ERROR",
+            {
+              error: error instanceof Error ? error.message : String(error),
+            },
+          ),
+          severity: "warning",
         });
       }
     }
@@ -99,7 +117,10 @@ export class FormatValidator {
   /**
    * Validate translation file data and return enhanced result with detailed messaging
    */
-  static validateWithEnhancedResult(data: TranslationFile, context: ValidationContext): EnhancedValidationResult {
+  static validateWithEnhancedResult(
+    data: TranslationFile,
+    context: ValidationContext,
+  ): EnhancedValidationResult {
     const basicResult = this.validate(data, context);
     return EnhancedValidationResult.fromValidationResult(basicResult);
   }
@@ -107,7 +128,10 @@ export class FormatValidator {
   /**
    * Create enhanced validation result from issues
    */
-  private static createEnhancedValidationResult(issues: ValidationIssue[], context: ValidationContext): ValidationResult {
+  private static createEnhancedValidationResult(
+    issues: ValidationIssue[],
+    context: ValidationContext,
+  ): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
@@ -118,24 +142,26 @@ export class FormatValidator {
         line: issue.line,
         column: issue.column,
         path: issue.path,
-        ...issue
+        ...issue,
       };
 
-      const formattedMessage = issue.message || ErrorMessageFormatter.formatMessage(issue.code, messageContext);
+      const formattedMessage =
+        issue.message ||
+        ErrorMessageFormatter.formatMessage(issue.code, messageContext);
 
-      if (issue.severity === 'error') {
+      if (issue.severity === "error") {
         errors.push({
           code: issue.code,
           message: formattedMessage,
           line: issue.line,
-          column: issue.column
+          column: issue.column,
         });
       } else {
         warnings.push({
           code: issue.code,
           message: formattedMessage,
           line: issue.line,
-          column: issue.column
+          column: issue.column,
         });
       }
     }
@@ -143,7 +169,7 @@ export class FormatValidator {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -172,41 +198,44 @@ export class FormatValidator {
   /**
    * Validate structure integrity for translation files
    */
-  static validateStructureIntegrity(data: TranslationFile, context: ValidationContext): ValidationResult {
+  static validateStructureIntegrity(
+    data: TranslationFile,
+    context: ValidationContext,
+  ): ValidationResult {
     const issues: ValidationIssue[] = [];
 
     // Basic structure validation
-    if (!data || typeof data !== 'object') {
+    if (!data || typeof data !== "object") {
       issues.push({
-        code: 'INVALID_STRUCTURE',
-        message: 'Translation data must be an object',
-        severity: 'error'
+        code: "INVALID_STRUCTURE",
+        message: "Translation data must be an object",
+        severity: "error",
       });
       return this.createValidationResult(issues);
     }
 
     // Check for empty data
-    const keys = Object.keys(data).filter(key => !key.startsWith('_'));
+    const keys = Object.keys(data).filter((key) => !key.startsWith("_"));
     if (keys.length === 0) {
       issues.push({
-        code: 'EMPTY_TRANSLATION_FILE',
-        message: 'Translation file contains no translatable content',
-        severity: 'warning'
+        code: "EMPTY_TRANSLATION_FILE",
+        message: "Translation file contains no translatable content",
+        severity: "warning",
       });
     }
 
     // Validate translatable content
-    this.validateTranslatableContent(data, '', issues);
+    this.validateTranslatableContent(data, "", issues);
 
     // Check for circular references
     try {
       JSON.stringify(data);
     } catch (error) {
-      if (error instanceof TypeError && error.message.includes('circular')) {
+      if (error instanceof TypeError && error.message.includes("circular")) {
         issues.push({
-          code: 'CIRCULAR_REFERENCE',
-          message: 'Translation data contains circular references',
-          severity: 'error'
+          code: "CIRCULAR_REFERENCE",
+          message: "Translation data contains circular references",
+          severity: "error",
         });
       }
     }
@@ -215,95 +244,103 @@ export class FormatValidator {
   }
 
   private static validateTranslatableContent(
-    obj: any, 
-    path: string, 
-    issues: ValidationIssue[], 
-    visited = new Set()
+    obj: any,
+    path: string,
+    issues: ValidationIssue[],
+    visited = new Set(),
   ): void {
     // Prevent infinite recursion
     if (visited.has(obj)) {
       return;
     }
 
-    if (typeof obj === 'object' && obj !== null) {
+    if (typeof obj === "object" && obj !== null) {
       visited.add(obj);
     }
 
     for (const [key, value] of Object.entries(obj)) {
       // Skip metadata keys
-      if (key.startsWith('_')) {
+      if (key.startsWith("_")) {
         continue;
       }
 
       const currentPath = path ? `${path}.${key}` : key;
 
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         // String values are translatable - validate string content
         this.validateStringContent(value, currentPath, issues);
-      } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Nested objects - recursively validate
         this.validateTranslatableContent(value, currentPath, issues, visited);
       } else if (Array.isArray(value)) {
         // Arrays - validate each element
         value.forEach((item, index) => {
           const arrayPath = `${currentPath}[${index}]`;
-          if (typeof item === 'string') {
+          if (typeof item === "string") {
             this.validateStringContent(item, arrayPath, issues);
-          } else if (typeof item === 'object' && item !== null) {
+          } else if (typeof item === "object" && item !== null) {
             this.validateTranslatableContent(item, arrayPath, issues, visited);
           } else {
             issues.push({
-              code: 'NON_TRANSLATABLE_ARRAY_ITEM',
+              code: "NON_TRANSLATABLE_ARRAY_ITEM",
               message: `Array item at ${arrayPath} is not translatable (${typeof item})`,
-              severity: 'warning',
-              path: arrayPath
+              severity: "warning",
+              path: arrayPath,
             });
           }
         });
       } else {
         // Non-string, non-object values
         issues.push({
-          code: 'NON_TRANSLATABLE_VALUE',
+          code: "NON_TRANSLATABLE_VALUE",
           message: `Value at ${currentPath} is not translatable (${typeof value})`,
-          severity: 'warning',
-          path: currentPath
+          severity: "warning",
+          path: currentPath,
         });
       }
     }
 
-    if (typeof obj === 'object' && obj !== null) {
+    if (typeof obj === "object" && obj !== null) {
       visited.delete(obj);
     }
   }
 
-  private static validateStringContent(value: string, path: string, issues: ValidationIssue[]): void {
+  private static validateStringContent(
+    value: string,
+    path: string,
+    issues: ValidationIssue[],
+  ): void {
     // Check for empty strings
     if (value.trim().length === 0) {
       issues.push({
-        code: 'EMPTY_TRANSLATION_STRING',
+        code: "EMPTY_TRANSLATION_STRING",
         message: `Empty or whitespace-only string at ${path}`,
-        severity: 'warning',
-        path: path
+        severity: "warning",
+        path: path,
       });
     }
 
     // Check for very long strings (potential data issues)
     if (value.length > 10000) {
       issues.push({
-        code: 'VERY_LONG_STRING',
+        code: "VERY_LONG_STRING",
         message: `String at ${path} is very long (${value.length} characters) - may indicate data issue`,
-        severity: 'info',
-        path: path
+        severity: "info",
+        path: path,
       });
     }
 
     // Check for potential HTML/XML content in non-XML formats
     if (this.containsHtmlTags(value)) {
       issues.push({
-        code: 'POTENTIAL_HTML_CONTENT',
+        code: "POTENTIAL_HTML_CONTENT",
         message: `String at ${path} contains HTML-like tags - ensure proper escaping`,
-        severity: 'info',
-        path: path
+        severity: "info",
+        path: path,
       });
     }
   }
@@ -313,29 +350,33 @@ export class FormatValidator {
     return htmlTagPattern.test(value);
   }
 
-  private static createValidationResult(issues: ValidationIssue[]): ValidationResult {
+  private static createValidationResult(
+    issues: ValidationIssue[],
+  ): ValidationResult {
     const errors: ValidationError[] = issues
-      .filter(issue => issue.severity === 'error')
-      .map(issue => ({
+      .filter((issue) => issue.severity === "error")
+      .map((issue) => ({
         code: issue.code,
         message: issue.message,
         line: issue.line,
-        column: issue.column
+        column: issue.column,
       }));
 
     const warnings: ValidationWarning[] = issues
-      .filter(issue => issue.severity === 'warning' || issue.severity === 'info')
-      .map(issue => ({
+      .filter(
+        (issue) => issue.severity === "warning" || issue.severity === "info",
+      )
+      .map((issue) => ({
         code: issue.code,
         message: issue.message,
         line: issue.line,
-        column: issue.column
+        column: issue.column,
       }));
 
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 }

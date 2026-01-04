@@ -9,6 +9,5 @@ export interface ITranslate {
 }
 
 export interface TranslationFile {
-  // biome-ignore lint/suspicious/noExplicitAny: This interface is used for flexibility in translation files
   [key: string]: any;
 }

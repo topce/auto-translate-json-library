@@ -33,7 +33,7 @@ export class FormatDetector {
 
   static detectFormat(filePath: string, content?: string): string {
     const extension = path.extname(filePath).toLowerCase();
-    
+
     // First try extension-based detection
     const formatFromExtension = this.extensionMap.get(extension);
     if (formatFromExtension && !content) {

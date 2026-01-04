@@ -1,10 +1,3 @@
 {
-  "greeting": "Bonjour le monde",
-  "farewell": "Au revoir",
-  "welcome": "Bienvenue dans notre application",
-  "description": "Ceci est un fichier démo pour la traduction automatique",
-  "button": {
-    "save": "Sauvegarder",
-    "cancel": "Annuler"
-  }
+
 }

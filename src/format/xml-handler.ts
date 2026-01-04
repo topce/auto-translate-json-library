@@ -4,14 +4,13 @@ import type {
   IFormatHandler,
   FormatOptions,
   ValidationResult,
-  EnhancedTranslationFile
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 
 export class XmlHandler implements IFormatHandler {
   private parser: XMLParser;
   private builder: XMLBuilder;
-  // biome-ignore lint/suspicious/noExplicitAny: Options object structure depends on library version
   private builderOptions: any;
 
   constructor() {
@@ -75,8 +74,8 @@ export class XmlHandler implements IFormatHandler {
     try {
       // Validate that content is actually XML-like
       const trimmed = content.trim();
-      if (!trimmed.startsWith('<?xml') && !trimmed.startsWith('<')) {
-        throw new Error('Content does not appear to be valid XML');
+      if (!trimmed.startsWith("<?xml") && !trimmed.startsWith("<")) {
+        throw new Error("Content does not appear to be valid XML");
       }
 
       // Basic validation for malformed XML
@@ -98,12 +97,14 @@ export class XmlHandler implements IFormatHandler {
           originalStructure: parsed,
           preserveComments: true,
           preserveAttributes: true,
-        }
+        },
       };
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to parse XML: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse XML: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -114,7 +115,10 @@ export class XmlHandler implements IFormatHandler {
 
       if (data._metadata?.originalStructure) {
         // Update the original structure with translated values
-        xmlData = this.updateOriginalStructure(data._metadata.originalStructure, data);
+        xmlData = this.updateOriginalStructure(
+          data._metadata.originalStructure,
+          data,
+        );
       } else {
         // Reconstruct XML structure
         xmlData = this.reconstructXmlStructure(data);
@@ -125,7 +129,10 @@ export class XmlHandler implements IFormatHandler {
       if (options?.indentation) {
         currentBuilder = new XMLBuilder({
           ...this.builderOptions,
-          indentBy: typeof options.indentation === "string" ? options.indentation : "  ".repeat(options.indentation),
+          indentBy:
+            typeof options.indentation === "string"
+              ? options.indentation
+              : "  ".repeat(options.indentation),
         });
       }
 
@@ -138,7 +145,9 @@ export class XmlHandler implements IFormatHandler {
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to serialize XML: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize XML: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -192,14 +201,14 @@ export class XmlHandler implements IFormatHandler {
         // Check if this looks like iOS XML without proper structure
         else if (this.looksLikeIosXml(data)) {
           this.validateIosFormat(data, errors, warnings);
-        }
-        else {
+        } else {
           // Check if it's empty data (should be valid but with warnings)
           const keys = Object.keys(data);
           if (keys.length === 0) {
             warnings.push({
               code: "EMPTY_XML",
-              message: "XML file appears to be empty or contains no translatable content",
+              message:
+                "XML file appears to be empty or contains no translatable content",
             });
           } else {
             // Generic XML format or flattened data
@@ -254,7 +263,9 @@ export class XmlHandler implements IFormatHandler {
 
     // Handle string elements
     if (resources.string) {
-      const strings = Array.isArray(resources.string) ? resources.string : [resources.string];
+      const strings = Array.isArray(resources.string)
+        ? resources.string
+        : [resources.string];
       for (const str of strings) {
         if (str["@_name"]) {
           const key = str["@_name"];
@@ -264,11 +275,16 @@ export class XmlHandler implements IFormatHandler {
           // If no #text or #cdata, check if the string element itself is the value
           if (value === undefined) {
             // Check if str is a simple object with just attributes
-            const nonAttributeKeys = Object.keys(str).filter(k => !k.startsWith("@_"));
+            const nonAttributeKeys = Object.keys(str).filter(
+              (k) => !k.startsWith("@_"),
+            );
             if (nonAttributeKeys.length === 0) {
               // Empty element
               value = "";
-            } else if (nonAttributeKeys.length === 1 && nonAttributeKeys[0] === "#text") {
+            } else if (
+              nonAttributeKeys.length === 1 &&
+              nonAttributeKeys[0] === "#text"
+            ) {
               value = str["#text"];
             } else {
               // Complex content, try to get text content
@@ -290,20 +306,26 @@ export class XmlHandler implements IFormatHandler {
 
     // Handle group elements (nested structure)
     if (resources.group) {
-      const groups = Array.isArray(resources.group) ? resources.group : [resources.group];
+      const groups = Array.isArray(resources.group)
+        ? resources.group
+        : [resources.group];
       for (const group of groups) {
         if (group["@_name"] && group.string) {
           const groupName = group["@_name"];
           result[groupName] = {};
 
-          const groupStrings = Array.isArray(group.string) ? group.string : [group.string];
+          const groupStrings = Array.isArray(group.string)
+            ? group.string
+            : [group.string];
           for (const str of groupStrings) {
             if (str["@_name"]) {
               const key = str["@_name"];
               let value = str["#text"] || str["#cdata"];
 
               if (value === undefined) {
-                const nonAttributeKeys = Object.keys(str).filter(k => !k.startsWith("@_"));
+                const nonAttributeKeys = Object.keys(str).filter(
+                  (k) => !k.startsWith("@_"),
+                );
                 if (nonAttributeKeys.length === 0) {
                   value = "";
                 } else {
@@ -355,7 +377,9 @@ export class XmlHandler implements IFormatHandler {
   private transformGenericXml(parsed: any): TranslationFile {
     // For generic XML, flatten the structure while preserving hierarchy
     // Skip the XML declaration and start from the root element
-    const rootKeys = Object.keys(parsed).filter(key => !key.startsWith('?xml') && !key.startsWith('@_'));
+    const rootKeys = Object.keys(parsed).filter(
+      (key) => !key.startsWith("?xml") && !key.startsWith("@_"),
+    );
 
     if (rootKeys.length === 1) {
       // If there's only one root element, flatten from that element
@@ -403,7 +427,10 @@ export class XmlHandler implements IFormatHandler {
     return result;
   }
 
-  private updateOriginalStructure(original: any, translated: TranslationFile): any {
+  private updateOriginalStructure(
+    original: any,
+    translated: TranslationFile,
+  ): any {
     // Deep clone the original structure
     const updated = JSON.parse(JSON.stringify(original));
 
@@ -413,7 +440,11 @@ export class XmlHandler implements IFormatHandler {
     return updated;
   }
 
-  private updateTranslatedValues(structure: any, translations: TranslationFile, path = ""): void {
+  private updateTranslatedValues(
+    structure: any,
+    translations: TranslationFile,
+    path = "",
+  ): void {
     if (Array.isArray(structure)) {
       // Handle arrays (like string elements in Android XML)
       for (const item of structure) {
@@ -440,14 +471,26 @@ export class XmlHandler implements IFormatHandler {
       }
     } else if (typeof structure === "object" && structure !== null) {
       // Special handling for iOS plist format
-      if (structure.key && structure.string && Array.isArray(structure.key) && Array.isArray(structure.string)) {
+      if (
+        structure.key &&
+        structure.string &&
+        Array.isArray(structure.key) &&
+        Array.isArray(structure.string)
+      ) {
         // Update iOS plist key-value pairs
-        for (let i = 0; i < structure.key.length && i < structure.string.length; i++) {
+        for (
+          let i = 0;
+          i < structure.key.length && i < structure.string.length;
+          i++
+        ) {
           const keyObj = structure.key[i];
           const stringObj = structure.string[i];
           const keyName = keyObj["#text"] || keyObj;
 
-          if (typeof keyName === "string" && translations[keyName] !== undefined) {
+          if (
+            typeof keyName === "string" &&
+            translations[keyName] !== undefined
+          ) {
             if (stringObj["#text"] !== undefined) {
               stringObj["#text"] = translations[keyName];
             } else if (typeof stringObj === "string") {
@@ -484,21 +527,21 @@ export class XmlHandler implements IFormatHandler {
     const groups: any[] = [];
 
     for (const [key, value] of Object.entries(cleanData)) {
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === "object" && value !== null) {
         // handle group
         const groupStrings = Object.entries(value).map(([gKey, gValue]) => ({
           "@_name": gKey,
-          "#text": String(gValue)
+          "#text": String(gValue),
         }));
         groups.push({
           "@_name": key,
-          "string": groupStrings
+          string: groupStrings,
         });
       } else {
         // handle string
         strings.push({
           "@_name": key,
-          "#text": String(value)
+          "#text": String(value),
         });
       }
     }
@@ -510,7 +553,11 @@ export class XmlHandler implements IFormatHandler {
     return { resources };
   }
 
-  private validateAndroidFormat(data: any, errors: any[], warnings: any[]): void {
+  private validateAndroidFormat(
+    data: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     if (!data || typeof data !== "object" || data.resources === undefined) {
       errors.push({
         code: "MISSING_RESOURCES",
@@ -522,7 +569,10 @@ export class XmlHandler implements IFormatHandler {
     const resources = data.resources;
 
     // Check for string elements - resources can be empty string or empty object
-    if (typeof resources === "string" || (typeof resources === "object" && (!resources.string && !resources.group))) {
+    if (
+      typeof resources === "string" ||
+      (typeof resources === "object" && !resources.string && !resources.group)
+    ) {
       warnings.push({
         code: "NO_STRINGS",
         message: "No string elements found in resources",
@@ -539,7 +589,11 @@ export class XmlHandler implements IFormatHandler {
       return;
     }
 
-    if (typeof data.plist === "object" && data.plist !== null && !data.plist.dict) {
+    if (
+      typeof data.plist === "object" &&
+      data.plist !== null &&
+      !data.plist.dict
+    ) {
       errors.push({
         code: "MISSING_DICT",
         message: "iOS plist must contain a 'dict' element",
@@ -547,12 +601,17 @@ export class XmlHandler implements IFormatHandler {
     }
   }
 
-  private validateGenericXmlFormat(data: any, errors: any[], warnings: any[]): void {
+  private validateGenericXmlFormat(
+    data: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     // Generic validation - just ensure it's a valid object
     if (Object.keys(data).length === 0) {
       warnings.push({
         code: "EMPTY_XML",
-        message: "XML file appears to be empty or contains no translatable content",
+        message:
+          "XML file appears to be empty or contains no translatable content",
       });
     }
   }
@@ -562,8 +621,8 @@ export class XmlHandler implements IFormatHandler {
     const trimmed = content.trim();
 
     // Check for basic XML structure issues
-    if (trimmed.includes('<') && !trimmed.includes('>')) {
-      throw new Error('Malformed XML: unclosed tag detected');
+    if (trimmed.includes("<") && !trimmed.includes(">")) {
+      throw new Error("Malformed XML: unclosed tag detected");
     }
 
     // Count opening and closing tags (basic check)
@@ -577,31 +636,39 @@ export class XmlHandler implements IFormatHandler {
     const doctype = trimmed.match(/<!DOCTYPE[^>]*>/g) || [];
     const comments = trimmed.match(/<!--[^>]*-->/g) || [];
 
-    const expectedClosingTags = openTags - selfClosingTags - xmlDeclaration.length - doctype.length - comments.length;
+    const expectedClosingTags =
+      openTags -
+      selfClosingTags -
+      xmlDeclaration.length -
+      doctype.length -
+      comments.length;
 
     if (expectedClosingTags > closeTags) {
-      throw new Error('Malformed XML: unclosed tags detected');
+      throw new Error("Malformed XML: unclosed tags detected");
     }
   }
 
   private looksLikeAndroidXml(data: any): boolean {
     // Check if it has Android XML characteristics without proper structure
     return (
-      data.string !== undefined &&
-      Array.isArray(data.string) &&
-      data.string.some((item: any) => item && typeof item === 'object' && item['@_name'])
-    ) || (
-        data.group !== undefined &&
+      (data.string !== undefined &&
+        Array.isArray(data.string) &&
+        data.string.some(
+          (item: any) => item && typeof item === "object" && item["@_name"],
+        )) ||
+      (data.group !== undefined &&
         Array.isArray(data.group) &&
-        data.group.some((item: any) => item && typeof item === 'object' && item['@_name'])
-      );
+        data.group.some(
+          (item: any) => item && typeof item === "object" && item["@_name"],
+        ))
+    );
   }
 
   private looksLikeIosXml(data: any): boolean {
     // Check if it has iOS XML characteristics without proper structure
     return (
       data.dict !== undefined &&
-      typeof data.dict === 'object' &&
+      typeof data.dict === "object" &&
       data.dict !== null &&
       (data.dict.key !== undefined || data.dict.string !== undefined)
     );

@@ -19,8 +19,8 @@ export class XmbXtbUtils {
    * Validate that XTB translations maintain message integrity with XMB source
    */
   validateBundleIntegrity(
-    xmbContent: string, 
-    xtbContent: string
+    xmbContent: string,
+    xtbContent: string,
   ): ValidationResult {
     const errors: any[] = [];
     const warnings: any[] = [];
@@ -32,19 +32,19 @@ export class XmbXtbUtils {
 
       // Get message metadata from XMB
       const xmbMetadata = xmbData._metadata?.xmbMetadata?.messages || {};
-      
+
       // Validate each translation against its original message
       for (const [messageId, translatedText] of Object.entries(xtbData)) {
         if (messageId === "_metadata") continue;
-        
+
         const originalMessage = xmbMetadata[messageId];
         if (originalMessage) {
           const originalText = originalMessage.originalText || "";
           const integrity = this.xmbHandler.validateMessageIntegrity(
-            originalText, 
-            String(translatedText)
+            originalText,
+            String(translatedText),
           );
-          
+
           errors.push(...integrity.errors);
           warnings.push(...integrity.warnings);
         } else {
@@ -58,7 +58,7 @@ export class XmbXtbUtils {
       // Check for missing translations
       for (const messageId of Object.keys(xmbData)) {
         if (messageId === "_metadata") continue;
-        
+
         if (!xtbData[messageId]) {
           warnings.push({
             code: "MISSING_TRANSLATION",
@@ -66,7 +66,6 @@ export class XmbXtbUtils {
           });
         }
       }
-
     } catch (error) {
       errors.push({
         code: "BUNDLE_PARSE_ERROR",
@@ -85,33 +84,46 @@ export class XmbXtbUtils {
    * Generate XTB file from XMB source with translations
    */
   generateXtbFromXmb(
-    xmbContent: string, 
-    targetLanguage: string, 
-    translations: TranslationFile
+    xmbContent: string,
+    targetLanguage: string,
+    translations: TranslationFile,
   ): string {
-    return this.xmbHandler.generateXtbFromXmb(xmbContent, targetLanguage, translations);
+    return this.xmbHandler.generateXtbFromXmb(
+      xmbContent,
+      targetLanguage,
+      translations,
+    );
   }
 
   /**
    * Update existing XTB file with new translations while preserving structure
    */
-  updateXtbFile(existingXtbContent: string, newTranslations: TranslationFile): string {
-    return this.xtbHandler.updateXtbTranslations(existingXtbContent, newTranslations);
+  updateXtbFile(
+    existingXtbContent: string,
+    newTranslations: TranslationFile,
+  ): string {
+    return this.xtbHandler.updateXtbTranslations(
+      existingXtbContent,
+      newTranslations,
+    );
   }
 
   /**
    * Extract message descriptions and meanings from XMB for translator context
    */
-  extractTranslatorContext(xmbContent: string): Record<string, {
-    description?: string;
-    meaning?: string;
-    originalText: string;
-    placeholders: {
-      variables: string[];
-      phElements: Array<{ name: string; content: string }>;
-      examples: string[];
-    };
-  }> {
+  extractTranslatorContext(xmbContent: string): Record<
+    string,
+    {
+      description?: string;
+      meaning?: string;
+      originalText: string;
+      placeholders: {
+        variables: string[];
+        phElements: Array<{ name: string; content: string }>;
+        examples: string[];
+      };
+    }
+  > {
     const context: Record<string, any> = {};
 
     try {
@@ -120,12 +132,12 @@ export class XmbXtbUtils {
 
       for (const [messageId, metadata] of Object.entries(xmbMetadata)) {
         const originalText = (metadata as any).originalText || "";
-        
+
         context[messageId] = {
           description: (metadata as any).description,
           meaning: (metadata as any).meaning,
           originalText,
-          placeholders: this.extractPlaceholderInfo(originalText)
+          placeholders: this.extractPlaceholderInfo(originalText),
         };
       }
     } catch (error) {
@@ -139,8 +151,8 @@ export class XmbXtbUtils {
    * Validate that message references are not broken in bundle structure
    */
   validateMessageReferences(
-    xmbContent: string, 
-    xtbContent: string
+    xmbContent: string,
+    xtbContent: string,
   ): ValidationResult {
     const errors: any[] = [];
     const warnings: any[] = [];
@@ -161,8 +173,12 @@ export class XmbXtbUtils {
       }
 
       // Validate message ID consistency
-      const xmbMessageIds = new Set(Object.keys(xmbData).filter(key => key !== "_metadata"));
-      const xtbMessageIds = new Set(Object.keys(xtbData).filter(key => key !== "_metadata"));
+      const xmbMessageIds = new Set(
+        Object.keys(xmbData).filter((key) => key !== "_metadata"),
+      );
+      const xtbMessageIds = new Set(
+        Object.keys(xtbData).filter((key) => key !== "_metadata"),
+      );
 
       // Check for message ID mismatches
       for (const xtbId of xtbMessageIds) {
@@ -173,7 +189,6 @@ export class XmbXtbUtils {
           });
         }
       }
-
     } catch (error) {
       errors.push({
         code: "REFERENCE_VALIDATION_ERROR",
@@ -196,13 +211,13 @@ export class XmbXtbUtils {
     const variables: string[] = [];
     const phElements: Array<{ name: string; content: string }> = [];
     const examples: string[] = [];
-    
+
     // Extract {$variable} and {VARIABLE} patterns
     const variableMatches = text.match(/\{[^}]+\}/g);
     if (variableMatches) {
       variables.push(...variableMatches);
     }
-    
+
     // Extract <ph> elements
     const phMatches = text.match(/<ph\s+name="([^"]*)"[^>]*>(.*?)<\/ph>/g);
     if (phMatches) {
@@ -212,12 +227,12 @@ export class XmbXtbUtils {
         if (nameMatch && contentMatch) {
           phElements.push({
             name: nameMatch[1],
-            content: contentMatch[1]
+            content: contentMatch[1],
           });
         }
       }
     }
-    
+
     // Extract <ex> elements
     const exMatches = text.match(/<ex>(.*?)<\/ex>/g);
     if (exMatches) {
@@ -228,7 +243,7 @@ export class XmbXtbUtils {
         }
       }
     }
-    
+
     return { variables, phElements, examples };
   }
 }

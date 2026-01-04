@@ -1,9 +1,9 @@
 import * as path from "node:path";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 
@@ -30,10 +30,10 @@ export class JsonHandler implements IFormatHandler {
   parse(content: string): EnhancedTranslationFile {
     try {
       const parsed = JSON.parse(content);
-      
+
       // Flatten nested structures for translation while preserving metadata
       const flattened = this.flattenObject(parsed);
-      
+
       // Add metadata
       const result: EnhancedTranslationFile = {
         ...flattened,
@@ -42,12 +42,14 @@ export class JsonHandler implements IFormatHandler {
           originalStructure: parsed,
           preserveComments: false, // JSON doesn't support comments natively
           preserveAttributes: false,
-        }
+        },
       };
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to parse JSON: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse JSON: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -55,12 +57,15 @@ export class JsonHandler implements IFormatHandler {
     try {
       // Remove metadata for serialization
       const { _metadata, ...cleanData } = data;
-      
+
       let result: any;
-      
+
       if (_metadata?.originalStructure) {
         // Reconstruct original nested structure with translated values
-        result = this.reconstructNestedStructure(_metadata.originalStructure, cleanData);
+        result = this.reconstructNestedStructure(
+          _metadata.originalStructure,
+          cleanData,
+        );
       } else {
         // Use flat structure or attempt to reconstruct from dot notation
         result = this.reconstructFromFlatStructure(cleanData);
@@ -68,10 +73,12 @@ export class JsonHandler implements IFormatHandler {
 
       // Apply formatting options
       const indentation = this.getIndentation(options);
-      
+
       return JSON.stringify(result, null, indentation);
     } catch (error) {
-      throw new Error(`Failed to serialize JSON: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize JSON: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -122,13 +129,21 @@ export class JsonHandler implements IFormatHandler {
     };
   }
 
-  private flattenObject(obj: any, prefix = "", result: Record<string, any> = {}): Record<string, any> {
+  private flattenObject(
+    obj: any,
+    prefix = "",
+    result: Record<string, any> = {},
+  ): Record<string, any> {
     for (const [key, value] of Object.entries(obj)) {
       const newKey = prefix ? `${prefix}.${key}` : key;
-      
+
       if (typeof value === "string") {
         result[newKey] = value;
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Recursively flatten nested objects
         this.flattenObject(value, newKey, result);
       } else if (Array.isArray(value)) {
@@ -149,37 +164,51 @@ export class JsonHandler implements IFormatHandler {
         result[newKey] = value;
       }
     }
-    
+
     return result;
   }
 
-  private reconstructNestedStructure(original: any, translations: Record<string, any>): any {
+  private reconstructNestedStructure(
+    original: any,
+    translations: Record<string, any>,
+  ): any {
     // Deep clone the original structure
     const result = JSON.parse(JSON.stringify(original));
-    
+
     // Update with translated values
     this.updateNestedValues(result, translations);
-    
+
     return result;
   }
 
-  private updateNestedValues(obj: any, translations: Record<string, any>, path = ""): void {
+  private updateNestedValues(
+    obj: any,
+    translations: Record<string, any>,
+    path = "",
+  ): void {
     for (const [key, value] of Object.entries(obj)) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       if (typeof value === "string") {
         // Check if we have a translation for this path
         if (translations[currentPath] !== undefined) {
           obj[key] = translations[currentPath];
         }
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Recursively update nested objects
         this.updateNestedValues(value, translations, currentPath);
       } else if (Array.isArray(value)) {
         // Handle arrays
         value.forEach((item, index) => {
           const arrayPath = `${currentPath}[${index}]`;
-          if (typeof item === "string" && translations[arrayPath] !== undefined) {
+          if (
+            typeof item === "string" &&
+            translations[arrayPath] !== undefined
+          ) {
             value[index] = translations[arrayPath];
           } else if (typeof item === "object" && item !== null) {
             this.updateNestedValues(item, translations, arrayPath);
@@ -191,31 +220,31 @@ export class JsonHandler implements IFormatHandler {
 
   private reconstructFromFlatStructure(flatData: Record<string, any>): any {
     const result: any = {};
-    
+
     for (const [key, value] of Object.entries(flatData)) {
       this.setNestedValue(result, key, value);
     }
-    
+
     return result;
   }
 
   private setNestedValue(obj: any, path: string, value: any): void {
     const keys = this.parsePath(path);
     let current = obj;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      
+
       if (key.isArray) {
         if (!Array.isArray(current[key.name])) {
           current[key.name] = [];
         }
-        
+
         // Ensure array has enough elements
         while (current[key.name].length <= key.index!) {
           current[key.name].push({});
         }
-        
+
         current = current[key.name][key.index!];
       } else {
         if (!(key.name in current)) {
@@ -224,7 +253,7 @@ export class JsonHandler implements IFormatHandler {
         current = current[key.name];
       }
     }
-    
+
     const lastKey = keys[keys.length - 1];
     if (lastKey.isArray) {
       if (!Array.isArray(current[lastKey.name])) {
@@ -236,10 +265,13 @@ export class JsonHandler implements IFormatHandler {
     }
   }
 
-  private parsePath(path: string): Array<{ name: string; isArray: boolean; index?: number }> {
+  private parsePath(
+    path: string,
+  ): Array<{ name: string; isArray: boolean; index?: number }> {
     const parts = path.split(".");
-    const result: Array<{ name: string; isArray: boolean; index?: number }> = [];
-    
+    const result: Array<{ name: string; isArray: boolean; index?: number }> =
+      [];
+
     for (const part of parts) {
       const arrayMatch = part.match(/^(.+)\[(\d+)\]$/);
       if (arrayMatch) {
@@ -255,29 +287,45 @@ export class JsonHandler implements IFormatHandler {
         });
       }
     }
-    
+
     return result;
   }
 
-  private validateTranslatableContent(obj: any, path: string, errors: any[], warnings: any[], visited = new Set()): void {
+  private validateTranslatableContent(
+    obj: any,
+    path: string,
+    errors: any[],
+    warnings: any[],
+    visited = new Set(),
+  ): void {
     // Check for circular references
     if (visited.has(obj)) {
       return; // Already processed this object
     }
-    
+
     if (typeof obj === "object" && obj !== null) {
       visited.add(obj);
     }
-    
+
     for (const [key, value] of Object.entries(obj)) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       if (typeof value === "string") {
         // String values are translatable - this is good
         continue;
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         // Nested objects - recursively validate
-        this.validateTranslatableContent(value, currentPath, errors, warnings, visited);
+        this.validateTranslatableContent(
+          value,
+          currentPath,
+          errors,
+          warnings,
+          visited,
+        );
       } else if (Array.isArray(value)) {
         // Arrays - check each element
         value.forEach((item, index) => {
@@ -286,7 +334,13 @@ export class JsonHandler implements IFormatHandler {
             // String in array is translatable
             return;
           } else if (typeof item === "object" && item !== null) {
-            this.validateTranslatableContent(item, arrayPath, errors, warnings, visited);
+            this.validateTranslatableContent(
+              item,
+              arrayPath,
+              errors,
+              warnings,
+              visited,
+            );
           } else {
             // Non-string, non-object values in arrays
             warnings.push({
@@ -303,7 +357,7 @@ export class JsonHandler implements IFormatHandler {
         });
       }
     }
-    
+
     if (typeof obj === "object" && obj !== null) {
       visited.delete(obj);
     }

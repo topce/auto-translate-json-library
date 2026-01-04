@@ -30,8 +30,12 @@ function displayHelp() {
     "  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepLPro,deepLFree or openai",
   );
   console.log("  --sourceLocale, -s <locale>  Specify the source locale");
-  console.log("  --format, -f <format>    Manually specify the file format (overrides auto-detection)");
-  console.log("  Note: inputPath can be a translation file in any supported format, or a folder structure");
+  console.log(
+    "  --format, -f <format>    Manually specify the file format (overrides auto-detection)",
+  );
+  console.log(
+    "  Note: inputPath can be a translation file in any supported format, or a folder structure",
+  );
   console.log(
     "  --keepTranslations, --no-keepTranslations  Keep or retranslate existing translations",
   );
@@ -43,13 +47,21 @@ function displayHelp() {
   const formats = FormatHandlerFactory.getSupportedFormats();
   const formatGroups = {
     "JSON-based": ["json", "arb"],
-    "XML-based": ["xml", "android-xml", "ios-xml", "generic-xml", "xliff", "xmb", "xtb"],
+    "XML-based": [
+      "xml",
+      "android-xml",
+      "ios-xml",
+      "generic-xml",
+      "xliff",
+      "xmb",
+      "xtb",
+    ],
     "Text-based": ["po", "pot", "yaml", "properties"],
-    "Tabular": ["csv", "tsv"]
+    Tabular: ["csv", "tsv"],
   };
-  
+
   for (const [group, groupFormats] of Object.entries(formatGroups)) {
-    const availableFormats = groupFormats.filter(f => formats.includes(f));
+    const availableFormats = groupFormats.filter((f) => formats.includes(f));
     if (availableFormats.length > 0) {
       console.log(`  ${group}: ${availableFormats.join(", ")}`);
     }
@@ -57,21 +69,33 @@ function displayHelp() {
   console.log("");
   console.log("Format examples:");
   console.log("  JSON:        translations.json, app.arb (Flutter)");
-  console.log("  XML:         strings.xml (Android), messages.xlf (XLIFF), template.xmb (Google)");
-  console.log("  Text:        messages.po (gettext), config.yaml, app.properties (Java)");
+  console.log(
+    "  XML:         strings.xml (Android), messages.xlf (XLIFF), template.xmb (Google)",
+  );
+  console.log(
+    "  Text:        messages.po (gettext), config.yaml, app.properties (Java)",
+  );
   console.log("  Tabular:     translations.csv, data.tsv");
   console.log("");
   console.log("Usage examples:");
-  console.log("  atj translations.json                    # Auto-detect JSON format");
+  console.log(
+    "  atj translations.json                    # Auto-detect JSON format",
+  );
   console.log("  atj --format xliff messages.xlf         # Force XLIFF format");
-  console.log("  atj --mode folder locales/               # Process entire folder");
-  console.log("  atj --engine google --format po msgs.po # Use Google Translate with PO files");
+  console.log(
+    "  atj --mode folder locales/               # Process entire folder",
+  );
+  console.log(
+    "  atj --engine google --format po msgs.po # Use Google Translate with PO files",
+  );
   console.log("");
   console.log("Default values");
   console.log("  --mode, -m <mode>                                    file");
   console.log("  --engine, -e <engine>                                aws");
   console.log("  --sourceLocale, -s <locale>                          en");
-  console.log("  --format, -f <format>                                auto-detect");
+  console.log(
+    "  --format, -f <format>                                auto-detect",
+  );
   console.log(
     "  --keepTranslations, --no-keepTranslations            --keepTranslations",
   );
@@ -86,33 +110,59 @@ function listFormats() {
   console.log("");
   console.log("Supported file formats:");
   console.log("");
-  
+
   const formats = FormatHandlerFactory.getSupportedFormats();
   const formatDetails = {
-    "json": { extensions: [".json"], description: "JSON translation files" },
-    "arb": { extensions: [".arb"], description: "Flutter Application Resource Bundle" },
-    "xml": { extensions: [".xml"], description: "Generic XML translation files" },
-    "android-xml": { extensions: [".xml"], description: "Android strings.xml format" },
-    "ios-xml": { extensions: [".xml"], description: "iOS localization XML format" },
+    json: { extensions: [".json"], description: "JSON translation files" },
+    arb: {
+      extensions: [".arb"],
+      description: "Flutter Application Resource Bundle",
+    },
+    xml: { extensions: [".xml"], description: "Generic XML translation files" },
+    "android-xml": {
+      extensions: [".xml"],
+      description: "Android strings.xml format",
+    },
+    "ios-xml": {
+      extensions: [".xml"],
+      description: "iOS localization XML format",
+    },
     "generic-xml": { extensions: [".xml"], description: "Generic XML format" },
-    "xliff": { extensions: [".xlf", ".xliff"], description: "XLIFF 1.2 and 2.x translation files" },
-    "xmb": { extensions: [".xmb"], description: "XML Message Bundle source files" },
-    "xtb": { extensions: [".xtb"], description: "XML Translation Bundle files" },
-    "po": { extensions: [".po"], description: "GNU gettext PO files" },
-    "pot": { extensions: [".pot"], description: "GNU gettext POT template files" },
-    "yaml": { extensions: [".yaml", ".yml"], description: "YAML translation files" },
-    "properties": { extensions: [".properties"], description: "Java Properties files" },
-    "csv": { extensions: [".csv"], description: "Comma-separated values files" },
-    "tsv": { extensions: [".tsv"], description: "Tab-separated values files" }
+    xliff: {
+      extensions: [".xlf", ".xliff"],
+      description: "XLIFF 1.2 and 2.x translation files",
+    },
+    xmb: {
+      extensions: [".xmb"],
+      description: "XML Message Bundle source files",
+    },
+    xtb: { extensions: [".xtb"], description: "XML Translation Bundle files" },
+    po: { extensions: [".po"], description: "GNU gettext PO files" },
+    pot: {
+      extensions: [".pot"],
+      description: "GNU gettext POT template files",
+    },
+    yaml: {
+      extensions: [".yaml", ".yml"],
+      description: "YAML translation files",
+    },
+    properties: {
+      extensions: [".properties"],
+      description: "Java Properties files",
+    },
+    csv: { extensions: [".csv"], description: "Comma-separated values files" },
+    tsv: { extensions: [".tsv"], description: "Tab-separated values files" },
   };
 
   for (const format of formats.sort()) {
     const details = formatDetails[format as keyof typeof formatDetails];
     if (details) {
-      console.log(`  ${format.padEnd(15)} ${details.extensions.join(", ").padEnd(20)} ${details.description}`);
+      console.log(
+        `  ${format.padEnd(15)} ${details.extensions.join(", ").padEnd(20)} ${details.description}`,
+      );
     }
   }
-  
+
   console.log("");
   console.log("Usage examples:");
   console.log("  atj --format json translations.json");
@@ -120,12 +170,16 @@ function listFormats() {
   console.log("  atj --format po locales/messages.po");
   console.log("  atj --format yaml config/translations.yaml");
   console.log("  atj --format arb --engine google lib/l10n/app_en.arb");
-  console.log("  atj --format android-xml --sourceLocale en res/values/strings.xml");
+  console.log(
+    "  atj --format android-xml --sourceLocale en res/values/strings.xml",
+  );
   console.log("");
   console.log("Best practices:");
   console.log("  • Format is usually auto-detected from file extension");
   console.log("  • Use --format to override auto-detection when needed");
-  console.log("  • For XML files, specify the exact variant (android-xml, ios-xml, xliff)");
+  console.log(
+    "  • For XML files, specify the exact variant (android-xml, ios-xml, xliff)",
+  );
   console.log("  • Use --keepTranslations to preserve existing translations");
   console.log("  • Test with a single file before processing entire folders");
 }
@@ -148,7 +202,12 @@ const flags = minimist(arguments_, {
     help: ["h"],
   },
   string: ["mode", "engine", "sourceLocale", "format"],
-  boolean: ["keepTranslations", "keepExtraTranslations", "help", "list-formats"],
+  boolean: [
+    "keepTranslations",
+    "keepExtraTranslations",
+    "help",
+    "list-formats",
+  ],
   default: {
     engine: "aws",
     sourceLocale: "en",
@@ -170,8 +229,14 @@ if (flags["list-formats"]) {
 }
 
 const inputPath = flags._[0];
-const { mode, engine, sourceLocale, keepTranslations, keepExtraTranslations, format } =
-  flags;
+const {
+  mode,
+  engine,
+  sourceLocale,
+  keepTranslations,
+  keepExtraTranslations,
+  format,
+} = flags;
 
 // Validate input path
 if (!inputPath) {
@@ -195,7 +260,14 @@ if (mode && !["file", "folder"].includes(mode)) {
 }
 
 // Validate engine
-const validEngines = ["aws", "azure", "google", "deepLPro", "deepLFree", "openai"];
+const validEngines = [
+  "aws",
+  "azure",
+  "google",
+  "deepLPro",
+  "deepLFree",
+  "openai",
+];
 if (engine && !validEngines.includes(engine)) {
   console.error(c.red(`❌ Invalid engine: ${engine}`));
   console.error(c.yellow(`💡 Supported engines: ${validEngines.join(", ")}`));

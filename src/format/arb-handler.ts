@@ -1,9 +1,9 @@
 import * as path from "node:path";
-import type { 
-  IFormatHandler, 
-  FormatOptions, 
-  ValidationResult, 
-  EnhancedTranslationFile 
+import type {
+  IFormatHandler,
+  FormatOptions,
+  ValidationResult,
+  EnhancedTranslationFile,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 
@@ -18,11 +18,14 @@ interface ArbMetadata {
 interface ArbResourceMetadata {
   type?: string;
   description?: string;
-  placeholders?: Record<string, {
-    type?: string;
-    example?: string;
-    description?: string;
-  }>;
+  placeholders?: Record<
+    string,
+    {
+      type?: string;
+      example?: string;
+      description?: string;
+    }
+  >;
   context?: string;
 }
 
@@ -31,7 +34,7 @@ interface IcuMessageInfo {
   placeholders: string[];
   pluralForms?: string[];
   selectOptions?: string[];
-  messageType: 'simple' | 'plural' | 'select' | 'complex';
+  messageType: "simple" | "plural" | "select" | "complex";
 }
 
 export class ArbHandler implements IFormatHandler {
@@ -58,17 +61,18 @@ export class ArbHandler implements IFormatHandler {
   parse(content: string): EnhancedTranslationFile {
     try {
       const parsed = JSON.parse(content);
-      
+
       if (!this.isValidArbStructure(parsed)) {
         throw new Error("Invalid ARB file structure");
       }
 
       // Separate ARB metadata from translatable content
-      const { metadata, resources, resourceMetadata } = this.extractArbComponents(parsed);
-      
+      const { metadata, resources, resourceMetadata } =
+        this.extractArbComponents(parsed);
+
       // Analyze ICU message formats in resources
       const icuAnalysis = this.analyzeIcuMessages(resources);
-      
+
       // Create flattened structure for translation
       const result: EnhancedTranslationFile = {
         ...resources,
@@ -81,57 +85,61 @@ export class ArbHandler implements IFormatHandler {
           arbMetadata: metadata,
           resourceMetadata: resourceMetadata,
           icuAnalysis: icuAnalysis,
-        }
+        },
       };
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to parse ARB: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse ARB: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
   serialize(data: EnhancedTranslationFile, options?: FormatOptions): string {
     try {
       const { _metadata, ...translatedResources } = data;
-      
+
       // Reconstruct ARB structure with proper ordering
       const result: any = {};
-      
+
       // 1. Add ARB metadata first (@@locale, @@last_modified, etc.)
       if (_metadata?.arbMetadata) {
         // Ensure @@locale comes first if present
         if (_metadata.arbMetadata["@@locale"]) {
           result["@@locale"] = _metadata.arbMetadata["@@locale"];
         }
-        
+
         // Add other ARB metadata in sorted order
         const otherMetadata = Object.entries(_metadata.arbMetadata)
           .filter(([key]) => key !== "@@locale")
           .sort(([a], [b]) => a.localeCompare(b));
-          
+
         for (const [key, value] of otherMetadata) {
           result[key] = value;
         }
-        
+
         // Update @@last_modified if preserving timestamps
         if (options?.customSettings?.updateTimestamp !== false) {
           result["@@last_modified"] = new Date().toISOString();
         }
       }
-      
+
       // 2. Add translated resources in sorted order
-      const sortedResources = Object.entries(translatedResources)
-        .sort(([a], [b]) => a.localeCompare(b));
-        
+      const sortedResources = Object.entries(translatedResources).sort(
+        ([a], [b]) => a.localeCompare(b),
+      );
+
       for (const [key, value] of sortedResources) {
         result[key] = value;
       }
-      
+
       // 3. Add resource metadata (@resourceName entries) in sorted order
       if (_metadata?.resourceMetadata) {
-        const sortedMetadata = Object.entries(_metadata.resourceMetadata)
-          .sort(([a], [b]) => a.localeCompare(b));
-          
+        const sortedMetadata = Object.entries(_metadata.resourceMetadata).sort(
+          ([a], [b]) => a.localeCompare(b),
+        );
+
         for (const [key, value] of sortedMetadata) {
           // Ensure metadata is properly structured
           result[key] = this.sanitizeResourceMetadata(value);
@@ -140,10 +148,12 @@ export class ArbHandler implements IFormatHandler {
 
       // Apply formatting options
       const indentation = this.getIndentation(options);
-      
+
       return JSON.stringify(result, null, indentation);
     } catch (error) {
-      throw new Error(`Failed to serialize ARB: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to serialize ARB: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -175,10 +185,10 @@ export class ArbHandler implements IFormatHandler {
 
     // Validate ARB metadata format
     this.validateArbMetadata(data, errors, warnings);
-    
+
     // Validate resource structure
     this.validateResourceStructure(data, errors, warnings);
-    
+
     // Validate ICU message formats
     this.validateIcuMessages(data, errors, warnings);
 
@@ -195,17 +205,25 @@ export class ArbHandler implements IFormatHandler {
     }
 
     // Check for ARB-specific patterns
-    const hasArbMetadata = Object.keys(parsed).some(key => key.startsWith("@@"));
-    const hasResourceMetadata = Object.keys(parsed).some(key => key.startsWith("@") && !key.startsWith("@@"));
-    
+    const hasArbMetadata = Object.keys(parsed).some((key) =>
+      key.startsWith("@@"),
+    );
+    const hasResourceMetadata = Object.keys(parsed).some(
+      (key) => key.startsWith("@") && !key.startsWith("@@"),
+    );
+
     // ARB files should have either ARB metadata or resource metadata
-    return hasArbMetadata || hasResourceMetadata || this.hasArbResourcePattern(parsed);
+    return (
+      hasArbMetadata ||
+      hasResourceMetadata ||
+      this.hasArbResourcePattern(parsed)
+    );
   }
 
   private hasArbResourcePattern(parsed: any): boolean {
     // Look for typical ARB resource patterns
     const keys = Object.keys(parsed);
-    return keys.some(key => {
+    return keys.some((key) => {
       const metadataKey = `@${key}`;
       return metadataKey in parsed;
     });
@@ -226,14 +244,19 @@ export class ArbHandler implements IFormatHandler {
         metadata[key as keyof ArbMetadata] = value as string;
       } else if (key.startsWith("@")) {
         // Resource metadata - validate and preserve structure
-        resourceMetadata[key] = this.validateAndPreserveResourceMetadata(key, value);
+        resourceMetadata[key] = this.validateAndPreserveResourceMetadata(
+          key,
+          value,
+        );
       } else {
         // Translatable resource
         if (typeof value === "string") {
           resources[key] = value;
         } else {
           // Non-string values in ARB should be preserved as metadata
-          console.warn(`Non-string resource "${key}" found in ARB file, treating as metadata`);
+          console.warn(
+            `Non-string resource "${key}" found in ARB file, treating as metadata`,
+          );
         }
       }
     }
@@ -241,32 +264,39 @@ export class ArbHandler implements IFormatHandler {
     return { metadata, resources, resourceMetadata };
   }
 
-  private validateAndPreserveResourceMetadata(key: string, value: any): ArbResourceMetadata {
+  private validateAndPreserveResourceMetadata(
+    key: string,
+    value: any,
+  ): ArbResourceMetadata {
     if (typeof value !== "object" || value === null) {
-      console.warn(`Invalid resource metadata for ${key}, creating empty metadata object`);
+      console.warn(
+        `Invalid resource metadata for ${key}, creating empty metadata object`,
+      );
       return {};
     }
 
     const metadata: ArbResourceMetadata = {};
-    
+
     // Preserve known metadata properties
     if (value.type !== undefined) {
       metadata.type = String(value.type);
     }
-    
+
     if (value.description !== undefined) {
       metadata.description = String(value.description);
     }
-    
+
     if (value.context !== undefined) {
       metadata.context = String(value.context);
     }
-    
+
     // Preserve placeholders with validation
     if (value.placeholders && typeof value.placeholders === "object") {
-      metadata.placeholders = this.preservePlaceholderMetadata(value.placeholders);
+      metadata.placeholders = this.preservePlaceholderMetadata(
+        value.placeholders,
+      );
     }
-    
+
     // Preserve any additional properties (for extensibility)
     for (const [prop, propValue] of Object.entries(value)) {
       if (!["type", "description", "context", "placeholders"].includes(prop)) {
@@ -279,8 +309,10 @@ export class ArbHandler implements IFormatHandler {
 
   private preservePlaceholderMetadata(placeholders: any): Record<string, any> {
     const preserved: Record<string, any> = {};
-    
-    for (const [placeholderName, placeholderData] of Object.entries(placeholders)) {
+
+    for (const [placeholderName, placeholderData] of Object.entries(
+      placeholders,
+    )) {
       if (typeof placeholderData === "object" && placeholderData !== null) {
         preserved[placeholderName] = { ...placeholderData };
       } else {
@@ -288,7 +320,7 @@ export class ArbHandler implements IFormatHandler {
         preserved[placeholderName] = {};
       }
     }
-    
+
     return preserved;
   }
 
@@ -298,20 +330,20 @@ export class ArbHandler implements IFormatHandler {
     }
 
     const sanitized: ArbResourceMetadata = {};
-    
+
     // Ensure string properties are strings
     if (metadata.type !== undefined) {
       sanitized.type = String(metadata.type);
     }
-    
+
     if (metadata.description !== undefined) {
       sanitized.description = String(metadata.description);
     }
-    
+
     if (metadata.context !== undefined) {
       sanitized.context = String(metadata.context);
     }
-    
+
     // Preserve placeholders structure
     if (metadata.placeholders && typeof metadata.placeholders === "object") {
       sanitized.placeholders = {};
@@ -321,7 +353,7 @@ export class ArbHandler implements IFormatHandler {
         }
       }
     }
-    
+
     return sanitized;
   }
 
@@ -334,7 +366,7 @@ export class ArbHandler implements IFormatHandler {
             message: `ARB metadata ${key} must be a string, got ${typeof value}`,
           });
         }
-        
+
         // Validate specific metadata
         if (key === "@@locale" && typeof value === "string") {
           if (!this.isValidLocaleCode(value)) {
@@ -348,7 +380,11 @@ export class ArbHandler implements IFormatHandler {
     }
   }
 
-  private validateResourceStructure(data: any, errors: any[], warnings: any[]): void {
+  private validateResourceStructure(
+    data: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     const resourceKeys = new Set<string>();
     const metadataKeys = new Set<string>();
 
@@ -376,7 +412,10 @@ export class ArbHandler implements IFormatHandler {
       if (!metadataKeys.has(resourceKey)) {
         // This is not an error, just informational
         const resourceValue = data[resourceKey];
-        if (typeof resourceValue === "string" && this.analyzeIcuMessage(resourceValue).hasIcuSyntax) {
+        if (
+          typeof resourceValue === "string" &&
+          this.analyzeIcuMessage(resourceValue).hasIcuSyntax
+        ) {
           warnings.push({
             code: "MISSING_METADATA_FOR_ICU",
             message: `Resource "${resourceKey}" contains ICU syntax but has no metadata`,
@@ -396,7 +435,12 @@ export class ArbHandler implements IFormatHandler {
     this.validateResourceMetadataConsistency(data, errors, warnings);
   }
 
-  private validateResourceMetadata(key: string, metadata: any, errors: any[], warnings: any[]): void {
+  private validateResourceMetadata(
+    key: string,
+    metadata: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     if (typeof metadata !== "object" || metadata === null) {
       errors.push({
         code: "INVALID_RESOURCE_METADATA",
@@ -422,7 +466,12 @@ export class ArbHandler implements IFormatHandler {
     }
   }
 
-  private validatePlaceholders(resourceKey: string, placeholders: any, errors: any[], warnings: any[]): void {
+  private validatePlaceholders(
+    resourceKey: string,
+    placeholders: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     if (typeof placeholders !== "object" || placeholders === null) {
       errors.push({
         code: "INVALID_PLACEHOLDERS",
@@ -431,7 +480,9 @@ export class ArbHandler implements IFormatHandler {
       return;
     }
 
-    for (const [placeholderName, placeholderData] of Object.entries(placeholders)) {
+    for (const [placeholderName, placeholderData] of Object.entries(
+      placeholders,
+    )) {
       if (typeof placeholderData !== "object" || placeholderData === null) {
         errors.push({
           code: "INVALID_PLACEHOLDER_DATA",
@@ -466,9 +517,14 @@ export class ArbHandler implements IFormatHandler {
     }
   }
 
-  private validateIcuMessageSyntax(key: string, message: string, errors: any[], warnings: any[]): void {
+  private validateIcuMessageSyntax(
+    key: string,
+    message: string,
+    errors: any[],
+    warnings: any[],
+  ): void {
     const icuInfo = this.analyzeIcuMessage(message);
-    
+
     if (!icuInfo.hasIcuSyntax) {
       return; // No ICU syntax to validate
     }
@@ -482,8 +538,8 @@ export class ArbHandler implements IFormatHandler {
     }
 
     // Validate plural forms
-    if (icuInfo.messageType === 'plural' && icuInfo.pluralForms) {
-      if (!icuInfo.pluralForms.includes('other')) {
+    if (icuInfo.messageType === "plural" && icuInfo.pluralForms) {
+      if (!icuInfo.pluralForms.includes("other")) {
         errors.push({
           code: "ICU_MISSING_OTHER_PLURAL",
           message: `ICU plural message in "${key}" must include 'other' form`,
@@ -492,8 +548,8 @@ export class ArbHandler implements IFormatHandler {
     }
 
     // Validate select forms
-    if (icuInfo.messageType === 'select' && icuInfo.selectOptions) {
-      if (!icuInfo.selectOptions.includes('other')) {
+    if (icuInfo.messageType === "select" && icuInfo.selectOptions) {
+      if (!icuInfo.selectOptions.includes("other")) {
         warnings.push({
           code: "ICU_MISSING_OTHER_SELECT",
           message: `ICU select message in "${key}" should include 'other' option`,
@@ -508,17 +564,17 @@ export class ArbHandler implements IFormatHandler {
   private validateBracketMatching(message: string): boolean {
     let depth = 0;
     let inQuotes = false;
-    
+
     for (let i = 0; i < message.length; i++) {
       const char = message[i];
-      const prevChar = i > 0 ? message[i - 1] : '';
-      
-      if (char === "'" && prevChar !== '\\') {
+      const prevChar = i > 0 ? message[i - 1] : "";
+
+      if (char === "'" && prevChar !== "\\") {
         inQuotes = !inQuotes;
       } else if (!inQuotes) {
-        if (char === '{') {
+        if (char === "{") {
           depth++;
-        } else if (char === '}') {
+        } else if (char === "}") {
           depth--;
           if (depth < 0) {
             return false; // More closing than opening brackets
@@ -526,13 +582,18 @@ export class ArbHandler implements IFormatHandler {
         }
       }
     }
-    
+
     return depth === 0; // All brackets should be matched
   }
 
-  private validateIcuSyntaxErrors(key: string, message: string, errors: any[], warnings: any[]): void {
+  private validateIcuSyntaxErrors(
+    key: string,
+    message: string,
+    errors: any[],
+    warnings: any[],
+  ): void {
     // Check for common syntax errors
-    
+
     // Unescaped single quotes in ICU messages
     const unescapedQuotePattern = /(?<!\\)'/g;
     const quotes = message.match(unescapedQuotePattern);
@@ -562,7 +623,11 @@ export class ArbHandler implements IFormatHandler {
     }
   }
 
-  private validateResourceMetadataConsistency(data: any, errors: any[], warnings: any[]): void {
+  private validateResourceMetadataConsistency(
+    data: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     for (const [key, value] of Object.entries(data)) {
       // Skip metadata keys
       if (key.startsWith("@")) {
@@ -572,7 +637,7 @@ export class ArbHandler implements IFormatHandler {
       if (typeof value === "string") {
         const metadataKey = `@${key}`;
         const metadata = data[metadataKey];
-        
+
         // Check if resource has ICU syntax but no metadata at all
         const icuInfo = this.analyzeIcuMessage(value);
         if (icuInfo.hasIcuSyntax && !metadata) {
@@ -581,18 +646,33 @@ export class ArbHandler implements IFormatHandler {
             message: `Resource "${key}" uses ICU placeholders but has no placeholder metadata`,
           });
         } else if (metadata) {
-          this.validatePlaceholderConsistency(key, value, metadata, errors, warnings);
+          this.validatePlaceholderConsistency(
+            key,
+            value,
+            metadata,
+            errors,
+            warnings,
+          );
         }
       }
     }
   }
 
-  private validatePlaceholderConsistency(resourceKey: string, message: string, metadata: any, errors: any[], warnings: any[]): void {
+  private validatePlaceholderConsistency(
+    resourceKey: string,
+    message: string,
+    metadata: any,
+    errors: any[],
+    warnings: any[],
+  ): void {
     const icuInfo = this.analyzeIcuMessage(message);
-    
+
     if (!icuInfo.hasIcuSyntax) {
       // If no ICU syntax but metadata has placeholders, warn
-      if (metadata.placeholders && Object.keys(metadata.placeholders).length > 0) {
+      if (
+        metadata.placeholders &&
+        Object.keys(metadata.placeholders).length > 0
+      ) {
         warnings.push({
           code: "METADATA_PLACEHOLDER_MISMATCH",
           message: `Resource "${resourceKey}" has placeholder metadata but no ICU placeholders in message`,
@@ -640,13 +720,15 @@ export class ArbHandler implements IFormatHandler {
     return localePattern.test(locale);
   }
 
-  private analyzeIcuMessages(resources: Record<string, string>): Record<string, IcuMessageInfo> {
+  private analyzeIcuMessages(
+    resources: Record<string, string>,
+  ): Record<string, IcuMessageInfo> {
     const analysis: Record<string, IcuMessageInfo> = {};
-    
+
     for (const [key, message] of Object.entries(resources)) {
       analysis[key] = this.analyzeIcuMessage(message);
     }
-    
+
     return analysis;
   }
 
@@ -654,7 +736,7 @@ export class ArbHandler implements IFormatHandler {
     const info: IcuMessageInfo = {
       hasIcuSyntax: false,
       placeholders: [],
-      messageType: 'simple'
+      messageType: "simple",
     };
 
     // Check for ICU syntax patterns
@@ -677,16 +759,19 @@ export class ArbHandler implements IFormatHandler {
     if (hasIcuSyntax) {
       // Extract placeholders
       info.placeholders = this.extractIcuPlaceholders(message);
-      
+
       // Determine message type - check for specific patterns
-      if (message.includes(', plural,') || message.includes(',plural,')) {
-        info.messageType = 'plural';
+      if (message.includes(", plural,") || message.includes(",plural,")) {
+        info.messageType = "plural";
         info.pluralForms = this.extractPluralForms(message);
-      } else if (message.includes(', select,') || message.includes(',select,')) {
-        info.messageType = 'select';
+      } else if (
+        message.includes(", select,") ||
+        message.includes(",select,")
+      ) {
+        info.messageType = "select";
         info.selectOptions = this.extractSelectOptions(message);
       } else if (info.placeholders.length > 0) {
-        info.messageType = 'complex';
+        info.messageType = "complex";
       }
     }
 
@@ -695,11 +780,11 @@ export class ArbHandler implements IFormatHandler {
 
   private extractIcuPlaceholders(message: string): string[] {
     const placeholders: string[] = [];
-    
+
     // Use a simple approach to find all {variable} patterns
     const placeholderPattern = /\{([a-zA-Z_][a-zA-Z0-9_]*)/g;
     let match;
-    
+
     while ((match = placeholderPattern.exec(message)) !== null) {
       const variableName = match[1];
       if (!placeholders.includes(variableName)) {
@@ -712,18 +797,18 @@ export class ArbHandler implements IFormatHandler {
 
   private extractPluralForms(message: string): string[] {
     const pluralForms: string[] = [];
-    
+
     // Match plural patterns like {count, plural, =0 {no items} =1 {one item} other {# items}}
     const pluralPattern = /\{[^,]+,\s*plural\s*,\s*(.+)\}/g;
     const match = pluralPattern.exec(message);
-    
+
     if (match) {
       const pluralContent = match[1];
       // Extract plural form keys (=0, =1, other, few, many, etc.)
       // Use a more robust approach to handle nested braces
       const formPattern = /(=\d+|zero|one|two|few|many|other)\s*\{/g;
       let formMatch;
-      
+
       while ((formMatch = formPattern.exec(pluralContent)) !== null) {
         const form = formMatch[1];
         if (!pluralForms.includes(form)) {
@@ -737,18 +822,18 @@ export class ArbHandler implements IFormatHandler {
 
   private extractSelectOptions(message: string): string[] {
     const selectOptions: string[] = [];
-    
+
     // Match select patterns like {gender, select, male {he} female {she} other {they}}
     const selectPattern = /\{[^,]+,\s*select\s*,\s*(.+)\}/g;
     const match = selectPattern.exec(message);
-    
+
     if (match) {
       const selectContent = match[1];
       // Extract select option keys
       // Use a more robust approach to handle nested braces
       const optionPattern = /(\w+)\s*\{/g;
       let optionMatch;
-      
+
       while ((optionMatch = optionPattern.exec(selectContent)) !== null) {
         const option = optionMatch[1];
         if (!selectOptions.includes(option)) {
@@ -760,7 +845,10 @@ export class ArbHandler implements IFormatHandler {
     return selectOptions;
   }
 
-  private validateIcuMessageIntegrity(original: string, translated: string): boolean {
+  private validateIcuMessageIntegrity(
+    original: string,
+    translated: string,
+  ): boolean {
     const originalInfo = this.analyzeIcuMessage(original);
     const translatedInfo = this.analyzeIcuMessage(translated);
 
@@ -780,7 +868,9 @@ export class ArbHandler implements IFormatHandler {
     }
 
     // Check placeholders match
-    if (originalInfo.placeholders.length !== translatedInfo.placeholders.length) {
+    if (
+      originalInfo.placeholders.length !== translatedInfo.placeholders.length
+    ) {
       return false;
     }
 
@@ -792,10 +882,12 @@ export class ArbHandler implements IFormatHandler {
 
     // Check plural forms match (if applicable)
     if (originalInfo.pluralForms && translatedInfo.pluralForms) {
-      if (originalInfo.pluralForms.length !== translatedInfo.pluralForms.length) {
+      if (
+        originalInfo.pluralForms.length !== translatedInfo.pluralForms.length
+      ) {
         return false;
       }
-      
+
       for (const form of originalInfo.pluralForms) {
         if (!translatedInfo.pluralForms.includes(form)) {
           return false;
@@ -805,10 +897,13 @@ export class ArbHandler implements IFormatHandler {
 
     // Check select options match (if applicable)
     if (originalInfo.selectOptions && translatedInfo.selectOptions) {
-      if (originalInfo.selectOptions.length !== translatedInfo.selectOptions.length) {
+      if (
+        originalInfo.selectOptions.length !==
+        translatedInfo.selectOptions.length
+      ) {
         return false;
       }
-      
+
       for (const option of originalInfo.selectOptions) {
         if (!translatedInfo.selectOptions.includes(option)) {
           return false;

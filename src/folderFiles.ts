@@ -32,7 +32,9 @@ export class FolderFiles implements IFiles {
     const sourceFilePath = this.createFileName(this.sourceLocale);
     try {
       if (fs.existsSync(sourceFilePath)) {
-        const content = fs.readFileSync(sourceFilePath, 'utf8').substring(0, 1000);
+        const content = fs
+          .readFileSync(sourceFilePath, "utf8")
+          .substring(0, 1000);
         return FormatDetector.detectFormat(sourceFilePath, content);
       }
     } catch (error) {
@@ -62,10 +64,10 @@ export class FolderFiles implements IFiles {
   }
 
   loadJsonFromLocale(locale: string) {
-  return loadJsonFromLocale(this.createFileName(locale));
+    return loadJsonFromLocale(this.createFileName(locale));
   }
 
   saveJsonToLocale(locale: string, file: TranslationFile) {
-  saveJsonToLocale(this.createFileName(locale), file);
+    saveJsonToLocale(this.createFileName(locale), file);
   }
 }
