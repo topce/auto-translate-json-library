@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
-import path from "node:path";
 import { existsSync } from "node:fs";
+import path from "node:path";
 import minimist from "minimist";
 import c from "picocolors";
 import packageJson from "../../package.json" with { type: "json" };
+
 const { version } = packageJson;
+
 import type { Configuration } from "../config.js";
-import { translate } from "../lib.js";
 import { FormatHandlerFactory } from "../format-handler-factory.js";
+import { translate } from "../lib.js";
 // Import format handlers to ensure they are registered
 import "../format/index.js";
 import { config as dotenvConfig } from "dotenv";

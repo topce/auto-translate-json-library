@@ -1,10 +1,10 @@
 import * as path from "node:path";
 import * as yaml from "js-yaml";
 import type {
-  IFormatHandler,
-  FormatOptions,
-  ValidationResult,
   EnhancedTranslationFile,
+  FormatOptions,
+  IFormatHandler,
+  ValidationResult,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 

@@ -1,11 +1,11 @@
 import type {
-  ValidationResult,
   ValidationError,
+  ValidationResult,
   ValidationWarning,
 } from "../format.interface.js";
 import {
-  ErrorMessageFormatter,
   type ErrorMessageContext,
+  ErrorMessageFormatter,
 } from "./error-messages.js";
 
 /**

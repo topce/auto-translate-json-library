@@ -1,20 +1,20 @@
 import * as path from "node:path";
 import * as gettextParser from "gettext-parser";
 import type {
-  IFormatHandler,
-  FormatOptions,
-  ValidationResult,
   EnhancedTranslationFile,
+  FormatOptions,
+  IFormatHandler,
+  ValidationResult,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import {
-  formatPluralFormsHeader,
-  validatePluralExpression,
-  parseContext,
   createContextKey,
-  parsePluralIndex,
   createPluralKey,
+  formatPluralFormsHeader,
+  parseContext,
+  parsePluralIndex,
   validateContext,
+  validatePluralExpression,
   validatePluralForms,
 } from "./po-utils.js";
 

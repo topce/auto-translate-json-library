@@ -1,7 +1,7 @@
-import type { TranslationFile } from "../translate.interface.js";
 import type { EnhancedTranslationFile } from "../format.interface.js";
 import { FormatDetector } from "../format-detector.js";
 import { FormatHandlerFactory } from "../format-handler-factory.js";
+import type { TranslationFile } from "../translate.interface.js";
 import { ErrorMessageFormatter } from "./error-messages.js";
 
 /**

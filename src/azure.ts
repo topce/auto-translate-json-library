@@ -1,9 +1,8 @@
+import axios from "axios";
+import { setTimeout as sleep } from "timers/promises";
+import { v4 as uuidv4 } from "uuid";
 import type { ITranslate } from "./translate.interface.js";
 import { Util } from "./util.js";
-import { setTimeout as sleep } from "timers/promises";
-
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 
 const supportedLanguages = [
   "af",

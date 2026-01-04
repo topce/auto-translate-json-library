@@ -1,9 +1,9 @@
 import * as path from "node:path";
 import type {
-  IFormatHandler,
-  FormatOptions,
-  ValidationResult,
   EnhancedTranslationFile,
+  FormatOptions,
+  IFormatHandler,
+  ValidationResult,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import { CsvHandler, type CsvOptions } from "./csv-handler.js";

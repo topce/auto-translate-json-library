@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { type IFiles, loadJsonFromLocale, saveJsonToLocale } from "./files.js";
-import type { TranslationFile } from "./translate.interface.js";
 import { FormatDetector } from "./format-detector.js";
+import type { TranslationFile } from "./translate.interface.js";
 
 export class FolderFiles implements IFiles {
   folderPath: string;

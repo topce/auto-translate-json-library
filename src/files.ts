@@ -1,10 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { TranslationFile } from "./translate.interface.js";
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
+import type { EnhancedTranslationFile } from "./format.interface.js";
 import { FormatDetector } from "./format-detector.js";
 import { FormatHandlerFactory } from "./format-handler-factory.js";
-import type { EnhancedTranslationFile } from "./format.interface.js";
+import type { TranslationFile } from "./translate.interface.js";
 // Import format handlers to ensure they are registered
 import "./format/index.js";
 

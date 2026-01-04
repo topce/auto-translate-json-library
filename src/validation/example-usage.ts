@@ -3,10 +3,10 @@
  * This file demonstrates how to use the validation system in practice
  */
 
-import { ValidationService, initializeValidation } from "./index.js";
+import { ArbHandler } from "../format/arb-handler.js";
 import { JsonHandler } from "../format/json-handler.js";
 import { XliffHandler } from "../format/xliff-handler.js";
-import { ArbHandler } from "../format/arb-handler.js";
+import { initializeValidation, ValidationService } from "./index.js";
 
 // Initialize the validation system
 initializeValidation();

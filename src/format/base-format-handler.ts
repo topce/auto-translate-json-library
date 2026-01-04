@@ -1,8 +1,8 @@
 import type {
-  IFormatHandler,
-  FormatOptions,
-  ValidationResult,
   EnhancedTranslationFile,
+  FormatOptions,
+  IFormatHandler,
+  ValidationResult,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import {

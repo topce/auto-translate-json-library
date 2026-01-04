@@ -1,18 +1,18 @@
 import * as path from "node:path";
 import * as gettextParser from "gettext-parser";
 import type {
-  IFormatHandler,
-  FormatOptions,
-  ValidationResult,
   EnhancedTranslationFile,
+  FormatOptions,
+  IFormatHandler,
+  ValidationResult,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import {
+  createContextKey,
+  createPluralKey,
   formatPluralFormsHeader,
   parseContext,
-  createContextKey,
   parsePluralIndex,
-  createPluralKey,
   validateContext,
 } from "./po-utils.js";
 

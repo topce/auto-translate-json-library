@@ -1,11 +1,11 @@
-import * as path from "node:path";
 import * as fs from "node:fs";
+import * as path from "node:path";
 import * as propertiesParser from "properties-parser";
 import type {
-  IFormatHandler,
-  FormatOptions,
-  ValidationResult,
   EnhancedTranslationFile,
+  FormatOptions,
+  IFormatHandler,
+  ValidationResult,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 

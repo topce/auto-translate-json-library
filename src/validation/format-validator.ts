@@ -1,15 +1,15 @@
 import type {
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
-  IFormatHandler,
   EnhancedTranslationFile,
+  IFormatHandler,
+  ValidationError,
+  ValidationResult,
+  ValidationWarning,
 } from "../format.interface.js";
 import type { TranslationFile } from "../translate.interface.js";
 import { EnhancedValidationResult } from "./enhanced-validation-result.js";
 import {
-  ErrorMessageFormatter,
   type ErrorMessageContext,
+  ErrorMessageFormatter,
 } from "./error-messages.js";
 
 export interface FormatValidationRule {

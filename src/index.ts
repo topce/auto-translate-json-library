@@ -22,8 +22,8 @@ try {
   console.log(error);
 }
 
-import minimist from "minimist";
 import { config as dotenvConfig } from "dotenv";
+import minimist from "minimist";
 
 function setConfigurationFromCLI() {
   const argv = minimist(process.argv.slice(2));
