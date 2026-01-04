@@ -1,7 +1,7 @@
-app: ''
-name: '""'
-description: '""'
-menu: ''
-file: '""'
-edit: '""'
-view: '""'
+app:
+  name: ""
+  description: ""
+menu:
+  file: ""
+  edit: ""
+  view: ""
