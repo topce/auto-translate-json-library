@@ -1,6 +1,6 @@
 {
   "name": "auto-translate-json-library",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "description": "Automatically translates JSON language files to other languages using Google Translate,AWS,Azure,DeepL,OpenAI or local OpenAI compatible server",
   "main": "./build/src/index.js",
@@ -104,7 +104,7 @@
   "author": "codegrue",
   "repository": {
     "type": "git",
-    "url": "https://github.com/topce/auto-translate-json-library"
+    "url": "git+https://github.com/topce/auto-translate-json-library.git"
   },
   "contributors": [
     "codegrue",
