@@ -129,6 +129,7 @@ export class OpenAITranslate implements ITranslate {
     const configuration = {
       apiKey: apiKey,
       baseURL: baseUrl,
+      timeout: 120000, // 2 minutes timeout for local models like Ollama
     };
     this.openai = new OpenAI(configuration);
   }
