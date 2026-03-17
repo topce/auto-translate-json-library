@@ -8,6 +8,8 @@ import { DeepLTranslate } from "./deepl.js";
 import { Files, type IFiles } from "./files.js";
 import { FolderFiles } from "./folderFiles.js";
 import { GoogleTranslate } from "./google.js";
+import { HuggingFaceTranslate } from "./huggingface.js";
+import { HuggingFaceLocalTranslate } from "./huggingface-local.js";
 import { OpenAITranslate } from "./openai.js";
 import type { ITranslate, TranslationFile } from "./translate.interface.js";
 import { Util } from "./util.js";
@@ -66,9 +68,19 @@ export async function translate(
       config.translationKeyInfo.presencePenalty,
       config.translationKeyInfo.frequencyPenalty,
     );
+  } else if (config.translationKeyInfo.kind === "huggingface") {
+    translateEngine = new HuggingFaceTranslate(
+      config.translationKeyInfo.apiKey,
+      config.translationKeyInfo.model,
+      config.translationKeyInfo.provider,
+    );
+  } else if (config.translationKeyInfo.kind === "huggingface-local") {
+    translateEngine = new HuggingFaceLocalTranslate(
+      config.translationKeyInfo.model,
+    );
   } else {
     console.warn(
-      "You must provide a Google, AWS, Azure, deepL, openai parameters first in the extension settings.",
+      "You must provide a Google, AWS, Azure, deepL, openai, huggingface, or huggingface-local parameters first in the extension settings.",
     );
     return;
   }

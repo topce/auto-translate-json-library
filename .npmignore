@@ -35,8 +35,7 @@ node_modules/
 .gitignore
 
 # Build artifacts that shouldn't be in source (but build/ is included via files array)
-# Uncomment if you want to exclude specific build files
-# build/src/**/*.test.*
+build/tests/
 
 # Logs and temporary files
 *.log

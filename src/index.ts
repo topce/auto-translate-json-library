@@ -1,3 +1,4 @@
+import type { InferenceProviderOrPolicy } from "@huggingface/inference";
 import { Configuration } from "./config.js";
 import { translate } from "./lib.js";
 
@@ -141,6 +142,28 @@ function setConfigurationFromEnvironment() {
         process.env.ATJ_OPEN_AI_FREQUENCY_PENALTY ?? "0",
       ),
       presencePenalty: Number(process.env.ATJ_OPEN_AI_PRESENCE_PENALTY ?? "0"),
+    };
+  }
+
+  // Hugging Face cloud mode (requires API key)
+  if (process.env.ATJ_HUGGING_FACE_API_KEY) {
+    config.translationKeyInfo = {
+      kind: "huggingface",
+      apiKey: process.env.ATJ_HUGGING_FACE_API_KEY,
+      model:
+        process.env.ATJ_HUGGING_FACE_MODEL ??
+        "Helsinki-NLP/opus-mt-en-fr",
+      provider: process.env.ATJ_HUGGING_FACE_PROVIDER as
+        | InferenceProviderOrPolicy
+        | undefined,
+    };
+  }
+
+  // Hugging Face local mode (no API key, ONNX on-device — takes priority)
+  if (process.env.ATJ_HUGGING_FACE_LOCAL_MODEL) {
+    config.translationKeyInfo = {
+      kind: "huggingface-local",
+      model: process.env.ATJ_HUGGING_FACE_LOCAL_MODEL,
     };
   }
 

@@ -75,6 +75,36 @@ ATJ_OPEN_AI_MAX_TOKENS=512
 
 If you prefer to use cloud translation services instead of local AI, create a `.env` file with one of these configurations:
 
+### Hugging Face Cloud
+```env
+ATJ_HUGGING_FACE_API_KEY=your_huggingface_token_here
+ATJ_HUGGING_FACE_PROVIDER=hf-inference
+ATJ_HUGGING_FACE_MODEL=Helsinki-NLP/opus-mt-en-fr
+ATJ_SOURCE_LOCALE=en
+```
+
+Run it with:
+
+```bash
+cp ../huggingface.env .env
+npm install
+node run-demo.js --engine=huggingface
+```
+
+### Hugging Face Local
+```env
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-fr
+ATJ_SOURCE_LOCALE=en
+```
+
+Run it with:
+
+```bash
+cp ../huggingface-local.env .env
+npm install
+node run-demo.js --engine=huggingface-local
+```
+
 ### Google Translate
 ```env
 ATJ_GOOGLE_API_KEY=your_google_api_key_here
@@ -104,6 +134,14 @@ ATJ_SOURCE_LOCALE=en
 3. From the demo directory, copy the environment file: `cp ollama.env .env`
 4. Install demo dependencies: `npm install`
 5. Run the demo: `npm run demo`
+
+### Quick Start with Hugging Face
+1. For cloud mode, copy `../huggingface.env` to `.env` and set `ATJ_HUGGING_FACE_API_KEY`
+2. For local mode, copy `../huggingface-local.env` to `.env`
+3. Install demo dependencies: `npm install`
+4. Run cloud mode: `node run-demo.js --engine=huggingface`
+5. Run local mode: `node run-demo.js --engine=huggingface-local`
+6. On first local run, wait for the model download to complete
 
 ### Manual Execution
 1. Open a terminal in the demo directory

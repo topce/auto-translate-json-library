@@ -73,6 +73,44 @@ The CLI expects you to specify a file path within a language directory, and it w
 - Valid API keys for translation engines or Ollama setup
 - The project must be built (`npm run build` in the root)
 
+## Setup for Hugging Face
+
+### Hugging Face Cloud
+Create a `.env` file in `demo-folder/` with:
+
+```env
+ATJ_HUGGING_FACE_API_KEY=your_huggingface_token_here
+ATJ_HUGGING_FACE_PROVIDER=hf-inference
+ATJ_HUGGING_FACE_MODEL=Helsinki-NLP/opus-mt-en-fr
+ATJ_SOURCE_LOCALE=en
+ATJ_MODE=folder
+```
+
+Run it with:
+
+```bash
+cp ../huggingface.env .env
+node run-demo.js --engine=huggingface
+```
+
+### Hugging Face Local
+Create a `.env` file in `demo-folder/` with:
+
+```env
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-fr
+ATJ_SOURCE_LOCALE=en
+ATJ_MODE=folder
+```
+
+Run it with:
+
+```bash
+cp ../huggingface-local.env .env
+node run-demo.js --engine=huggingface-local
+```
+
+On the first local run, the ONNX model is downloaded and cached before translation starts.
+
 ## Setup for Local AI (Ollama) - Recommended
 
 ### 1. Install Ollama
@@ -108,6 +146,13 @@ The key difference is `ATJ_MODE=folder` which tells the library to use folder mo
 3. From the demo-folder directory: `cp ollama.env .env`
 4. Install dependencies: `npm install`
 5. Run the demo: `node run-demo.js`
+
+### Quick Start with Hugging Face
+1. For cloud mode, copy `../huggingface.env` to `.env` and set `ATJ_HUGGING_FACE_API_KEY`
+2. For local mode, copy `../huggingface-local.env` to `.env`
+3. Install dependencies: `npm install`
+4. Run cloud mode: `node run-demo.js --engine=huggingface`
+5. Run local mode: `node run-demo.js --engine=huggingface-local`
 
 ### Specific Format Demos
 ```bash

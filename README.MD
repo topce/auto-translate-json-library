@@ -7,10 +7,11 @@ Auto Translate JSON
 It opens possibility to use Auto Translation JSON
 not just in VS Code but as a library and command line interface.
 
-You can use Azure, AWS, Google, DeepL, OpenAI or
+You can use Azure, AWS, Google, DeepL, OpenAI,
 local OpenAI compatible REST API
-for example [ollama](https://ollama.com/) 
+for example [ollama](https://ollama.com/)
 because it is compatible with OpenAI https://ollama.com/blog/openai-compatibility
+or [Hugging Face](https://huggingface.co/) (cloud API or fully local on-device inference)
 
 ## 🚀 Version 2.0.0 - Major Release
 
@@ -55,7 +56,7 @@ import { translate, Configuration } from 'auto-translate-json-library';
 const config: Configuration = {
   // Translation service configuration
   translationKeyInfo: {
-    kind: 'openai', // 'google' | 'aws' | 'azure' | 'deepLPro' | 'deepLFree' | 'openai'
+    kind: 'openai', // 'google' | 'aws' | 'azure' | 'deepLPro' | 'deepLFree' | 'openai' | 'huggingface' | 'huggingface-local'
     apiKey: 'your-api-key',
     // OpenAI-specific options
     baseUrl: 'https://api.openai.com/v1', // or local Ollama: 'http://localhost:11434/v1'
@@ -125,6 +126,35 @@ const config: Configuration = {
 };
 ```
 
+#### Hugging Face Cloud (Helsinki-NLP, NLLB, etc.)
+```typescript
+// Requires a free HF token: https://huggingface.co/settings/tokens
+const config: Configuration = {
+  translationKeyInfo: {
+    kind: 'huggingface',
+    apiKey: process.env.ATJ_HUGGING_FACE_API_KEY,
+    model: 'Helsinki-NLP/opus-mt-en-fr',
+    provider: 'hf-inference'
+  },
+  sourceLocale: 'en'
+};
+```
+
+The cloud Hugging Face integration uses dedicated translation models such as `Helsinki-NLP/opus-mt-en-fr` and `facebook/nllb-200-distilled-600M`.
+
+#### Hugging Face Local (No API key — fully on-device)
+```typescript
+// No account, no API key, no internet after first run
+// Model (~300 MB) is downloaded and cached automatically on first use
+const config: Configuration = {
+  translationKeyInfo: {
+    kind: 'huggingface-local',
+    model: 'Xenova/opus-mt-en-fr' // ONNX version, runs on CPU/GPU via ONNX Runtime
+  },
+  sourceLocale: 'en'
+};
+```
+
 #### AWS Translate
 ```typescript
 const config: Configuration = {
@@ -188,6 +218,48 @@ npm install -g auto-translate-json-library
 ```
 
 Then use the convenient `atj` command:
+
+## Publish to npm
+
+The repo now uses npm trusted publishing from GitHub Actions instead of a long-lived `NPM_TOKEN`.
+
+### One-time npm setup
+
+1. Open the package settings on npm for `auto-translate-json-library`.
+2. Enable trusted publishing for this GitHub repository.
+3. Grant the workflow permission to publish from `topce/auto-translate-json-library`.
+
+After that, GitHub Actions can publish with OIDC and `--provenance`, with no npm token stored in GitHub secrets.
+
+### Release flow
+
+1. Bump `version` in `package.json`.
+2. Run `npm run release:check` locally.
+3. Commit and push to `master`.
+4. Create and push a version tag such as `v2.0.4`.
+
+```shell
+git tag v2.0.4
+git push origin v2.0.4
+```
+
+The publish workflow will then:
+
+- install with `npm ci`
+- run tests
+- build the package
+- run `npm pack --dry-run`
+- publish to npm with provenance
+
+### Local dry run
+
+If you want to inspect the package before tagging:
+
+```shell
+npm run release:check
+```
+
+This is the quickest way to catch missing files, broken builds, or packaging mistakes before a real publish.
 
 ```shell
 atj translations/en.json -e google -s en
@@ -265,6 +337,34 @@ atj translations/en.json -e deepLPro -s en
 
 # DeepL Free (limited usage)
 atj translations/en.json -e deepLFree -s en
+```
+
+#### Hugging Face Cloud
+```shell
+# Using Helsinki-NLP opus-mt model (fast, purpose-built for translation)
+ATJ_HUGGING_FACE_API_KEY=hf_your_token \
+atj translations/en.json -e huggingface -s en
+
+# Different language pair model
+ATJ_HUGGING_FACE_API_KEY=hf_your_token \
+ATJ_HUGGING_FACE_MODEL=Helsinki-NLP/opus-mt-en-de \
+atj translations/en.json -e huggingface -s en
+
+# Using NLLB (supports 200+ languages)
+ATJ_HUGGING_FACE_API_KEY=hf_your_token \
+ATJ_HUGGING_FACE_MODEL=facebook/nllb-200-distilled-600M \
+atj translations/en.json -e huggingface -s en
+```
+
+#### Hugging Face Local (No API key)
+```shell
+# Model downloads automatically on first run (~300 MB), then works offline
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-fr \
+atj translations/en.json -e huggingface-local -s en
+
+# Different language pair
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-de \
+atj translations/en.json -e huggingface-local -s en
 ```
 
 ### File vs Folder Mode
@@ -901,6 +1001,110 @@ The library supports multiple translation services. Choose the one that best fit
 
 ---
 
+### 🤗 Hugging Face Cloud (Best Free Translation Models)
+
+**Best for**: High-quality translations using purpose-built models, free tier available, 200+ languages with NLLB
+
+#### Setup Steps:
+1. **Create a Hugging Face Account**:
+   - Go to [huggingface.co](https://huggingface.co/) and sign up (free)
+
+2. **Get an Access Token**:
+   - Go to [Settings → Access Tokens](https://huggingface.co/settings/tokens)
+   - Click "New token", choose "Read" role, copy the token
+
+3. **Configure Environment**:
+   ```bash
+   # Copy the HuggingFace environment template
+   cp huggingface.env .env
+
+   # Edit .env and replace your_huggingface_token_here with your actual token
+   ```
+
+4. **Usage**:
+   ```bash
+   atj translations/en.json -e huggingface -s en
+   ```
+
+#### Quick Run Commands:
+```bash
+# Use the default cloud example model
+cp huggingface.env .env
+atj translations/en.json -e huggingface -s en
+
+# Override the model for another language pair
+ATJ_HUGGING_FACE_API_KEY=hf_your_token \
+ATJ_HUGGING_FACE_MODEL=Helsinki-NLP/opus-mt-en-de \
+atj translations/en.json -e huggingface -s en
+
+# Use NLLB for broader language coverage
+ATJ_HUGGING_FACE_API_KEY=hf_your_token \
+ATJ_HUGGING_FACE_MODEL=facebook/nllb-200-distilled-600M \
+atj translations/en.json -e huggingface -s en
+```
+
+#### Recommended Models:
+- **`Helsinki-NLP/opus-mt-en-fr`** — Fast, lightweight, English→French (swap `fr` for other languages)
+- **`Helsinki-NLP/opus-mt-en-de`** — English→German
+- **`facebook/nllb-200-distilled-600M`** — 200+ languages, one model for all pairs
+- **`facebook/nllb-200-1.3B`** — Higher quality, 200+ languages
+
+Browse all Helsinki-NLP models: [huggingface.co/Helsinki-NLP](https://huggingface.co/Helsinki-NLP)
+
+#### Pricing:
+- **Free tier**: Rate-limited but sufficient for development
+- **PRO**: $9/month for higher rate limits
+- **Inference Endpoints**: Pay-per-use for production workloads
+
+---
+
+### 🏠 Hugging Face Local (Free, Private, No API Key)
+
+**Best for**: Complete privacy, offline usage, zero cost, no rate limits — using the same purpose-built translation models as the cloud mode but running entirely on your machine via ONNX Runtime.
+
+> This is analogous to Ollama but uses dedicated translation models instead of general LLMs — typically faster and more accurate for translation tasks.
+
+#### Setup Steps:
+1. **No account or API key needed** — just configure the model name
+
+2. **Configure Environment**:
+   ```bash
+   # Copy the local HuggingFace environment template
+   cp huggingface-local.env .env
+   ```
+
+3. **Run** — the model downloads automatically on first use:
+   ```bash
+   atj translations/en.json -e huggingface-local -s en
+   ```
+   First run downloads the model (~300 MB) and caches it locally. All subsequent runs are fully offline.
+
+#### Quick Run Commands:
+```bash
+# Use the default local example model
+cp huggingface-local.env .env
+atj translations/en.json -e huggingface-local -s en
+
+# Use another local translation model
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-de \
+atj translations/en.json -e huggingface-local -s en
+
+# Use a larger multilingual local model
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/nllb-200-distilled-600M \
+atj translations/en.json -e huggingface-local -s en
+```
+
+#### Recommended ONNX Models (from [huggingface.co/Xenova](https://huggingface.co/Xenova)):
+- **`Xenova/opus-mt-en-fr`** — English→French (~300 MB)
+- **`Xenova/opus-mt-en-de`** — English→German (~300 MB)
+- **`Xenova/opus-mt-en-es`** — English→Spanish (~300 MB)
+- **`Xenova/nllb-200-distilled-600M`** — 200+ languages, one model (~1.2 GB)
+
+#### Pricing:
+- **Completely free**, forever — no account, no limits, no internet after first run
+
+---
+
 ## Service Comparison
 
 | Service | Quality | Speed | Cost | Languages | Best For |
@@ -911,6 +1115,8 @@ The library supports multiple translation services. Choose the one that best fit
 | **AWS** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | 75+ | AWS ecosystem |
 | **Azure** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | 90+ | Microsoft ecosystem |
 | **DeepL** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | 30+ | Highest quality |
+| **HuggingFace** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 200+ | Free tier, many models |
+| **HuggingFace Local** | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 200+ | Offline, private, free |
 
 ## Quick Start Examples
 
@@ -982,6 +1188,8 @@ atj docs/en.yaml -e openai -s en --format yaml
 | **DeepL Pro** | `deepLPro` | DeepL Pro API (higher limits) | DeepL Pro API key |
 | **DeepL Free** | `deepLFree` | DeepL Free API (limited) | DeepL Free API key |
 | **OpenAI** | `openai` | GPT models for translation | OpenAI API key |
+| **Hugging Face Cloud** | `huggingface` | HF Inference API (Helsinki-NLP, NLLB…) | HF Access Token |
+| **Hugging Face Local** | `huggingface-local` | On-device ONNX inference, no internet | None |
 
 ### Environment Variables
 
@@ -1031,6 +1239,35 @@ ATJ_OPEN_AI_BASE_URL=http://localhost:11434/v1
 ATJ_OPEN_AI_MODEL=qwen2.5:14b
 ATJ_OPEN_AI_MAX_TOKENS=512
 ATJ_OPEN_AI_TEMPERATURE=0.3
+```
+
+#### Hugging Face Cloud
+```bash
+# Requires a free HF token: https://huggingface.co/settings/tokens
+ATJ_HUGGING_FACE_API_KEY=your_huggingface_token_here
+# Optional explicit provider when model auto-selection does not work
+ATJ_HUGGING_FACE_PROVIDER=hf-inference
+# Model to use
+ATJ_HUGGING_FACE_MODEL=Helsinki-NLP/opus-mt-en-fr
+```
+
+Run it with:
+
+```bash
+atj translations/en.json -e huggingface -s en
+```
+
+#### Hugging Face Local (no API key needed)
+```bash
+# ONNX model ID — downloaded and cached on first run (~300 MB)
+# Find models at: https://huggingface.co/Xenova
+ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-fr
+```
+
+Run it with:
+
+```bash
+atj translations/en.json -e huggingface-local -s en
 ```
 
 #### Other Configuration

@@ -158,8 +158,8 @@ export const loadJsonFromLocale: (
           );
         }
 
-        // For formats that need metadata for proper reconstruction (like YAML), preserve it
-        if (format === 'yaml' || format === 'yml') {
+        // Preserve handler metadata for formats that cannot be reconstructed from plain key/value content.
+        if (format === "yaml" || format === "yml" || format === "arb") {
           return tempResult;
         }
 

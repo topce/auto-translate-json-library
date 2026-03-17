@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import type { InferenceProviderOrPolicy } from "@huggingface/inference";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import minimist from "minimist";
@@ -9,13 +10,53 @@ import packageJson from "../../package.json" with { type: "json" };
 const { version } = packageJson;
 
 import type { Configuration } from "../config.js";
-import { FormatHandlerFactory } from "../format-handler-factory.js";
-import { translate } from "../lib.js";
-// Import format handlers to ensure they are registered
-import "../format/index.js";
 import { config as dotenvConfig } from "dotenv";
 
 dotenvConfig();
+
+const formatDetails = {
+  json: { extensions: [".json"], description: "JSON translation files" },
+  arb: {
+    extensions: [".arb"],
+    description: "Flutter Application Resource Bundle",
+  },
+  xml: { extensions: [".xml"], description: "Generic XML translation files" },
+  "android-xml": {
+    extensions: [".xml"],
+    description: "Android strings.xml format",
+  },
+  "ios-xml": {
+    extensions: [".xml"],
+    description: "iOS localization XML format",
+  },
+  "generic-xml": { extensions: [".xml"], description: "Generic XML format" },
+  xliff: {
+    extensions: [".xlf", ".xliff"],
+    description: "XLIFF 1.2 and 2.x translation files",
+  },
+  xmb: {
+    extensions: [".xmb"],
+    description: "XML Message Bundle source files",
+  },
+  xtb: { extensions: [".xtb"], description: "XML Translation Bundle files" },
+  po: { extensions: [".po"], description: "GNU gettext PO files" },
+  pot: {
+    extensions: [".pot"],
+    description: "GNU gettext POT template files",
+  },
+  yaml: {
+    extensions: [".yaml", ".yml"],
+    description: "YAML translation files",
+  },
+  properties: {
+    extensions: [".properties"],
+    description: "Java Properties files",
+  },
+  csv: { extensions: [".csv"], description: "Comma-separated values files" },
+  tsv: { extensions: [".tsv"], description: "Tab-separated values files" },
+} as const;
+
+const supportedFormats = Object.keys(formatDetails);
 
 // Define a function to display the help message
 function displayHelp() {
@@ -46,7 +87,6 @@ function displayHelp() {
   );
   console.log("");
   console.log("Supported formats:");
-  const formats = FormatHandlerFactory.getSupportedFormats();
   const formatGroups = {
     "JSON-based": ["json", "arb"],
     "XML-based": [
@@ -63,7 +103,7 @@ function displayHelp() {
   };
 
   for (const [group, groupFormats] of Object.entries(formatGroups)) {
-    const availableFormats = groupFormats.filter((f) => formats.includes(f));
+    const availableFormats = groupFormats.filter((f) => supportedFormats.includes(f));
     if (availableFormats.length > 0) {
       console.log(`  ${group}: ${availableFormats.join(", ")}`);
     }
@@ -113,50 +153,7 @@ function listFormats() {
   console.log("Supported file formats:");
   console.log("");
 
-  const formats = FormatHandlerFactory.getSupportedFormats();
-  const formatDetails = {
-    json: { extensions: [".json"], description: "JSON translation files" },
-    arb: {
-      extensions: [".arb"],
-      description: "Flutter Application Resource Bundle",
-    },
-    xml: { extensions: [".xml"], description: "Generic XML translation files" },
-    "android-xml": {
-      extensions: [".xml"],
-      description: "Android strings.xml format",
-    },
-    "ios-xml": {
-      extensions: [".xml"],
-      description: "iOS localization XML format",
-    },
-    "generic-xml": { extensions: [".xml"], description: "Generic XML format" },
-    xliff: {
-      extensions: [".xlf", ".xliff"],
-      description: "XLIFF 1.2 and 2.x translation files",
-    },
-    xmb: {
-      extensions: [".xmb"],
-      description: "XML Message Bundle source files",
-    },
-    xtb: { extensions: [".xtb"], description: "XML Translation Bundle files" },
-    po: { extensions: [".po"], description: "GNU gettext PO files" },
-    pot: {
-      extensions: [".pot"],
-      description: "GNU gettext POT template files",
-    },
-    yaml: {
-      extensions: [".yaml", ".yml"],
-      description: "YAML translation files",
-    },
-    properties: {
-      extensions: [".properties"],
-      description: "Java Properties files",
-    },
-    csv: { extensions: [".csv"], description: "Comma-separated values files" },
-    tsv: { extensions: [".tsv"], description: "Tab-separated values files" },
-  };
-
-  for (const format of formats.sort()) {
+  for (const format of [...supportedFormats].sort()) {
     const details = formatDetails[format as keyof typeof formatDetails];
     if (details) {
       console.log(
@@ -248,7 +245,7 @@ if (!inputPath) {
 }
 
 // Validate format if specified
-if (format && !FormatHandlerFactory.hasHandler(format)) {
+if (format && !supportedFormats.includes(format)) {
   console.error(c.red(`❌ Unsupported format: ${format}`));
   console.error(c.yellow("💡 Use --list-formats to see all supported formats"));
   process.exit(1);
@@ -269,6 +266,8 @@ const validEngines = [
   "deepLPro",
   "deepLFree",
   "openai",
+  "huggingface",
+  "huggingface-local",
 ];
 if (engine && !validEngines.includes(engine)) {
   console.error(c.red(`❌ Invalid engine: ${engine}`));
@@ -398,6 +397,42 @@ switch (engine) {
     };
     break;
   }
+  case "huggingface": {
+    const huggingFaceApiKey = process.env.ATJ_HUGGING_FACE_API_KEY;
+    if (!huggingFaceApiKey) {
+      console.error(
+        c.red(
+          "❌ Hugging Face API key not found in environment variable ATJ_HUGGING_FACE_API_KEY",
+        ),
+      );
+      process.exit(1);
+    }
+    config.translationKeyInfo = {
+      kind: "huggingface",
+      apiKey: huggingFaceApiKey,
+      model: process.env.ATJ_HUGGING_FACE_MODEL ?? "Helsinki-NLP/opus-mt-en-fr",
+      provider: process.env.ATJ_HUGGING_FACE_PROVIDER as
+        | InferenceProviderOrPolicy
+        | undefined,
+    };
+    break;
+  }
+  case "huggingface-local": {
+    const huggingFaceLocalModel = process.env.ATJ_HUGGING_FACE_LOCAL_MODEL;
+    if (!huggingFaceLocalModel) {
+      console.error(
+        c.red(
+          "❌ Hugging Face local model not found in environment variable ATJ_HUGGING_FACE_LOCAL_MODEL",
+        ),
+      );
+      process.exit(1);
+    }
+    config.translationKeyInfo = {
+      kind: "huggingface-local",
+      model: huggingFaceLocalModel,
+    };
+    break;
+  }
   default:
     console.error(c.red(`❌ Engine ${engine} not supported`));
     process.exit(1);
@@ -418,10 +453,19 @@ config.mode = mode;
 if (format) {
   config.format = format;
 }
-const sourcePath = path.join(process.cwd(), inputPath);
-console.log(c.green(`🌐 Translating ${sourcePath}`));
 
-translate(sourcePath, config).catch((error) => {
+async function main() {
+  // Load the translation runtime only when an actual translation command is executed.
+  await import("../format/index.js");
+  const { translate } = await import("../lib.js");
+
+  const sourcePath = path.join(process.cwd(), inputPath);
+  console.log(c.green(`🌐 Translating ${sourcePath}`));
+
+  await translate(sourcePath, config);
+}
+
+main().catch((error) => {
   console.error(c.red("❌ Translate error:\n"), error);
   process.exit(1);
 });
