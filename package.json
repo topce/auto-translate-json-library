@@ -1,6 +1,6 @@
 {
   "name": "auto-translate-json-library",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "type": "module",
   "description": "Automatically translates JSON language files to other languages using Google Translate, AWS, Azure, DeepL, OpenAI, Hugging Face (cloud & local) or local OpenAI compatible server",
   "main": "./build/src/index.js",
