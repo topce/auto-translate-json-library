@@ -1,16 +1,7 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-
-import { AWSTranslate } from "./aws.js";
-import { AzureTranslate } from "./azure.js";
 import type { Configuration } from "./config.js";
-import { DeepLTranslate } from "./deepl.js";
 import { Files, type IFiles } from "./files.js";
 import { FolderFiles } from "./folderFiles.js";
-import { GoogleTranslate } from "./google.js";
-import { HuggingFaceTranslate } from "./huggingface.js";
-import { HuggingFaceLocalTranslate } from "./huggingface-local.js";
-import { OpenAITranslate } from "./openai.js";
+import { createTranslateEngine } from "./provider-factory.js";
 import type { ITranslate, TranslationFile } from "./translate.interface.js";
 import { Util } from "./util.js";
 
@@ -31,57 +22,16 @@ export async function translate(
 
   let translateEngine: ITranslate;
 
-  if (config.translationKeyInfo.kind === "google") {
-    translateEngine = await GoogleTranslate.initialize(
-      config.translationKeyInfo.apiKey,
-    );
-  } else if (config.translationKeyInfo.kind === "aws") {
-    translateEngine = new AWSTranslate(
-      config.translationKeyInfo.accessKeyId,
-      config.translationKeyInfo.secretAccessKey,
-      config.translationKeyInfo.region,
-    );
-  } else if (config.translationKeyInfo.kind === "azure") {
-    translateEngine = new AzureTranslate(
-      config.translationKeyInfo.secretKey,
-      config.translationKeyInfo.region,
-    );
-  } else if (config.translationKeyInfo.kind === "deepLFree") {
-    translateEngine = new DeepLTranslate(
-      config.translationKeyInfo.secretKey,
-      "free",
-    );
-  } else if (config.translationKeyInfo.kind === "deepLPro") {
-    translateEngine = new DeepLTranslate(
-      config.translationKeyInfo.secretKey,
-      "pro",
-    );
-  } else if (config.translationKeyInfo.kind === "openai") {
-    translateEngine = new OpenAITranslate(
-      config.translationKeyInfo.apiKey,
-      config.translationKeyInfo.baseUrl,
-      config.translationKeyInfo.model,
-      config.translationKeyInfo.maxTokens,
-      config.translationKeyInfo.temperature,
-      config.translationKeyInfo.topP,
-      config.translationKeyInfo.n,
-      config.translationKeyInfo.presencePenalty,
-      config.translationKeyInfo.frequencyPenalty,
-    );
-  } else if (config.translationKeyInfo.kind === "huggingface") {
-    translateEngine = new HuggingFaceTranslate(
-      config.translationKeyInfo.apiKey,
-      config.translationKeyInfo.model,
-      config.translationKeyInfo.provider,
-    );
-  } else if (config.translationKeyInfo.kind === "huggingface-local") {
-    translateEngine = new HuggingFaceLocalTranslate(
-      config.translationKeyInfo.model,
-    );
-  } else {
-    console.warn(
-      "You must provide a Google, AWS, Azure, deepL, openai, huggingface, or huggingface-local parameters first in the extension settings.",
-    );
+  try {
+    translateEngine = await createTranslateEngine(config);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.warn(error.message);
+    } else {
+      console.warn(
+        "You must provide a Google, AWS, Azure, deepL, openai, huggingface, or huggingface-local parameters first in the extension settings.",
+      );
+    }
     return;
   }
 

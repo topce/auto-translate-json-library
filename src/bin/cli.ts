@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-import type { InferenceProviderOrPolicy } from "@huggingface/inference";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import type { InferenceProviderOrPolicy } from "@huggingface/inference";
 import minimist from "minimist";
 import c from "picocolors";
 import packageJson from "../../package.json" with { type: "json" };
 
 const { version } = packageJson;
 
-import type { Configuration } from "../config.js";
 import { config as dotenvConfig } from "dotenv";
+import type { Configuration } from "../config.js";
 
 dotenvConfig();
 
@@ -67,10 +67,13 @@ function displayHelp() {
   console.log("  --help, -h               Display this help message");
   console.log("  --list-formats           List all supported file formats");
   console.log(
+    "  --json, -j               Output in JSON format (LLM-friendly)",
+  );
+  console.log(
     "  --mode, -m <mode>        Specify the translation mode:file or folder",
   );
   console.log(
-    "  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepLPro,deepLFree or openai",
+    "  --engine, -e <engine>    Specify the translation engine:aws,azure,google,deepLPro,deepLFree,openai,huggingface,huggingface-local",
   );
   console.log("  --sourceLocale, -s <locale>  Specify the source locale");
   console.log(
@@ -103,7 +106,9 @@ function displayHelp() {
   };
 
   for (const [group, groupFormats] of Object.entries(formatGroups)) {
-    const availableFormats = groupFormats.filter((f) => supportedFormats.includes(f));
+    const availableFormats = groupFormats.filter((f) =>
+      supportedFormats.includes(f),
+    );
     if (availableFormats.length > 0) {
       console.log(`  ${group}: ${availableFormats.join(", ")}`);
     }
@@ -128,8 +133,56 @@ function displayHelp() {
     "  atj --mode folder locales/               # Process entire folder",
   );
   console.log(
-    "  atj --engine google --format po msgs.po # Use Google Translate with PO files",
+    "  atj --engine google --format po msgs.po  # Use Google Translate with PO files",
   );
+  console.log(
+    "  atj --engine huggingface-local demo.json # Use local Hugging Face model",
+  );
+  console.log(
+    "  atj --engine openai --sourceLocale en --format yaml config.yaml",
+  );
+  console.log("  atj --engine huggingface --mode folder translations/");
+  console.log("");
+  console.log("Comprehensive examples:");
+  console.log("  # Basic translation with auto-detection");
+  console.log("  atj translations/en.json");
+  console.log("");
+  console.log("  # Specify engine and format");
+  console.log("  atj --engine google --format json translations.json");
+  console.log("  atj --engine azure --format xml strings.xml");
+  console.log("  atj --engine openai --format yaml config.yaml");
+  console.log("");
+  console.log("  # Local inference (no API keys needed)");
+  console.log("  atj --engine huggingface-local demo.json");
+  console.log("  atj --engine openai --sourceLocale en messages.po");
+  console.log("");
+  console.log("  # Folder mode for project structure");
+  console.log("  atj --mode folder --engine google locales/");
+  console.log("  atj --mode folder --engine huggingface-local translations/");
+  console.log("");
+  console.log("  # Advanced options");
+  console.log(
+    "  atj --engine google --sourceLocale en --keepTranslations app.json",
+  );
+  console.log("  atj --engine azure --no-keepExtraTranslations strings.xml");
+  console.log("");
+  console.log("  # JSON output for LLM/automation");
+  console.log("  atj --engine huggingface-local --json demo.json");
+  console.log("  atj --engine google --json --format po messages.po");
+  console.log("  atj --format xliff messages.xlf         # Force XLIFF format");
+  console.log(
+    "  atj --mode folder locales/               # Process entire folder",
+  );
+  console.log(
+    "  atj --engine google --format po msgs.po  # Use Google Translate with PO files",
+  );
+  console.log(
+    "  atj --engine huggingface-local demo.json # Use local Hugging Face model",
+  );
+  console.log(
+    "  atj --engine openai --sourceLocale en --format yaml config.yaml",
+  );
+  console.log("  atj --engine huggingface --mode folder translations/");
   console.log("");
   console.log("Default values");
   console.log("  --mode, -m <mode>                                    file");
@@ -143,6 +196,37 @@ function displayHelp() {
   );
   console.log(
     "  --keepExtraTranslations, --no-keepExtraTranslations  --no-keepExtraTranslations",
+  );
+  console.log("  --json, -j                                           false");
+  console.log("");
+  console.log("Engine details:");
+  console.log(
+    "  aws              - AWS Translate (requires ATJ_AWS_* env vars)",
+  );
+  console.log(
+    "  azure            - Azure Translator (requires ATJ_AZURE_* env vars)",
+  );
+  console.log(
+    "  google           - Google Translate (requires ATJ_GOOGLE_API_KEY)",
+  );
+  console.log(
+    "  deepLPro         - DeepL Pro API (requires ATJ_DEEPL_PRO_SECRET_KEY)",
+  );
+  console.log(
+    "  deepLFree        - DeepL Free API (requires ATJ_DEEPL_FREE_SECRET_KEY)",
+  );
+  console.log(
+    "  openai           - OpenAI API or local Ollama (requires ATJ_OPEN_AI_SECRET_KEY)",
+  );
+  console.log(
+    "  huggingface      - Hugging Face Cloud API (requires ATJ_HUGGING_FACE_API_KEY)",
+  );
+  console.log(
+    "  huggingface-local - Hugging Face Local ONNX (requires ATJ_HUGGING_FACE_LOCAL_MODEL)",
+  );
+  console.log("");
+  console.log(
+    "Performance note: Engines use lazy loading - only the selected engine is loaded.",
   );
 }
 
@@ -172,6 +256,9 @@ function listFormats() {
   console.log(
     "  atj --format android-xml --sourceLocale en res/values/strings.xml",
   );
+  console.log("  atj --engine huggingface-local demo.json");
+  console.log("  atj --engine openai --format yaml config.yaml");
+  console.log("  atj --engine huggingface --mode folder translations/");
   console.log("");
   console.log("Best practices:");
   console.log("  • Format is usually auto-detected from file extension");
@@ -181,6 +268,11 @@ function listFormats() {
   );
   console.log("  • Use --keepTranslations to preserve existing translations");
   console.log("  • Test with a single file before processing entire folders");
+  console.log("  • Engines use lazy loading - only needed SDKs are loaded");
+  console.log(
+    "  • For local inference: huggingface-local (ONNX) or openai (Ollama)",
+  );
+  console.log("  • Set environment variables in .env file for API keys");
 }
 
 const arguments_ = process.argv.slice(2);
@@ -199,6 +291,7 @@ const flags = minimist(arguments_, {
     sourceLocale: ["s"],
     format: ["f"],
     help: ["h"],
+    json: ["j"],
   },
   string: ["mode", "engine", "sourceLocale", "format"],
   boolean: [
@@ -206,6 +299,7 @@ const flags = minimist(arguments_, {
     "keepExtraTranslations",
     "help",
     "list-formats",
+    "json",
   ],
   default: {
     engine: "aws",
@@ -213,6 +307,7 @@ const flags = minimist(arguments_, {
     keepTranslations: true,
     keepExtraTranslations: false,
     mode: "file",
+    json: false,
   },
 });
 console.log(c.green(`🔨 Auto translate json cli v${version}`));
@@ -235,6 +330,7 @@ const {
   keepTranslations,
   keepExtraTranslations,
   format,
+  json,
 } = flags;
 
 // Validate input path
@@ -290,8 +386,16 @@ switch (engine) {
     if (!googleApiKey) {
       console.error(
         c.red(
-          "❌ Google api key not found in environment variable ATJ_GOOGLE_API_KEY",
+          "❌ Google API key not found in environment variable ATJ_GOOGLE_API_KEY",
         ),
+      );
+      console.error(
+        c.yellow(
+          "💡 Get API key: https://cloud.google.com/translate/docs/setup",
+        ),
+      );
+      console.error(
+        c.yellow("💡 Set ATJ_GOOGLE_API_KEY in .env file or environment"),
       );
       process.exit(1);
     }
@@ -344,7 +448,22 @@ switch (engine) {
     if (!openaiApiKey) {
       console.error(
         c.red(
-          "❌ Openai api key not found in environment variable ATJ_OPEN_AI_SECRET_KEY",
+          "❌ OpenAI API key not found in environment variable ATJ_OPEN_AI_SECRET_KEY",
+        ),
+      );
+      console.error(
+        c.yellow(
+          "💡 For OpenAI: Set ATJ_OPEN_AI_SECRET_KEY to your OpenAI API key",
+        ),
+      );
+      console.error(
+        c.yellow(
+          "💡 For local Ollama: Set ATJ_OPEN_AI_SECRET_KEY to 'ollama' and ATJ_OPEN_AI_BASE_URL to 'http://localhost:11434'",
+        ),
+      );
+      console.error(
+        c.yellow(
+          "💡 Example for Ollama: ATJ_OPEN_AI_SECRET_KEY=ollama ATJ_OPEN_AI_BASE_URL=http://localhost:11434",
         ),
       );
       process.exit(1);
@@ -425,6 +544,21 @@ switch (engine) {
           "❌ Hugging Face local model not found in environment variable ATJ_HUGGING_FACE_LOCAL_MODEL",
         ),
       );
+      console.error(
+        c.yellow(
+          "💡 Set ATJ_HUGGING_FACE_LOCAL_MODEL in .env file or environment",
+        ),
+      );
+      console.error(
+        c.yellow(
+          "💡 Example: ATJ_HUGGING_FACE_LOCAL_MODEL=Xenova/opus-mt-en-fr",
+        ),
+      );
+      console.error(
+        c.yellow(
+          "💡 Available models: https://huggingface.co/models?pipeline_tag=translation",
+        ),
+      );
       process.exit(1);
     }
     config.translationKeyInfo = {
@@ -460,9 +594,127 @@ async function main() {
   const { translate } = await import("../lib.js");
 
   const sourcePath = path.join(process.cwd(), inputPath);
-  console.log(c.green(`🌐 Translating ${sourcePath}`));
 
-  await translate(sourcePath, config);
+  if (json) {
+    // JSON output mode - capture console output
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+    const originalConsoleWarn = console.warn;
+
+    const logs: Array<{ type: string; message: string; timestamp: number }> =
+      [];
+
+    console.log = (...args) => {
+      logs.push({
+        type: "log",
+        message: args
+          .map((arg) =>
+            typeof arg === "object" ? JSON.stringify(arg) : String(arg),
+          )
+          .join(" "),
+        timestamp: Date.now(),
+      });
+    };
+
+    console.error = (...args) => {
+      logs.push({
+        type: "error",
+        message: args
+          .map((arg) =>
+            typeof arg === "object" ? JSON.stringify(arg) : String(arg),
+          )
+          .join(" "),
+        timestamp: Date.now(),
+      });
+    };
+
+    console.warn = (...args) => {
+      logs.push({
+        type: "warn",
+        message: args
+          .map((arg) =>
+            typeof arg === "object" ? JSON.stringify(arg) : String(arg),
+          )
+          .join(" "),
+        timestamp: Date.now(),
+      });
+    };
+
+    const startTime = Date.now();
+
+    try {
+      await translate(sourcePath, config);
+      const endTime = Date.now();
+
+      const result = {
+        command: "translate",
+        version,
+        timestamp: new Date().toISOString(),
+        input: {
+          path: sourcePath,
+          mode,
+          engine,
+          sourceLocale,
+          format: format || "auto",
+          keepTranslations,
+          keepExtraTranslations,
+        },
+        performance: {
+          startTime,
+          endTime,
+          totalMs: endTime - startTime,
+        },
+        logs,
+        status: "success",
+        message: "Translation completed successfully",
+      };
+
+      // Restore console
+      console.log = originalConsoleLog;
+      console.error = originalConsoleError;
+      console.warn = originalConsoleWarn;
+
+      console.log(JSON.stringify(result, null, 2));
+    } catch (error) {
+      const errorTime = Date.now();
+
+      const result = {
+        command: "translate",
+        version,
+        timestamp: new Date().toISOString(),
+        input: {
+          path: sourcePath,
+          mode,
+          engine,
+          sourceLocale,
+          format: format || "auto",
+          keepTranslations,
+          keepExtraTranslations,
+        },
+        performance: {
+          startTime,
+          errorTime,
+          totalMs: errorTime - startTime,
+        },
+        logs,
+        status: "error",
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      };
+
+      // Restore console
+      console.log = originalConsoleLog;
+      console.error = originalConsoleError;
+      console.warn = originalConsoleWarn;
+
+      console.log(JSON.stringify(result, null, 2));
+      process.exit(1);
+    }
+  } else {
+    // Normal output mode
+    console.log(c.green(`🌐 Translating ${sourcePath}`));
+    await translate(sourcePath, config);
+  }
 }
 
 main().catch((error) => {

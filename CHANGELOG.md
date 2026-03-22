@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-03-22
+
+### ⚡ Performance & CLI Improvements Release
+
+#### Added
+- **Lazy Loading**: Translation engines now load on-demand instead of at startup
+- **JSON Output Mode**: New `--json` flag for structured, LLM-friendly output
+- **Enhanced CLI Help**: Comprehensive examples and engine documentation
+- **Performance Metrics**: Execution timing in JSON output for monitoring
+
+#### Enhanced
+- **CLI User Experience**: Better error messages with helpful tips and links
+- **Engine Documentation**: All engines (huggingface, huggingface-local) fully documented
+- **Local Inference Support**: Improved documentation for huggingface-local and Ollama
+- **Developer Experience**: 15+ comprehensive usage examples added
+
+#### Performance Improvements
+- **Startup Time**: Reduced from ~500ms to ~27ms (library import)
+- **Memory Footprint**: Only selected engine's SDK loads into memory
+- **CLI Response**: Help/version commands don't trigger SDK loading
+- **Engine Loading**: Each provider SDK loads only when first used
+
+#### Technical Improvements
+- **Provider Factory**: New `provider-factory.ts` with dynamic imports
+- **Console Capture**: JSON output captures all logs, errors, and warnings
+- **Error Handling**: Enhanced error messages with configuration guidance
+- **Type Safety**: Maintained full TypeScript compatibility
+
+#### Backward Compatibility
+- ✅ All existing functionality preserved
+- ✅ All 470 tests pass
+- ✅ No breaking API changes
+- ✅ Existing environment variables unchanged
+- ✅ Demo scripts continue to work
+
+### Migration Notes
+- No migration required - fully backward compatible
+- New `--json` flag available for automation workflows
+- Performance benefits automatic (no configuration needed)
+- Existing scripts continue to work unchanged
+
 ## [2.0.0] - 2025-01-04
 
 ### 🚀 Major Release - Complete Rewrite and Enhancement

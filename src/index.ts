@@ -150,9 +150,7 @@ function setConfigurationFromEnvironment() {
     config.translationKeyInfo = {
       kind: "huggingface",
       apiKey: process.env.ATJ_HUGGING_FACE_API_KEY,
-      model:
-        process.env.ATJ_HUGGING_FACE_MODEL ??
-        "Helsinki-NLP/opus-mt-en-fr",
+      model: process.env.ATJ_HUGGING_FACE_MODEL ?? "Helsinki-NLP/opus-mt-en-fr",
       provider: process.env.ATJ_HUGGING_FACE_PROVIDER as
         | InferenceProviderOrPolicy
         | undefined,

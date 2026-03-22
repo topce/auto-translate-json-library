@@ -2,14 +2,14 @@ import type { InferenceProviderOrPolicy } from "@huggingface/inference";
 
 export type Configuration = {
   translationKeyInfo:
-  | GoogleTranslationKey
-  | AwsTranslationKey
-  | AzureTranslationKey
-  | DeepLProTranslationKey
-  | DeepLFreeTranslationKey
-  | OpenAITranslationKey
-  | HuggingFaceTranslationKey
-  | HuggingFaceLocalTranslationKey;
+    | GoogleTranslationKey
+    | AwsTranslationKey
+    | AzureTranslationKey
+    | DeepLProTranslationKey
+    | DeepLFreeTranslationKey
+    | OpenAITranslationKey
+    | HuggingFaceTranslationKey
+    | HuggingFaceLocalTranslationKey;
   startDelimiter: string;
   endDelimiter: string;
   mode: "file" | "folder";

@@ -1,3 +1,7 @@
 {
-
+  "description": "C'est un fichier de démonstration pour la traduction automatique",
+  "button": {
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  }
 }
