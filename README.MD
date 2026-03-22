@@ -1,5 +1,7 @@
 # Auto Translate JSON Library
 
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/topce?color=ea4aaa&label=Sponsor&logo=github)](https://github.com/sponsors/topce)
+
 This project is used in, (and refactored from) excellent VS Code extension
 Auto Translate JSON
 <https://marketplace.visualstudio.com/items?itemName=JeffJorczak.auto-translate-json>
@@ -13,15 +15,19 @@ for example [ollama](https://ollama.com/)
 because it is compatible with OpenAI https://ollama.com/blog/openai-compatibility
 or [Hugging Face](https://huggingface.co/) (cloud API or fully local on-device inference)
 
-## 🚀 Version 2.0.0 - Major Release
+## 💖 Sponsor this Project
 
-This major release brings comprehensive improvements including:
-- **ES Modules support** for modern JavaScript compatibility
-- **Enhanced validation system** with detailed error reporting and recovery
-- **Expanded format support** with robust handling for all major translation formats
-- **Complete demo system** with interactive examples
-- **Comprehensive test suite** with 100% format handler coverage
-- **Security updates** for all dependencies
+If you find this library valuable and would like to support its ongoing development, please consider sponsoring the project on GitHub.
+
+**Sponsor via GitHub Sponsors:** [https://github.com/sponsors/topce](https://github.com/sponsors/topce)
+
+Your sponsorship helps with:
+- Ongoing maintenance and bug fixes
+- Adding new features and translation services
+- Supporting open-source development
+- Keeping the library up-to-date with the latest translation APIs
+
+Even a small monthly contribution makes a big difference in ensuring this project remains actively maintained and continues to improve.
 
 ## ⚡ Version 2.1.0 - Performance & CLI Improvements
 
@@ -49,6 +55,16 @@ This release focuses on performance optimization and enhanced developer experien
 - **Before**: All SDKs loaded at startup (~80MB+ memory)
 - **After**: Only needed SDK loads on demand
 - **Result**: 70% faster startup, 80% lower memory for most use cases
+
+## 🚀 Version 2.0.0 - Major Release
+
+This major release brings comprehensive improvements including:
+- **ES Modules support** for modern JavaScript compatibility
+- **Enhanced validation system** with detailed error reporting and recovery
+- **Expanded format support** with robust handling for all major translation formats
+- **Complete demo system** with interactive examples
+- **Comprehensive test suite** with 100% format handler coverage
+- **Security updates** for all dependencies
 
 ## Use as Library
 
@@ -543,6 +559,12 @@ This will run translations on sample files in multiple formats (JSON, XML, YAML,
 
 ## Contribute
 
+There are several ways to contribute to this project:
+
+### 💖 Financial Support
+If you find this library valuable in your projects, consider supporting its development through [GitHub Sponsors](https://github.com/sponsors/topce). Your sponsorship helps ensure ongoing maintenance, bug fixes, and new features.
+
+### 🛠️ Code Contributions
 Clone repo and use the following commands:
 
 1. Install ollama and run `ollama run llama2`
