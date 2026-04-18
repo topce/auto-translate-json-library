@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-04-18
+
+### 🔧 Dependency Updates & Bug Fixes
+
+#### Updated Dependencies
+- **@biomejs/biome**: bumped to `2.4.12`
+- **@types/node**: bumped to `25.6.0`
+- **ts-jest**: bumped to `29.4.9`
+- **typescript**: bumped to `6.0.3`
+- **@aws-sdk/client-translate**: bumped to `3.1032.0`
+- **@huggingface/transformers**: bumped to `^4.1.0`
+- **axios**: bumped to `1.15.0`
+- **deepl-node**: bumped to `1.26.0`
+- **dotenv**: bumped to `17.4.2`
+- **fast-xml-parser**: bumped to `5.7.1`
+- **openai**: bumped to `6.34.0`
+
+#### Fixed
+- **TypeScript**: Added `"jest"` and `"node"` to `types` in `tsconfig.json` so Jest globals (`describe`, `it`, `expect`) are correctly recognized
+- **Jest config**: Added `moduleResolution: 'bundler'`, `rootDir: '.'`, and `ignoreDeprecations: '6.0'` to ts-jest tsconfig override to fix TS5011 and TS5107 errors in test runs
+- All 470 tests pass
+
 ## [2.1.0] - 2026-03-22
 
 ### ⚡ Performance & CLI Improvements Release
