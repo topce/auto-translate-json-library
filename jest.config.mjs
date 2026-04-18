@@ -6,7 +6,10 @@ export default {
     '^.+\\.ts$': ['ts-jest', {
       useESM: true,
       tsconfig: {
-        module: 'esnext'
+        module: 'esnext',
+        moduleResolution: 'bundler',
+        rootDir: '.',
+        ignoreDeprecations: '6.0'
       }
     }],
   },
