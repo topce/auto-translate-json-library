@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-07-31
+
+### 🧹 Library Entry Cleanup & Dependency Updates
+
+#### Fixed
+- **Removed debug logging from production code**: Dropped the `🔍 DEBUG` `console.log` statements from the OpenAI translator (`src/openai.ts`) that were logging prompts and translation input/output.
+
+#### Updated Dependencies
+- **@aws-sdk/client-translate**: `3.1032.0` → `3.1100.0`
+- **@google-cloud/translate**: `9.3.0` → `9.4.2`
+- **@huggingface/inference**: `4.13.15` → `4.13.24`
+- **@huggingface/transformers**: `4.1.0` → `4.2.0`
+- **axios**: `1.15.0` → `1.19.0`
+- **csv-parser**: `3.2.0` → `3.2.1`
+- **deepl-node**: `1.26.0` → `1.27.0`
+- **fast-xml-parser**: `5.7.1` → `5.10.1`
+- **form-data**: `4.0.5` → `4.0.6`
+- **gettext-parser**: `9.0.2` → `9.1.1`
+- **js-yaml**: `4.1.1` → `4.3.1`
+- **openai**: `6.34.0` → `7.3.0` (major)
+- **sharp**: `0.34.5` → `0.35.3`
+- **uuid**: `13.0.0` → `14.0.1` (major)
+- **yargs**: `18.0.0` → `18.1.0`
+
+#### Updated Dev Dependencies
+- **@biomejs/biome**: `2.4.12` → `2.5.6`
+- **@topce/native-preview**: `7.0.0-dev.20260215` → `7.0.3`
+- **@types/node**: `25.6.0` → `26.1.2`
+- **jest**: `30.3.0` → `30.4.2`
+- **ts-jest**: `29.4.9` → `29.4.12`
+
+#### Verification
+- All 470 tests pass (12 suites)
+- `npm pack --dry-run` succeeds (91 files, 100.7 kB packed)
+
 ## [2.2.0] - 2026-04-18
 
 ### 🔧 Dependency Updates & Bug Fixes
