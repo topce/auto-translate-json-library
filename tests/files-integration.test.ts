@@ -127,6 +127,49 @@ describe('Files Integration Tests', () => {
       expect(savedContent['nested.key'] || savedContent.nested?.key).toBe('valor');
     });
 
+    it('should round-trip JSON files with colliding literal dot keys without crashing (CIRCABC case)', async () => {
+      // Flat keys where one key is a dot-boundary prefix of others. This mirrors
+      // the real translate() pipeline: loadJsonFromLocale strips _metadata, so
+      // saveJsonToLocale must reconstruct from the flat keys without throwing
+      // "Cannot create property 'x' on string" and without losing data.
+      const circabcJson = path.join(testDir, 'circabc-en.json');
+      const source = {
+        'admin.invite.circabc.admin': 'Invite CIRCABC administrator',
+        'admin.invite.circabc.admin.succeed':
+          'Invitation of CIRCABC administrator was successful',
+        'admin.invite.circabc.admin.failed':
+          'Invitation of CIRCABC administrator failed'
+      };
+      fs.writeFileSync(circabcJson, JSON.stringify(source, null, 2));
+
+      const files = new Files(circabcJson);
+      const loaded = await files.loadJsonFromLocale('circabc-en');
+
+      // The flat keys survive loading (metadata is stripped for JSON).
+      expect(loaded['admin.invite.circabc.admin']).toBe(
+        'Invite CIRCABC administrator'
+      );
+
+      // Saving must not throw the collision error.
+      expect(() =>
+        files.saveJsonToLocale('circabc-es', loaded)
+      ).not.toThrow();
+
+      const savedFile = path.join(testDir, 'circabc-es.json');
+      expect(fs.existsSync(savedFile)).toBe(true);
+
+      const savedContent = JSON.parse(fs.readFileSync(savedFile, 'utf8'));
+      expect(savedContent['admin.invite.circabc.admin']).toBe(
+        'Invite CIRCABC administrator'
+      );
+      expect(savedContent['admin.invite.circabc.admin.succeed']).toBe(
+        'Invitation of CIRCABC administrator was successful'
+      );
+      expect(savedContent['admin.invite.circabc.admin.failed']).toBe(
+        'Invitation of CIRCABC administrator failed'
+      );
+    });
+
     it('should load and save real test data files across multiple formats', async () => {
       const testDataDir = path.join(__dirname, 'test-data');
       

@@ -439,6 +439,70 @@ describe('JsonHandler', () => {
     });
   });
 
+  describe('dot-key collision (CIRCABC case)', () => {
+    // A flat key that is ALSO a dot-boundary prefix of other flat keys cannot be
+    // represented as a nested tree: the same path would have to be both a string
+    // leaf and an object. Reconstruction must not crash and must not lose data.
+    const circabc = {
+      'admin.invite.circabc.admin': 'Invite CIRCABC administrator',
+      'admin.invite.circabc.admin.succeed':
+        'Invitation of CIRCABC administrator was successful',
+      'admin.invite.circabc.admin.failed':
+        'Invitation of CIRCABC administrator failed'
+    };
+
+    it('should not throw "Cannot create property ... on string"', () => {
+      expect(() => handler.serialize(circabc)).not.toThrow();
+    });
+
+    it('should preserve all colliding keys and values losslessly', () => {
+      const result = handler.serialize(circabc);
+      const parsed = JSON.parse(result);
+
+      expect(parsed['admin.invite.circabc.admin']).toBe(
+        'Invite CIRCABC administrator'
+      );
+      expect(parsed['admin.invite.circabc.admin.succeed']).toBe(
+        'Invitation of CIRCABC administrator was successful'
+      );
+      expect(parsed['admin.invite.circabc.admin.failed']).toBe(
+        'Invitation of CIRCABC administrator failed'
+      );
+    });
+
+    it('should still nest non-colliding keys while keeping colliding keys flat', () => {
+      const mixed = {
+        'menu.file': 'File',
+        'menu.edit': 'Edit',
+        'admin.invite.circabc.admin': 'Invite CIRCABC administrator',
+        'admin.invite.circabc.admin.succeed': 'Success',
+        'admin.invite.circabc.admin.failed': 'Failed'
+      };
+
+      const result = handler.serialize(mixed);
+      const parsed = JSON.parse(result);
+
+      // Non-colliding keys nest as before.
+      expect(parsed.menu.file).toBe('File');
+      expect(parsed.menu.edit).toBe('Edit');
+
+      // Colliding keys stay literal (flat) to remain representable and lossless.
+      expect(parsed['admin.invite.circabc.admin']).toBe(
+        'Invite CIRCABC administrator'
+      );
+      expect(parsed['admin.invite.circabc.admin.succeed']).toBe('Success');
+      expect(parsed['admin.invite.circabc.admin.failed']).toBe('Failed');
+    });
+
+    it('should reload serialized output without loss (round-trip)', () => {
+      const result = handler.serialize(circabc);
+      const reparsed = handler.parse(result) as EnhancedTranslationFile;
+      const { _metadata, ...flat } = reparsed;
+
+      expect(flat).toEqual(circabc);
+    });
+  });
+
   describe('enhanced JSON metadata preservation', () => {
     let nestedJsonContent: string;
 

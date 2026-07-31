@@ -412,15 +412,62 @@ export class YamlHandler implements IFormatHandler {
 
   private reconstructFromFlatStructure(flatData: Record<string, any>): any {
     const result: any = {};
+    const keys = Object.keys(flatData);
 
-    for (const [key, value] of Object.entries(flatData)) {
-      this.setNestedValue(result, key, value);
+    // Some flat keys contain literal dots and are ALSO dot-boundary prefixes of
+    // other flat keys (e.g. "a.b.c" and "a.b.c.d"). Such a set cannot be
+    // expressed as a nested tree: the shared path would have to be both a
+    // scalar leaf and a mapping at the same time. Splitting them blindly either
+    // crashes ("Cannot create property 'x' on string") or silently drops data.
+    // Keep the colliding keys as literal (flat) keys so the output is lossless.
+    const conflicting = this.findConflictingKeys(keys);
+
+    for (const key of keys) {
+      const value = flatData[key];
+
+      if (conflicting.has(key)) {
+        result[key] = value;
+        continue;
+      }
+
+      // If nesting still hits an unexpected collision (e.g. a mixed
+      // array/object shape), fall back to a literal key rather than throwing
+      // or losing the value.
+      if (!this.setNestedValue(result, key, value)) {
+        result[key] = value;
+      }
     }
 
     return result;
   }
 
-  private setNestedValue(obj: any, path: string, value: any): void {
+  /**
+   * Returns the set of flat keys that cannot be safely expanded into a nested
+   * structure because another key is a dot-boundary ancestor of them. Both
+   * sides of every such collision are returned so callers can preserve them as
+   * literal flat keys instead of splitting on ".".
+   */
+  private findConflictingKeys(keys: string[]): Set<string> {
+    const conflicting = new Set<string>();
+    const keySet = new Set(keys);
+
+    for (const key of keys) {
+      const segments = key.split(".");
+
+      let prefix = "";
+      for (let i = 0; i < segments.length - 1; i++) {
+        prefix = i === 0 ? segments[0] : `${prefix}.${segments[i]}`;
+        if (keySet.has(prefix)) {
+          conflicting.add(prefix);
+          conflicting.add(key);
+        }
+      }
+    }
+
+    return conflicting;
+  }
+
+  private setNestedValue(obj: any, path: string, value: any): boolean {
     const keys = this.parsePath(path);
     let current = obj;
 
@@ -428,6 +475,12 @@ export class YamlHandler implements IFormatHandler {
       const key = keys[i];
 
       if (key.isArray) {
+        if (
+          current[key.name] !== undefined &&
+          !Array.isArray(current[key.name])
+        ) {
+          return false; // expected an array here, found something else
+        }
         if (!Array.isArray(current[key.name])) {
           current[key.name] = [];
         }
@@ -441,8 +494,19 @@ export class YamlHandler implements IFormatHandler {
           current[key.name].push(defaultValue);
         }
 
-        current = current[key.name][key.index!];
+        const next = current[key.name][key.index!];
+        if (next === null || typeof next !== "object") {
+          return false; // slot already holds a scalar, cannot descend
+        }
+        current = next;
       } else {
+        const existing = current[key.name];
+        if (
+          existing !== undefined &&
+          (typeof existing !== "object" || existing === null)
+        ) {
+          return false; // cannot descend into a scalar leaf
+        }
         if (!(key.name in current)) {
           current[key.name] = {};
         }
@@ -452,6 +516,12 @@ export class YamlHandler implements IFormatHandler {
 
     const lastKey = keys[keys.length - 1];
     if (lastKey.isArray) {
+      if (
+        current[lastKey.name] !== undefined &&
+        !Array.isArray(current[lastKey.name])
+      ) {
+        return false;
+      }
       if (!Array.isArray(current[lastKey.name])) {
         current[lastKey.name] = [];
       }
@@ -463,8 +533,18 @@ export class YamlHandler implements IFormatHandler {
 
       current[lastKey.name][lastKey.index!] = value;
     } else {
+      const existing = current[lastKey.name];
+      if (
+        existing !== undefined &&
+        typeof existing === "object" &&
+        existing !== null
+      ) {
+        return false; // would clobber a mapping/sequence with a scalar leaf
+      }
       current[lastKey.name] = value;
     }
+
+    return true;
   }
 
   private parsePath(

@@ -196,4 +196,52 @@ describe("YamlHandler", () => {
       expect(reparsed["metadata.config.debug"]).toBe(original["metadata.config.debug"]);
     });
   });
+
+  describe("dot-key collision (flat reconstruction)", () => {
+    // No _metadata is present, so serialize() goes through
+    // reconstructFromFlatStructure. A flat key that is also a dot-boundary
+    // prefix of other flat keys must not crash or drop data.
+    const circabc = {
+      "admin.invite.circabc.admin": "Invite CIRCABC administrator",
+      "admin.invite.circabc.admin.succeed":
+        "Invitation of CIRCABC administrator was successful",
+      "admin.invite.circabc.admin.failed":
+        "Invitation of CIRCABC administrator failed",
+    };
+
+    it("should not throw on colliding literal dot keys", () => {
+      expect(() => handler.serialize(circabc)).not.toThrow();
+    });
+
+    it("should preserve all colliding keys and values losslessly", () => {
+      const serialized = handler.serialize(circabc);
+      const reparsed = handler.parse(serialized);
+
+      expect(reparsed["admin.invite.circabc.admin"]).toBe(
+        "Invite CIRCABC administrator"
+      );
+      expect(reparsed["admin.invite.circabc.admin.succeed"]).toBe(
+        "Invitation of CIRCABC administrator was successful"
+      );
+      expect(reparsed["admin.invite.circabc.admin.failed"]).toBe(
+        "Invitation of CIRCABC administrator failed"
+      );
+    });
+
+    it("should still nest non-colliding keys", () => {
+      const mixed = {
+        "menu.file": "File",
+        "admin.invite.circabc.admin": "Invite CIRCABC administrator",
+        "admin.invite.circabc.admin.succeed": "Success",
+      };
+      const serialized = handler.serialize(mixed);
+      const reparsed = handler.parse(serialized);
+
+      expect(reparsed["menu.file"]).toBe("File");
+      expect(reparsed["admin.invite.circabc.admin"]).toBe(
+        "Invite CIRCABC administrator"
+      );
+      expect(reparsed["admin.invite.circabc.admin.succeed"]).toBe("Success");
+    });
+  });
 });

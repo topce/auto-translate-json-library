@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-07-31
+
+### 🐛 Dot-Key Collision Fix (JSON & YAML)
+
+#### Fixed
+- **Fixed crash on flat keys that collide under dot-nesting** (`src/format/json-handler.ts`, `src/format/yaml-handler.ts`): Serializing a translation set where one flat key is also a dot-boundary prefix of another (for example `admin.invite.circabc.admin` together with `admin.invite.circabc.admin.succeed`) threw `Failed to serialize JSON: Cannot create property 'succeed' on string '…'`. The same path cannot be both a string leaf and an object in a nested tree, and under ES module strict mode the assignment threw instead of failing silently.
+  - `reconstructFromFlatStructure` is now collision-aware: keys involved in a dot-boundary prefix collision are preserved as literal (flat) keys, so the output stays lossless and valid. Non-colliding keys continue to nest exactly as before (backward compatible).
+  - `setNestedValue` no longer throws on an incompatible shape; it reports the collision so the caller can keep the key literal, guarding against any residual mixed array/object cases.
+
+#### Verification
+- All 478 tests pass (12 suites), including new regression tests:
+  - `tests/json-handler.test.ts`: 4 collision tests (no-throw, lossless preservation, mixed nest/flat, round-trip)
+  - `tests/files-integration.test.ts`: end-to-end round-trip through `Files.load/saveJsonToLocale` (the real translate save path)
+  - `tests/yaml-handler.test.ts`: 3 collision tests on the flat reconstruction path
+- `npm run build` (tsc) succeeds
+- Biome lint passes on changed source files
+- `npm pack --dry-run` succeeds (91 files, 104.4 kB packed)
+
 ## [2.3.0] - 2026-07-31
 
 ### 🧹 Library Entry Cleanup & Dependency Updates

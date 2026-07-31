@@ -220,15 +220,73 @@ export class JsonHandler implements IFormatHandler {
 
   private reconstructFromFlatStructure(flatData: Record<string, any>): any {
     const result: any = {};
+    const keys = Object.keys(flatData);
 
-    for (const [key, value] of Object.entries(flatData)) {
-      this.setNestedValue(result, key, value);
+    // Some flat keys contain literal dots and are ALSO dot-boundary prefixes of
+    // other flat keys (e.g. "a.b.c" and "a.b.c.d"). Such a set cannot be
+    // expressed as a nested tree: the shared path would have to be both a
+    // string leaf and an object at the same time. Splitting them blindly either
+    // crashes ("Cannot create property 'x' on string") or silently drops data.
+    // Keep the colliding keys as literal (flat) keys so the output is lossless.
+    const conflicting = this.findConflictingKeys(keys);
+
+    for (const key of keys) {
+      const value = flatData[key];
+
+      if (conflicting.has(key)) {
+        result[key] = value;
+        continue;
+      }
+
+      // If nesting still hits an unexpected collision (e.g. a mixed
+      // array/object shape), fall back to a literal key rather than throwing
+      // or losing the value.
+      if (!this.setNestedValue(result, key, value)) {
+        result[key] = value;
+      }
     }
 
     return result;
   }
 
-  private setNestedValue(obj: any, path: string, value: any): void {
+  /**
+   * Returns the set of flat keys that cannot be safely expanded into a nested
+   * structure because another key is a dot-boundary ancestor of them. Both
+   * sides of every such collision are returned so callers can preserve them as
+   * literal flat keys instead of splitting on ".".
+   *
+   * Example: for `["a.b.c", "a.b.c.d"]`, `"a.b.c"` is an ancestor of
+   * `"a.b.c.d"`, so both are returned.
+   */
+  private findConflictingKeys(keys: string[]): Set<string> {
+    const conflicting = new Set<string>();
+    const keySet = new Set(keys);
+
+    for (const key of keys) {
+      const segments = key.split(".");
+
+      // Walk every dot-boundary ancestor path of this key. If an ancestor path
+      // is itself a full key, then that ancestor is a string leaf while this
+      // key needs it to be an object: both collide.
+      let prefix = "";
+      for (let i = 0; i < segments.length - 1; i++) {
+        prefix = i === 0 ? segments[0] : `${prefix}.${segments[i]}`;
+        if (keySet.has(prefix)) {
+          conflicting.add(prefix);
+          conflicting.add(key);
+        }
+      }
+    }
+
+    return conflicting;
+  }
+
+  /**
+   * Sets a value at a dot/bracket path, creating intermediate objects/arrays as
+   * needed. Returns `false` (instead of throwing) when the path collides with an
+   * incompatible existing shape, so the caller can preserve the key literally.
+   */
+  private setNestedValue(obj: any, path: string, value: any): boolean {
     const keys = this.parsePath(path);
     let current = obj;
 
@@ -236,6 +294,12 @@ export class JsonHandler implements IFormatHandler {
       const key = keys[i];
 
       if (key.isArray) {
+        if (
+          current[key.name] !== undefined &&
+          !Array.isArray(current[key.name])
+        ) {
+          return false; // expected an array here, found something else
+        }
         if (!Array.isArray(current[key.name])) {
           current[key.name] = [];
         }
@@ -245,8 +309,19 @@ export class JsonHandler implements IFormatHandler {
           current[key.name].push({});
         }
 
-        current = current[key.name][key.index!];
+        const next = current[key.name][key.index!];
+        if (next === null || typeof next !== "object") {
+          return false; // slot already holds a primitive, cannot descend
+        }
+        current = next;
       } else {
+        const existing = current[key.name];
+        if (
+          existing !== undefined &&
+          (typeof existing !== "object" || existing === null)
+        ) {
+          return false; // cannot descend into a primitive leaf
+        }
         if (!(key.name in current)) {
           current[key.name] = {};
         }
@@ -256,13 +331,29 @@ export class JsonHandler implements IFormatHandler {
 
     const lastKey = keys[keys.length - 1];
     if (lastKey.isArray) {
+      if (
+        current[lastKey.name] !== undefined &&
+        !Array.isArray(current[lastKey.name])
+      ) {
+        return false;
+      }
       if (!Array.isArray(current[lastKey.name])) {
         current[lastKey.name] = [];
       }
       current[lastKey.name][lastKey.index!] = value;
     } else {
+      const existing = current[lastKey.name];
+      if (
+        existing !== undefined &&
+        typeof existing === "object" &&
+        existing !== null
+      ) {
+        return false; // would clobber an object/array with a scalar leaf
+      }
       current[lastKey.name] = value;
     }
+
+    return true;
   }
 
   private parsePath(
